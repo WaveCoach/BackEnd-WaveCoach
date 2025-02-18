@@ -3,8 +3,8 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Daftar Lowongan Magang</h5>
-        <p>Menu "Daftar Lowongan Magang" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi lowongan magang secara efisien</p>
+        <h5 class="card-title">Daftar Coach</h5>
+        <p>Menu "Coach" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Coach secara efisien</p>
 
         <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4">
             <i class="fas fa-plus"></i> Tambah
@@ -14,42 +14,41 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>Email</th>
                     <th>aksi</th>
                 </tr>
             </thead>
             <tbody>
+                    @foreach ($coaches as $item)
+
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{$loop->iteration}}</td>
+                        <td>{{$item -> name}}</td>
+                        <td>{{$item-> email}}</td>
                         <td class="d-flex">
-                            <a href="" class="btn btn-warning btn-sm ">
+                            <a href="{{route('coach.edit', $item->id)}}" class="btn btn-warning btn-sm ">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="" class="btn btn-info btn-sm mx-2">
+                            <a href="{{route('coach.show', $item->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="" class="btn btn-success btn-sm mx-2">
-                                <i class="fas fa-users"></i>
-                            </a>
-                            <form action="" method="POST" style="display:inline;">
-
+                            <form action="{{route('coach.destroy', $item->id)}}" method="POST" style="display:inline;">
+                                @method('delete')
+                                @csrf
                                 <button type="submit" class="btn btn-danger btn-sm" >
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
+                    @endforeach
+
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>Email</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
