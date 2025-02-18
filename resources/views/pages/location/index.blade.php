@@ -3,10 +3,10 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Daftar Lowongan Magang</h5>
-        <p>Menu "Daftar Lowongan Magang" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi lowongan magang secara efisien</p>
+        <h5 class="card-title">Daftar Lokasi Latihan Renang</h5>
+        <p>Menu "Location" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi daftar lokasi renang secara efisien</p>
 
-        <a href="" class="btn btn-success btn-sm mb-4">
+        <a href="{{route('location.create')}}" class="btn btn-success btn-sm mb-4">
             <i class="fas fa-plus"></i> Tambah
         </a>
         <table id="zero-conf" class="display" style="width:100%">
@@ -14,30 +14,24 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>alamat</th>
                     <th>aksi</th>
                 </tr>
             </thead>
             <tbody>
-
-
+                    @foreach ($locations as $location)
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{$location -> name}}</td>
+                        <td>{{$location -> address}}</td>
                         <td class="d-flex">
-                            <a href="" class="btn btn-warning btn-sm ">
+                            <a href="{{route('location.edit', $location->id)}}" class="btn btn-warning btn-sm ">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="" class="btn btn-info btn-sm mx-2">
+                            <a href="{{route('location.show', $location->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="" class="btn btn-success btn-sm mx-2">
-                                <i class="fas fa-users"></i>
-                            </a>
-                            <form action="" method="POST" style="display:inline;">
+                            <form action="{{route('location.destroy', $location -> id)}}" method="POST" style="display:inline;">
 
                                 <button type="submit" class="btn btn-danger btn-sm" >
                                     <i class="fas fa-trash"></i>
@@ -45,13 +39,13 @@
                             </form>
                         </td>
                     </tr>
+                    @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>Alamat</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>

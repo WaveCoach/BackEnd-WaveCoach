@@ -12,4 +12,6 @@ class location extends Model
         'name',
         'address',
     ];
+
+    protected $dates = ['deleted_at'];
 }
