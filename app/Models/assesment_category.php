@@ -12,5 +12,12 @@ class assesment_category extends Model
         'name',
     ];
 
+    public function aspects()
+    {
+        return $this->hasMany(assesment_aspect::class, 'assesment_categories_id');
+    }
+
+
+
 
 }
