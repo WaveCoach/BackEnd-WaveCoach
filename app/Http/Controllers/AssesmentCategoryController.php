@@ -31,7 +31,7 @@ class AssesmentCategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('assesment-category')->with('success', 'Assessment category created successfully');
+        return redirect()->route('assesment-category.index')->with('success', 'Assessment category created successfully');
     }
 
 
@@ -60,7 +60,7 @@ class AssesmentCategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('assesment-category')->with('success', 'Assessment category updated successfully');
+        return redirect()->route('assesment-category.index')->with('success', 'Assessment category updated successfully');
     }
 
 
@@ -69,6 +69,6 @@ class AssesmentCategoryController extends Controller
         $category = assesment_category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('assesment-category')->with('success', 'Assessment category deleted successfully');
+        return redirect()->route('assesment-category.index')->with('success', 'Assessment category deleted successfully');
     }
 }

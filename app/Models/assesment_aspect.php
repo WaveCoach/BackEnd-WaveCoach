@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class assesment_aspect extends Model
 {
-    protected $table = 'assessment_aspects';
+    protected $table = 'assesment_aspects';
 
     protected $fillable = [
         'assesment_categories_id',
