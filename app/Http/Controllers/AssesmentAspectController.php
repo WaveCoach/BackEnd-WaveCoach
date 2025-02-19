@@ -77,7 +77,6 @@ class AssesmentAspectController extends Controller
         }
 
         $aspects->delete();
-
         return redirect()->route('assesment-aspect.index')->with('success', 'aspects deleted successfully');
     }
 }

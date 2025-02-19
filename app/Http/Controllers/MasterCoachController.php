@@ -87,7 +87,6 @@ class MasterCoachController extends Controller
         }
 
         $user->delete();
-
         return redirect()->route('mastercoach.index')->with('success', 'User deleted successfully');
     }
 }

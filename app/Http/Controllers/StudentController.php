@@ -11,8 +11,8 @@ class StudentController extends Controller
 
     public function index()
     {
-        $student = User::where('role_id', 4)->get();
-        return view('pages.student.index', compact('student'));
+        $students = User::where('role_id', 4)->get();
+        return view('pages.student.index', compact('students'));
     }
 
 
@@ -86,7 +86,6 @@ class StudentController extends Controller
         }
 
         $user->delete();
-
         return redirect()->route('student.index')->with('success', 'User deleted successfully');
     }
 }

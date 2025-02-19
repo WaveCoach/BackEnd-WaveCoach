@@ -72,7 +72,6 @@ class LocationController extends Controller
     {
         $location = Location::findOrFail($id);
         $location->delete();
-
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
     }
 }
