@@ -3,19 +3,19 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Daftar Lowongan Magang</h5>
-        <p>Menu "Daftar Lowongan Magang" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi lowongan magang secara efisien</p>
+        <h5 class="card-title">Daftar Schedule</h5>
+        <p>Menu "Daftar Schedule" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Schedule secara efisien</p>
 
-        <a href="" class="btn btn-success btn-sm mb-4">
+        <a href="{{route('schedule.create')}}" class="btn btn-success btn-sm mb-4">
             <i class="fas fa-plus"></i> Tambah
         </a>
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>Date</th>
+                    <th>Coach</th>
+                    <th>Student</th>
                     <th>aksi</th>
                 </tr>
             </thead>
@@ -49,9 +49,9 @@
             <tfoot>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>Major</th>
-                    <th>Visibility</th>
+                    <th>Date</th>
+                    <th>Coach</th>
+                    <th>Student</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
