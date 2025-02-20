@@ -22,8 +22,14 @@
             <tbody>
                 @foreach ($categories as $index => $category)
                     <tr>
-                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $index + 1 }}</td>
-                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $category->name }}</td>
+                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $index + 1 }}
+
+                        </td>
+                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $category->name }}
+                            <a href="{{ route('assesment-aspect.show', $category->id) }}" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
 
                         @if ($category->aspects->isEmpty())
                             <td colspan="2">Tidak ada aspek</td>

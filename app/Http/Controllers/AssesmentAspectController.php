@@ -58,8 +58,9 @@ class AssesmentAspectController extends Controller
 
     public function show(string $id)
     {
-        $aspect = assesment_aspect::findOrFail($id);
-        return view('pages.assesment_aspect.show', compact('aspect'));
+        // $aspect = assesment_aspect::findOrFail($id);
+        $category = assesment_category::with('aspects')->findOrFail($id);
+        return view('pages.assesment_aspect.show', compact('category'));
     }
 
     public function edit(string $id)

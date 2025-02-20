@@ -11,8 +11,8 @@ class AdminController extends Controller
 
     public function index()
     {
-        $admin = User::where('role_id', 1)->get();
-        return view('pages.admin.index', compact('admin'));
+        $admins = User::where('role_id', 1)->get();
+        return view('pages.admin.index', compact('admins'));
     }
 
 
@@ -27,14 +27,14 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $randomPassword = Str::random(8);
-
+        // dd($request->all());
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($randomPassword),
+            'password' => bcrypt($request->password),
             'role_id' => 1,
         ]);
         return redirect()->route('admin.index')->with('success', 'admin berhasil ditambahkan dengan password: ');
