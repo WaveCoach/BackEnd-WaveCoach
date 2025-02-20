@@ -14,9 +14,10 @@ class ScheduleController extends Controller
 
     public function index()
     {
-        $schedule = schedule::orderBy('created_at', 'desc')->get();
-        return view('pages.schedule.index', compact('schedule'));
+        $schedules = Schedule::with(['coach', 'students'])->get();
+        return view('pages.schedule.index', compact('schedules'));
     }
+
 
     public function store(Request $request) {
         $request->validate([
@@ -81,9 +82,103 @@ class ScheduleController extends Controller
 
 
 
-    public function show(){
-        return view('pages.schedule.show');
+    public function show($id)
+    {
+        $schedule = Schedule::with(['coach', 'students', 'location'])->findOrFail($id);
+        return view('pages.schedule.show', compact('schedule'));
     }
+
+
+    public function edit($id) {
+        $coaches = User::whereIn('role_id', [2, 3])->get(); // Ubah dari $coach ke $coaches
+        $students = User::where('role_id', 4)->get();
+        $locations = Location::all();
+        $schedule = Schedule::with(['coach', 'students', 'location'])->findOrFail($id);
+
+        return view('pages.schedule.edit', compact('coaches', 'students', 'locations', 'schedule'));
+    }
+
+
+
+    public function update(Request $request, $id) {
+        $request->validate([
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'coach_id' => 'nullable',
+            'location_id' => 'nullable',
+            'student_id' => 'required|array',
+            'student_id.*' => 'required',
+        ]);
+
+        $schedule = Schedule::findOrFail($id);
+
+        if (!is_numeric($request->coach_id)) {
+            $coach = User::firstOrCreate(
+                ['name' => $request->coach_id],
+                [
+                    'role_id' => 2,
+                    'email' => $request->email,
+                    'password' => Hash::make('12345678')
+                ]
+            );
+            $coachId = $coach->id;
+        } else {
+            $coachId = $request->coach_id;
+        }
+
+        if (!is_numeric($request->location_id)) {
+            $location = Location::firstOrCreate(
+                ['name' => $request->location_id],
+                ['address' => $request->address]
+            );
+            $locationId = $location->id;
+        } else {
+            $locationId = $request->location_id;
+        }
+
+        $schedule->update([
+            'date' => $request->date ?? $schedule->date,
+            'start_time' => $request->start_time ?? $schedule->start_time,
+            'end_time' => $request->end_time ?? $schedule->end_time,
+            'coach_id' => $coachId ?? $schedule->coach_id,
+            'location_id' => $locationId ?? $schedule->location_id,
+        ]);
+
+        $existingStudentIds = $schedule->students->pluck('id')->toArray();
+        $newStudentIds = $request->student_id;
+
+        schedule_detail::where('schedule_id', $schedule->id)
+            ->whereNotIn('user_id', $newStudentIds)
+            ->delete();
+
+        foreach ($newStudentIds as $studentId) {
+            if (!in_array($studentId, $existingStudentIds)) {
+                schedule_detail::create([
+                    'user_id' => $studentId,
+                    'schedule_id' => $schedule->id,
+                ]);
+            }
+        }
+
+        return redirect()->route('schedule.index')->with('success', 'Schedule berhasil diperbarui.');
+    }
+
+
+    public function destroy($scheduleId, $studentId) {
+        $scheduleDetail = schedule_detail::where('schedule_id', $scheduleId)
+            ->where('user_id', $studentId)
+            ->first();
+
+        if (!$scheduleDetail) {
+            return redirect()->route('schedule.index')->with('error', 'Peserta tidak ditemukan.');
+        }
+
+        $scheduleDetail->delete();
+
+        return redirect()->route('schedule.index')->with('success', 'Peserta berhasil dihapus.');
+    }
+
 
 
 
