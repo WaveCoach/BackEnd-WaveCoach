@@ -3,34 +3,50 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Inventory</h5>
-        <p>Menu "Inventory" memungkinkan admin untuk  memantau informasi Inventaris secara efisien</p>
+        <h5 class="card-title">Daftar Lokasi Latihan Renang</h5>
+        <p>Menu "inventory" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi daftar lokasi renang secara efisien</p>
 
-
+        <a href="{{route('inventory.create')}}" class="btn btn-success btn-sm mb-4">
+            <i class="fas fa-plus"></i> Tambah
+        </a>
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>qty</th>
+                    <th>Jumlah</th>
+                    <th>aksi</th>
                 </tr>
             </thead>
             <tbody>
-                    @foreach ($inventory as $item)
-
+                    @foreach ($inventorys as $inventory)
                     <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$item -> name}}</td>
-                        <td>{{$item-> total_quantity}}</td>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{$inventory -> name}}</td>
+                        <td>{{$inventory -> total_quantity}}</td>
+                        <td class="d-flex">
+                            <a href="{{route('inventory.edit', $inventory->id)}}" class="btn btn-warning btn-sm ">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{route('inventory.show', $inventory->id)}}" class="btn btn-info btn-sm mx-2">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <form action="{{route('inventory.destroy', $inventory -> id)}}" method="POST" style="display:inline;">
+
+                                <button type="submit" class="btn btn-danger btn-sm" >
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     @endforeach
-
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>qty</th>
+                    <th>Jumlah</th>
+                    <th>aksi</th>
                 </tr>
             </tfoot>
         </table>
