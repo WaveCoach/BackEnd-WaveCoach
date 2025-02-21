@@ -165,16 +165,13 @@ class ScheduleController extends Controller
     }
 
 
-    public function destroy($scheduleId, $studentId) {
-        $scheduleDetail = schedule_detail::where('schedule_id', $scheduleId)
-            ->where('user_id', $studentId)
-            ->first();
-
-        if (!$scheduleDetail) {
-            return redirect()->route('schedule.index')->with('error', 'Peserta tidak ditemukan.');
+    public function destroy($id) {
+        $schedule = Schedule::find($id);
+        if (!$schedule) {
+            return redirect()->route('schedule.index')->with('error', 'Jadwal tidak ditemukan.');
         }
-
-        $scheduleDetail->delete();
+        $schedule->scheduleDetail()->delete();
+        $schedule->delete();
 
         return redirect()->route('schedule.index')->with('success', 'Peserta berhasil dihapus.');
     }

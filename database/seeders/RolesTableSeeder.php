@@ -25,5 +25,9 @@ class RolesTableSeeder extends Seeder
             'name' => 'Master Coach',
         ]);
 
+        Role::create([
+            'name' => 'Student',
+        ]);
+
     }
 }

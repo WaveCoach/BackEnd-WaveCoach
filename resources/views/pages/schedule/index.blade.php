@@ -25,14 +25,8 @@
                 @foreach ($schedules as $index => $schedule)
                     <tr>
                         <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $index + 1 }}</td>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->date }} <br>
-                            <a href="{{ route('schedule.show', $schedule->id) }}" class="btn btn-success btn-sm">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->date }}
 
-                            <a href="{{ route('schedule.edit', $schedule->id) }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
                         </td>
                         <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->coach->name ?? '-' }}</td>
                         <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->location->name }}</td>
@@ -45,23 +39,32 @@
                         @else
                             @foreach ($schedule->students as $key => $student)
                                 @if ($key > 0) <tr> @endif
-                                    <td>{{ $student->name }} {{ $schedule->id }}</td>
-                                    <td class="d-flex">
+                                    <td>{{ $student->name }}</td>
+                                    @if ($key == 0)
+                                        <td rowspan="{{ max(1, $schedule->students->count()) }}">
+                                            <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
 
-                                        <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?');">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                            <a href="{{ route('schedule.show', $schedule->id) }}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('schedule.edit', $schedule->id) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    @endif
                                 @if ($key > 0) </tr> @endif
                             @endforeach
                         @endif
                     </tr>
                 @endforeach
             </tbody>
+
 
             <tfoot>
                 <tr>

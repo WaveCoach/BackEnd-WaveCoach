@@ -40,4 +40,8 @@ class schedule extends Model
         );
     }
 
+    public function scheduleDetail() {
+        return $this->hasMany(schedule_detail::class, 'schedule_id');
+    }
+
 }
