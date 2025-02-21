@@ -11,33 +11,26 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
+                    <th>Name Siswa</th>
                     <th>Email</th>
                     <th>aksi</th>
                 </tr>
             </thead>
             <tbody>
+                @foreach ($users as $item)
+                <tr>
+                    <td>{{$loop->iteration}}</td>
+                    <td>{{$item->name}}</td>
+                    <td>{{$item->email}}</td>
+                    <td class="d-flex">
+                        <a href="{{route('assesment-report.show',  $item->id)}}" class="btn btn-info btn-sm mx-2">
+                            <i class="fas fa-eye"></i>
+                        </a>
 
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td class="d-flex">
-                            <a href="" class="btn btn-warning btn-sm ">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="" class="btn btn-info btn-sm mx-2">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <form action="" method="POST" style="display:inline;">
-                                @method('delete')
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm" >
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
+                @endforeach
+
 
             </tbody>
             <tfoot>

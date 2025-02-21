@@ -11,7 +11,7 @@ class CoachController extends Controller
 
     public function index()
     {
-        $coaches = User::where('role_id', 2)->get();
+        $coaches = User::whereIn('role_id', [2, 3])->get();
         return view('pages.coach.index', compact('coaches'));
     }
 
