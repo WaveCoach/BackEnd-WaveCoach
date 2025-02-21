@@ -18,25 +18,31 @@ class MasterCoachController extends Controller
 
     public function create()
     {
-        return view('pages.mastercoach.create');
+        $coaches = User::where('role_id', 2)->get();
+        return view('pages.mastercoach.create', compact('coaches'));
     }
 
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'name' => 'required',
         ]);
 
-        $randomPassword = Str::random(8);
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($randomPassword),
-            'role_id' => 3,
-        ]);
+        if (is_numeric($request->name)) {
+            $user = User::find($request->name);
+            if ($user) {
+                $user->role_id = 3;
+                $user->save();
+            }
+        } else {
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt('12345678'),
+                'role_id' => 3,
+            ]);
+        }
 
         return redirect()->route('mastercoach.index')->with('success', 'Master Coach berhasil ditambahkan dengan password: ');
     }
