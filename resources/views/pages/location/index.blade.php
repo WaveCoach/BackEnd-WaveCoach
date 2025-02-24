@@ -15,6 +15,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>alamat</th>
+                    <th>Link Gmaps</th>
                     <th>aksi</th>
                 </tr>
             </thead>
@@ -24,6 +25,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{$location -> name}}</td>
                         <td>{{$location -> address}}</td>
+                        <td><a href="{{$location->maps}}">klik disini</a></td>
                         <td class="d-flex">
                             <a href="{{route('location.edit', $location->id)}}" class="btn btn-warning btn-sm ">
                                 <i class="fas fa-edit"></i>
@@ -31,12 +33,9 @@
                             <a href="{{route('location.show', $location->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <form action="{{route('location.destroy', $location -> id)}}" method="POST" style="display:inline;">
-
-                                <button type="submit" class="btn btn-danger btn-sm" >
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $location->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     @endforeach
@@ -46,6 +45,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Alamat</th>
+                    <th>Link Gmaps</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
@@ -66,24 +66,54 @@
 <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
+@push('custom-scripts')
 <!-- Javascripts -->
-<script src="{{asset('assets/plugins/jquery/jquery-3.4.1.min.js')}}"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="{{asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<script src="{{asset('assets/plugins/perfectscroll/perfect-scrollbar.min.js')}}"></script>
-<script src="{{asset('assets/plugins/DataTables/datatables.min.js')}}"></script>
-<script src="{{asset('assets/js/main.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/datatables.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).on('click', '.btn-delete', function(e) {
+        e.preventDefault();
+        let locationId = $(this).data('id');
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('location') }}/" + locationId,
+                    type: 'POST',
+                    data: {
+                        _method: 'DELETE',
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success')
+                            .then(() => location.reload());
+                    },
+                    error: function() {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan, coba lagi nanti.', 'error');
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 <script>
-    // Inisialisasi DataTables
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
-    });
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: "{{ session('success') }}",
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
 </script>
 @endpush

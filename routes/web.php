@@ -32,6 +32,10 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('admin', AdminController::class);
     Route::resource('assesment-aspect', AssesmentAspectController::class);
     Route::resource('assesment-category', AssesmentCategoryController::class);
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
 });
 
 

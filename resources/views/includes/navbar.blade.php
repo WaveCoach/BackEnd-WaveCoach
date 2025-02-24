@@ -20,7 +20,7 @@
                     <a class="dropdown-item" href="#">
                         <i data-feather="user"></i> Profile
                     </a>
-                    <form action="" method="POST" class="mb-0">
+                    <form action="{{route('logout')}}" method="POST" class="mb-0">
                         @csrf
                         <button type="submit" class="dropdown-item" style="background: none; border: none; padding: 0; text-align: left; width: 100%;">
                             <i data-feather="log-out"></i> Logout

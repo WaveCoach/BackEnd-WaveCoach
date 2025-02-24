@@ -26,11 +26,13 @@ class LocationController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            'maps'=> 'required|url'
         ]);
 
         location::create([
             'name' => $request->name,
             'address' => $request->address,
+            'maps' => $request->maps
         ]);
 
         return redirect()->route('location.index')->with('success', 'Data berhasil disimpan!');
@@ -56,20 +58,23 @@ class LocationController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+             'maps'=> 'required|url'
         ]);
 
         $location = Location::findOrFail($id);
         $location->update([
             'name' => $request->name,
             'address' => $request->address,
+            'maps' => $request->maps
         ]);
 
         return redirect()->route('location.index')->with('success', 'Data berhasil diperbarui!');
     }
 
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
+
         $location = Location::findOrFail($id);
         $location->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
