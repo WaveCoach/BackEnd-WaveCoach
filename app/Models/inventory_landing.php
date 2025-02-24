@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class inventory_landing extends Model
 {
-    protected $table = 'inventory_transactions';
+    protected $table = 'inventory_management';
 
     protected $fillable = [
         'inventory_id',

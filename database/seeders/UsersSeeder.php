@@ -18,8 +18,8 @@ class UsersSeeder extends Seeder
             // Admin
             [
                 'name' => 'Admin',
-                'email' => 'admin@example.com',
-                'password' => Hash::make('admin123'),
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('password'),
                 'role_id' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
