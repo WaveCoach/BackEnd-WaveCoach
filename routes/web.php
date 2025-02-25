@@ -29,6 +29,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('student', StudentController::class);
     Route::resource('assesment-report', AssesmentReportController::class);
     Route::resource('inventory', InventoryController::class);
+    Route::get('/inventory-edit/{id}', [InventoryController::class, 'inventedit'])->name('inventory.detailedit');
+    Route::put('/inventory-update/{id}', [InventoryController::class, 'inventUpdate'])->name('inventory.detailupdate');
+    Route::delete('/inventory-delete/{id}', [InventoryController::class, 'inventDestroy'])->name('inventory.detaildelete');
     Route::resource('admin', AdminController::class);
     Route::resource('assesment-aspect', AssesmentAspectController::class);
     Route::resource('assesment-category', AssesmentCategoryController::class);

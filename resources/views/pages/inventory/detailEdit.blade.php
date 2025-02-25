@@ -3,8 +3,8 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Tambah Inventory Baru</h5>
-        <p class="card-description">Halaman ini memungkinkan admin untuk menambahkan inventory baru</p>
+        <h5 class="card-title">Edit Inventory</h5>
+        <p class="card-description">Halaman ini memungkinkan admin untuk mengedit inventory</p>
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -13,38 +13,46 @@
                 @endforeach
             </ul>
         </div>
-        @endif
-        <form method="POST" action="{{ route('inventory.store') }}" id="jobPositionForm">
+    @endif
+        <form method="POST" action="{{ route('inventory.detailupdate', $pemegang->id) }}" id="jobPositionForm">
             @csrf
+            @method('PUT')
+
             <div class="row mb-4">
                 <div class="col-6 mb-3">
                     <label for="inventory_id" class="form-label">Inventaris</label>
-                    <select class="select2"  name="inventory_id" id="inventorySelect">
-                        <option value="" disabled selected>Pilih Inventaris</option>
-                        @foreach($inventorys as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <select class="select2" required name="inventory_id" id="inventorySelect">
+                        @foreach($inventories as $category)
+                            <option value="{{ $category->id }}" {{ $pemegang->inventory_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="col-6 mb-3">
                     <label for="total_quantity" class="form-label">Qty</label>
-                    <input type="number" class="form-control"  name="qty" id="total_quantity" min="1">
+                    <input type="number" class="form-control" required name="qty" id="total_quantity" min="1" value="{{ old('qty', $pemegang->qty) }}">
                 </div>
+
                 <div class="col-6 mb-3">
                     <label for="mastercoach_id" class="form-label">Mastercoach</label>
-                    <select class="select2"  name="mastercoach_id" id="mastercoachSelect">
-                        <option value="" disabled selected>Pilih Mastercoach</option>
+                    <select class="select2" required name="mastercoach_id" id="mastercoachSelect">
                         @foreach($mastercoaches as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" {{ $pemegang->mastercoach_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="col-6 mb-3" id="emailField" style="display: none;">
                     <label for="email" class="form-label">Email Mastercoach Baru</label>
                     <input type="email" class="form-control" name="email" id="emailInput" placeholder="Masukkan email">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <button type="submit" class="btn btn-primary">Update</button>
         </form>
     </div>
 </div>
