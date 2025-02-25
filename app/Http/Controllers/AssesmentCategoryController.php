@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\assesment_aspect;
 use App\Models\assesment_category;
 use Illuminate\Http\Request;
 
@@ -68,6 +69,7 @@ class AssesmentCategoryController extends Controller
     {
         $category = assesment_category::findOrFail($id);
         $category->delete();
+        assesment_aspect::where('assesment_categories_id', $id)->delete();
 
         return redirect()->route('assesment-category.index')->with('success', 'Assessment category deleted successfully');
     }

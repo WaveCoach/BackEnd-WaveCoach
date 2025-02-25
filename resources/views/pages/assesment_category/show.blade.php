@@ -7,15 +7,12 @@
             <div class="row mb-4">
                 <div class="col-6 mb-3">
                     <label for="name" class="form-label">Nama </label>
-                    <input type="text" class="form-control" disabled value="{{$coach->name}}" name="name" id="name">
-                </div>
-                <div class="col-6 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" disabled value="{{$coach->email}}" name="email" id="email">
+                    <input type="text" class="form-control" disabled value="{{$category->name}}" name="name" id="name">
                 </div>
 
+
             </div>
-            <a href="{{route('coach.index')}}" class="btn btn-warning">Kembali</a>
+            <a href="{{route('assesment-category.index')}}" class="btn btn-warning">Kembali</a>
         </form>
     </div>
 </div>
