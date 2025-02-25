@@ -21,6 +21,6 @@ class inventory extends Model
 
     public function inventoryManagements(): HasMany
     {
-        return $this->hasMany(inventory_management::class, 'inventory_id');
+        return $this->hasMany(inventory_management::class, 'inventory_id')->withTrashed();
     }
 }

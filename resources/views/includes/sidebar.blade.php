@@ -17,9 +17,9 @@
     <li class="{{ request()->is('coach') ? 'active-page' : '' }}">
         <a href="{{route('coach.index')}}"><i data-feather="user"></i>Coach</a>
     </li>
-    <li class="{{ request()->is('mastercoach') ? 'active-page' : '' }}">
+    {{-- <li class="{{ request()->is('mastercoach') ? 'active-page' : '' }}">
         <a href="{{route('mastercoach.index')}}"><i data-feather="user-plus"></i>Master Coach</a>
-    </li>
+    </li> --}}
     <li class="{{ request()->is('student') ? 'active-page' : '' }}">
         <a href="{{route('student.index')}}"><i data-feather="users"></i>Student</a>
     </li>

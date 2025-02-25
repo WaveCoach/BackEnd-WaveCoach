@@ -22,11 +22,11 @@ class inventory_management extends Model
 
     public function mastercoach(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'mastercoach_id');
+        return $this->belongsTo(User::class, 'mastercoach_id')->withTrashed();
     }
 
     public function inventory(): BelongsTo
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->belongsTo(Inventory::class, 'inventory_id')->withTrashed();
     }
 }

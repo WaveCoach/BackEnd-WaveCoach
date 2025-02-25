@@ -11,7 +11,7 @@ class CoachController extends Controller
 
     public function index()
     {
-        $coaches = User::whereIn('role_id', [2, 3])->get();
+        $coaches = User::OrderBy('created_at', 'desc')->whereIn('role_id', [2, 3])->get();
         return view('pages.coach.index', compact('coaches'));
     }
 
@@ -27,6 +27,7 @@ class CoachController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'role_id' => 'required|integer'
         ]);
 
         $randomPassword = Str::random(8);
@@ -35,7 +36,7 @@ class CoachController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($randomPassword),
-            'role_id' => 2,
+            'role_id' => $request->role_id
         ]);
 
         return redirect()->route('coach.index')->with('success', 'Coach berhasil ditambahkan dengan password: ');
@@ -61,6 +62,7 @@ class CoachController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'role_id' => 'required|integer'
         ]);
 
         $user = User::find($id);
@@ -72,13 +74,14 @@ class CoachController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'role_id' => $request->role_id
         ]);
 
         return redirect()->route('coach.index')->with('success', 'User updated successfully');
     }
 
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $user = User::find($id);
 

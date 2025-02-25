@@ -15,6 +15,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Status</th>
                     <th>aksi</th>
                 </tr>
             </thead>
@@ -25,6 +26,15 @@
                         <td>{{$loop->iteration}}</td>
                         <td>{{$item -> name}}</td>
                         <td>{{$item-> email}}</td>
+                        <td><span class="badge @if ($item->role_id == 2)
+                            bg-primary
+                        @else
+                            bg-success
+                        @endif "> @if ($item->role_id == 2)
+                            coach
+                        @else
+                            mastercoach
+                        @endif</span></td>
                         <td class="d-flex">
                             <a href="{{route('coach.edit', $item->id)}}" class="btn btn-warning btn-sm ">
                                 <i class="fas fa-edit"></i>
@@ -35,7 +45,7 @@
                             <form action="{{route('coach.destroy', $item->id)}}" method="POST" style="display:inline;">
                                 @method('delete')
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm" >
+                                <button type="submit" class="btn btn-danger btn-sm btn-delete" >
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -49,6 +59,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Status</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
@@ -69,24 +80,43 @@
 <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
-<!-- Javascripts -->
-<script src="{{asset('assets/plugins/jquery/jquery-3.4.1.min.js')}}"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="{{asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<script src="{{asset('assets/plugins/perfectscroll/perfect-scrollbar.min.js')}}"></script>
-<script src="{{asset('assets/plugins/DataTables/datatables.min.js')}}"></script>
-<script src="{{asset('assets/js/main.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/datatables.js')}}"></script>
+@push('custom-scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Inisialisasi DataTables
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
+    document.addEventListener("DOMContentLoaded", function() {
+        // SweetAlert konfirmasi sebelum hapus
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // SweetAlert untuk notifikasi sukses
+        @if(session('success'))
+            Swal.fire({
+                title: "Berhasil!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                confirmButtonText: "OK"
+            });
+        @endif
     });
 </script>
 @endpush
