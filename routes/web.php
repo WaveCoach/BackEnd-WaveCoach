@@ -34,6 +34,8 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::delete('/inventory-delete/{id}', [InventoryController::class, 'inventDestroy'])->name('inventory.detaildelete');
     Route::resource('admin', AdminController::class);
     Route::resource('assesment-aspect', AssesmentAspectController::class);
+    route::get('assesment-aspect/edit/{id}', [AssesmentAspectController::class, 'asessmentedit'])->name('assesmentaspect.edit');
+    route::put('assesment-aspect/update/{id}', [AssesmentAspectController::class, 'asessmentupdate'])->name('assesmentaspect.update');
     Route::resource('assesment-category', AssesmentCategoryController::class);
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

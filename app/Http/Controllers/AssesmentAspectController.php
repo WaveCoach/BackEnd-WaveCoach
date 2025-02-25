@@ -11,7 +11,7 @@ class AssesmentAspectController extends Controller
 
     public function index()
     {
-        $categories = assesment_category::with('aspects')->get();
+        $categories = assesment_category::OrderBy('created_at', 'desc')->with('aspects')->get();
         return view('pages.assesment_aspect.index', compact('categories'));
     }
 
@@ -28,7 +28,8 @@ class AssesmentAspectController extends Controller
     {
         $request->validate([
             'assesment_categories_id' => 'required',
-            'name' => 'required',
+            'name' => 'required|array|min:1',
+            'name.*' => 'string|max:255'
         ]);
 
         if (is_numeric($request->assesment_categories_id)) {
@@ -89,13 +90,66 @@ class AssesmentAspectController extends Controller
 
     public function destroy(string $id)
     {
-        $aspects = assesment_aspect::find($id);
+        $aspect = assesment_aspect::find($id);
 
-        if (!$aspects) {
-            return redirect()->route('assesment-aspect.index')->with('error', 'aspects not found');
+        if (!$aspect) {
+            return redirect()->route('assesment-aspect.index')->with('error', 'Aspek tidak ditemukan');
         }
 
-        $aspects->delete();
-        return redirect()->route('assesment-aspect.index')->with('success', 'aspects deleted successfully');
+        $aspect->delete();
+        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek berhasil dihapus');
+    }
+
+    public function asessmentedit($id){
+        $categories = assesment_category::all(); // Ambil semua kategori untuk dropdown
+        $selectedCategory = assesment_category::find($id); // Kategori yang sedang diedit
+        $aspects = assesment_aspect::where('assesment_categories_id', $id)->get(); // Aspek yang terkait
+
+        return view('pages.assesment_aspect.aspectedit', compact('categories', 'selectedCategory', 'aspects'));
+    }
+
+    public function asessmentupdate(Request $request, $id){
+        $request->validate([
+            'assesment_categories_id' => 'required',
+            'name' => 'required|array|min:1',
+            'name.*' => 'required|string|max:255'
+        ]);
+
+        $assesmentAspects = assesment_aspect::where('assesment_categories_id', $id)->get();
+
+        if (is_numeric($request->assesment_categories_id)) {
+            $categoryId = $request->assesment_categories_id;
+        } else {
+            $category = assesment_category::firstOrCreate(['name' => $request->assesment_categories_id]);
+            $categoryId = $category->id;
+        }
+
+        $decodedNames = json_decode($request->name[0], true);
+
+        if (!is_array($decodedNames)) {
+            return back()->withErrors(['name' => 'Format data tidak valid.']);
+        }
+
+        $names = array_map(fn($item) => $item['value'] ?? '', $decodedNames);
+        $names = array_filter($names);
+
+        if (empty($names)) {
+            return back()->withErrors(['name' => 'Harus ada setidaknya satu aspek penilaian.']);
+        }
+
+        $existingNames = $assesmentAspects->pluck('name')->toArray();
+        $namesToDelete = array_diff($existingNames, $names);
+        assesment_aspect::where('assesment_categories_id', $id)
+            ->whereIn('name', $namesToDelete)
+            ->delete();
+
+        foreach ($names as $name) {
+            assesment_aspect::updateOrCreate(
+                ['assesment_categories_id' => $categoryId, 'name' => $name],
+                ['assesment_categories_id' => $categoryId, 'name' => $name]
+            );
+        }
+
+        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil diperbarui');
     }
 }

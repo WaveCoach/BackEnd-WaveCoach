@@ -3,8 +3,8 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Tambah Aspek Penilaian Baru</h5>
-        <p class="card-description">Halaman ini memungkinkan admin untuk menambahkan Aspek Penilaian baru</p>
+        <h5 class="card-title">Edit Aspek Penilaian</h5>
+        <p class="card-description">Halaman ini memungkinkan admin untuk mengedit Aspek Penilaian</p>
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -14,27 +14,32 @@
             </ul>
         </div>
         @endif
-        <form method="POST" action="{{ route('assesment-aspect.store') }}" id="jobPositionForm">
+        <form method="POST" action="{{ route('assesmentaspect.update', $selectedCategory->id) }}" id="jobPositionForm">
             @csrf
+            @method('PUT')
+
             <div class="row mb-4">
                 <!-- Select2 untuk Kategori -->
                 <div class="col-6 mb-3">
                     <label for="assesment_categories_id" class="form-label">Kategori</label>
-                    <select class="select2"  name="assesment_categories_id" id="myselect">
-                        <option value="" disabled selected>Pilih Kategori</option>
+                    <select class="select2" required name="assesment_categories_id" id="myselect">
+                        <option value="" disabled>Pilih Kategori</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" {{ $selectedCategory->id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Input Aspek Penilaian -->
+                <!-- Input Aspek Penilaian dengan Tagify -->
                 <div class="col-6 mb-3">
                     <label for="name" class="form-label">Aspek Penilaian</label>
-                    <input type="text" class="form-control"  name="name[]" id="name">
+                    <input type="text" class="form-control"  name="name[]" id="name" value="{{ implode(',', $aspects->pluck('name')->toArray()) }}">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>
     </div>
 </div>
@@ -43,8 +48,8 @@
 @push('custom-style')
     <!-- Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
     <style>
-        /* Supaya Select2 tidak kepotong dalam card */
         .select2-container {
             width: 100% !important;
         }
@@ -52,17 +57,9 @@
 @endpush
 
 @push('custom-scripts')
-    <!-- Load jQuery (Hanya jika belum ada di layout) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Load Select2 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
-
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
-
 
     <script>
         $(document).ready(function() {
@@ -85,29 +82,14 @@
             });
         });
 
+        document.addEventListener("DOMContentLoaded", function () {
+            var input = document.querySelector("#name");
+            var tagify = new Tagify(input, {
+                delimiters: ",",
+                maxTags: 10,
+                trim: true,
+                dropdown: { enabled: 0 }
+            });
+        });
     </script>
-
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    var input = document.querySelector("#name");
-    var hiddenInput = document.querySelector("#name-hidden");
-
-    var tagify = new Tagify(input, {
-        delimiters: ",",
-        maxTags: 10,
-        trim: true,
-        dropdown: {
-            enabled: 0
-        }
-    });
-
-    // Simpan hanya teks tanpa format JSON
-    tagify.on('change', function(e) {
-        var values = tagify.value.map(tag => tag.value);
-        hiddenInput.value = JSON.stringify(values); // Simpan sebagai array string
-    });
-});
-
-    </script>
-
 @endpush

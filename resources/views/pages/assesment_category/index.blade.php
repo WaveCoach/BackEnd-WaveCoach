@@ -66,24 +66,4 @@
 <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
-<!-- Javascripts -->
-<script src="{{asset('assets/plugins/jquery/jquery-3.4.1.min.js')}}"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="{{asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<script src="{{asset('assets/plugins/perfectscroll/perfect-scrollbar.min.js')}}"></script>
-<script src="{{asset('assets/plugins/DataTables/datatables.min.js')}}"></script>
-<script src="{{asset('assets/js/main.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/datatables.js')}}"></script>
 
-<script>
-    // Inisialisasi DataTables
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
-    });
-</script>
-@endpush

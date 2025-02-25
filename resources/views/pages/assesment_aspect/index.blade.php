@@ -15,44 +15,28 @@
                 <tr>
                     <th>No</th>
                     <th>Category</th>
-                    <th>Aspek</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($categories as $index => $category)
                     <tr>
-                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $index + 1 }}
+                        <td >{{ $index + 1 }}
 
                         </td>
-                        <td rowspan="{{ max(1, $category->aspects->count()) }}">{{ $category->name }}
-                            <a href="{{ route('assesment-aspect.show', $category->id) }}" class="btn btn-primary btn-sm me-2">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                        </td>
+                        <td >{{ $category->name }}</td>
 
-                        @if ($category->aspects->isEmpty())
-                            <td colspan="2">Tidak ada aspek</td>
-                        @else
-                            @foreach ($category->aspects as $key => $aspect)
-                                @if ($key > 0) <tr> @endif
-                                    <td>{{ $aspect->name }}</td>
-                                    <td class="d-flex">
-                                        <a href="{{ route('assesment-aspect.edit', $aspect->id) }}" class="btn btn-warning btn-sm me-2">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                            <td class="d-flex">
+                                <a href="{{ route('assesment-aspect.show', $category->id) }}" class="btn btn-primary btn-sm me-2">
+                                    <i class="fas fa-eye"></i>
+                                </a>
 
-                                        <form action="{{ route('assesment-aspect.destroy', $aspect->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                @if ($key > 0) </tr> @endif
-                            @endforeach
-                        @endif
+                                <a href="{{route('assesmentaspect.edit', $category->id)}}" class="btn btn-warning btn-sm me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+
+                            </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -60,7 +44,6 @@
                 <tr>
                     <th>No</th>
                     <th>Category</th>
-                    <th>Aspek</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
@@ -81,24 +64,44 @@
 <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
-<!-- Javascripts -->
-<script src="{{ asset('assets/plugins/jquery/jquery-3.4.1.min.js') }}"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<script src="{{ asset('assets/plugins/perfectscroll/perfect-scrollbar.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/DataTables/datatables.min.js') }}"></script>
-<script src="{{ asset('assets/js/main.min.js') }}"></script>
-<script src="{{ asset('assets/js/pages/datatables.js') }}"></script>
+@push('custom-scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Inisialisasi DataTables
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
+    document.addEventListener("DOMContentLoaded", function() {
+        // Alert sukses saat menambahkan data baru
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Sukses!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        @endif
     });
+</script>
+
+
+<script>
+    $(document).on('submit', 'form.delete-form', function(e) {
+    e.preventDefault();
+    let form = this;
+
+    Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+});
 </script>
 @endpush
