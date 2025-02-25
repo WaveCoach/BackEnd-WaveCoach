@@ -3,8 +3,8 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Edit mastercoach</h5>
-        <p class="card-description">Halaman ini memungkinkan admin untuk melakukan perubahan pada mastercoach</p>
+        <h5 class="card-title">Edit assesment category</h5>
+        <p class="card-description">Halaman ini memungkinkan admin untuk melakukan perubahan pada assesment category</p>
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
