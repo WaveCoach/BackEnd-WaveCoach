@@ -11,7 +11,7 @@ class StudentController extends Controller
 
     public function index()
     {
-        $students = User::where('role_id', 4)->get();
+        $students = User::Orderby('created_at', 'desc')->where('role_id', 4)->get();
         return view('pages.student.index', compact('students'));
     }
 

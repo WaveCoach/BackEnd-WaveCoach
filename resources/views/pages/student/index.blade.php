@@ -32,7 +32,7 @@
                             <a href="{{route('student.show', $item->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <form action="{{route('student.destroy', $item->id)}}" method="POST" style="display:inline;">
+                            <form action="{{route('student.destroy', $item->id)}}" method="POST" class="delete-form" style="display:inline;">
                                 @method('delete')
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm" >
@@ -69,24 +69,41 @@
 <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
-<!-- Javascripts -->
-<script src="{{asset('assets/plugins/jquery/jquery-3.4.1.min.js')}}"></script>
-<script src="https://unpkg.com/@popperjs/core@2"></script>
-<script src="{{asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<script src="{{asset('assets/plugins/perfectscroll/perfect-scrollbar.min.js')}}"></script>
-<script src="{{asset('assets/plugins/DataTables/datatables.min.js')}}"></script>
-<script src="{{asset('assets/js/main.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/datatables.js')}}"></script>
+@push('custom-scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Inisialisasi DataTables
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
+    // Notifikasi sukses setelah menambah data
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    @endif
+
+    // Konfirmasi sebelum menghapus data
+    $(document).on('submit', 'form.delete-form', function(e) {
+        e.preventDefault();
+        let form = this;
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     });
 </script>
+
 @endpush
