@@ -11,6 +11,23 @@
 
                 <div class="row mb-4">
                     <div class="col-6 mb-3">
+                        <label for="coach_id" class="form-label">Coach</label>
+                        <select class="select2" required name="coach_id" id="coach-select">
+                            @foreach ($coaches as $c)
+                                <option value="{{ $c->id }}" {{ $schedule->coach_id == $c->id ? 'selected' : '' }}>
+                                    {{ $c->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6 mb-3" id="email-container" style="display: none;">
+                        <label class="form-label">Email Coach</label>
+                        <div id="email-list">
+                            <input type="email" class="form-control email-input" name="email" placeholder="Masukkan Email Coach">
+                        </div>
+                    </div>
+
+                    <div class="col-6 mb-3">
                         <label for="date" class="form-label">Date</label>
                         <input type="date" class="form-control" required name="date" value="{{ $schedule->date }}">
                     </div>
@@ -49,27 +66,13 @@
                                 </option>
                             @endforeach
                         </select>
-                        <a href="#" id="add-address">Tambahkan Kolam</a>
-                        <div id="address-input" style="display: none; margin-top: 10px;">
-                            <input type="text" class="form-control" name="address" placeholder="Masukkan Alamat Kolam">
+                        <div id="address-fields" style="display: none; margin-top: 10px;">
+                            <input type="text" class="form-control mb-2" name="address" placeholder="Masukkan Alamat Kolam">
+                            <input type="url" class="form-control" name="url" placeholder="Masukkan URL Alamat Kolam">
                         </div>
                     </div>
 
-                    <!-- Select2 untuk Coach -->
-                    <div class="col-6 mb-3">
-                        <label for="coach_id" class="form-label">Coach</label>
-                        <select class="select2" required name="coach_id" id="coach-select">
-                            @foreach ($coaches as $c)
-                                <option value="{{ $c->id }}" {{ $schedule->coach_id == $c->id ? 'selected' : '' }}>
-                                    {{ $c->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <a href="#" id="add-email">Tambahkan Email</a>
-                        <div id="email-input" style="display: none; margin-top: 10px;">
-                            <input type="email" class="form-control" name="email" placeholder="Masukkan Email Coach">
-                        </div>
-                    </div>
+
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update</button>
@@ -93,21 +96,73 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#coach-select, #location-select, #student-select').select2({
+            $('#category-select').on('change', function() {
+                $('#email-container').fadeIn();
+            });
+
+            $('#email-list').on('keypress', '.email-input', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $(this).after('<input type="email" class="form-control email-input mt-2" name="email" placeholder="Masukkan Email Coach">');
+                }
+            });
+
+            // Select2 untuk lokasi dengan opsi baru
+            $('#location-select').select2({
                 width: '100%',
                 placeholder: "Pilih atau Tambah Opsi",
                 allowClear: true,
-                tags: true
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true
+                    };
+                }
+            }).on('select2:select', function(e) {
+                var data = e.params.data;
+                if (data.newTag) {
+                    $('#address-fields').show();
+                } else {
+                    $('#address-fields').hide();
+                }
             });
 
-            $('#add-email').on('click', function(e) {
-                e.preventDefault();
-                $('#email-input').toggle();
+            $('#coach-select').select2({
+                width: '100%',
+                placeholder: "Pilih atau Tambah Opsi",
+                allowClear: true,
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true
+                    };
+                }
+            }).on('select2:select', function(e) {
+                var data = e.params.data;
+                if (data.newTag) {
+                    $('#email-container').show();
+                } else {
+                    $('#email-container').hide();
+                }
             });
 
-            $('#add-address').on('click', function(e) {
-                e.preventDefault();
-                $('#address-input').toggle();
+            // Select2 untuk student dan coach
+            $('#student-select, #category-select').select2({
+                width: '100%',
+                placeholder: "Pilih Opsi",
+                allowClear: true
             });
         });
     </script>

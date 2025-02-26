@@ -30,6 +30,8 @@ class ScheduleController extends Controller
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
+            'maps' => 'required',
+            'email' => 'required'
         ]);
 
         if (is_numeric($request->coach_id)) {
@@ -55,7 +57,8 @@ class ScheduleController extends Controller
         } else {
             $location = Location::firstOrCreate(
                 ['name' => $request->location_id],
-                ['address' => $request->address]
+                ['address' => $request->address],
+                ['maps' => $request->maps],
             );
             $locationId = $location->id;
         }
@@ -115,6 +118,8 @@ class ScheduleController extends Controller
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
+            'maps' => 'required',
+            'email' => 'required'
         ]);
 
         $schedule = Schedule::findOrFail($id);
@@ -141,7 +146,8 @@ class ScheduleController extends Controller
         if (!is_numeric($request->location_id)) {
             $location = Location::firstOrCreate(
                 ['name' => $request->location_id],
-                ['address' => $request->address]
+                ['address' => $request->address],
+                ['maps' => $request->maps]
             );
             $locationId = $location->id;
         } else {

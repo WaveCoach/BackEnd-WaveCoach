@@ -17,50 +17,40 @@
                     <th>Pelatih</th>
                     <th>Location</th>
                     <th>Time</th>
-                    <th>Peserta</th>
+                    {{-- <th>Peserta</th> --}}
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($schedules as $index => $schedule)
                     <tr>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $index + 1 }}</td>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->date }}
+                        <td >{{ $index + 1 }}</td>
+                        <td >{{ $schedule->date }}
 
                         </td>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->coach->name ?? '-' }}</td>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">{{ $schedule->location->name }}</td>
-                        <td rowspan="{{ max(1, $schedule->students->count()) }}">
+                        <td >{{ $schedule->coach->name ?? '-' }}</td>
+                        <td >{{ $schedule->location->name }}</td>
+                        <td >
                             {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
                         </td>
+                        <td >
+                            <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
 
-                        @if ($schedule->students->isEmpty())
-                            <td colspan="2">Tidak ada siswa</td>
-                        @else
-                            @foreach ($schedule->students as $key => $student)
-                                @if ($key > 0) <tr> @endif
-                                    <td>{{ $student->name }}</td>
-                                    @if ($key == 0)
-                                        <td rowspan="{{ max(1, $schedule->students->count()) }}">
-                                            <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                            <a href="{{ route('schedule.show', $schedule->id) }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('schedule.edit', $schedule->id) }}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
 
-                                            <a href="{{ route('schedule.show', $schedule->id) }}" class="btn btn-success btn-sm">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('schedule.edit', $schedule->id) }}" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                        </td>
-                                    @endif
-                                @if ($key > 0) </tr> @endif
-                            @endforeach
-                        @endif
+
                     </tr>
                 @endforeach
             </tbody>

@@ -54,7 +54,7 @@
                         </select>
                         <div id="address-fields" style="display: none; margin-top: 10px;">
                             <input type="text" class="form-control mb-2" name="address" placeholder="Masukkan Alamat Kolam">
-                            <input type="url" class="form-control" name="url" placeholder="Masukkan URL Alamat Kolam">
+                            <input type="maps" class="form-control" name="maps" placeholder="Masukkan URL Alamat Kolam">
                         </div>
                     </div>
                 </div>
