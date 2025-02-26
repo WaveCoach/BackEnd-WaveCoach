@@ -29,9 +29,9 @@
     <li class="{{ request()->is('assesment-aspect') ? 'active-page' : '' }}">
         <a href="{{route('assesment-aspect.index')}}"><i data-feather="file"></i>Assesment Aspects</a>
     </li>
-    <li class="{{ request()->is('assesment-category') ? 'active-page' : '' }}">
+    {{-- <li class="{{ request()->is('assesment-category') ? 'active-page' : '' }}">
         <a href="{{route('assesment-category.index')}}"><i data-feather="file-text"></i>Assesment Category</a>
-    </li>
+    </li> --}}
     <li class="{{ request()->is('assesment-report') ? 'active-page' : '' }}">
         <a href="{{route('assesment-report.index')}}"><i data-feather="clipboard"></i>Assesment Reports</a>
     </li>
