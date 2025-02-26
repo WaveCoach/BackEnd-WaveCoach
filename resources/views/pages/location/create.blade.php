@@ -18,7 +18,7 @@
             @csrf
             <div class="row mb-4">
                 <div class="col-6 mb-3">
-                    <label for="title" class="form-label">Nama </label>
+                    <label for="title" class="form-label">Nama Lokasi</label>
                     <input type="text" class="form-control"  name="name" >
                 </div>
                 <div class="col-6 mb-3">

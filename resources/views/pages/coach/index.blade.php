@@ -13,6 +13,7 @@
             <thead>
                 <tr>
                     <th>No</th>
+                    <th>Tanggal Masuk</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
@@ -24,6 +25,7 @@
 
                     <tr>
                         <td>{{$loop->iteration}}</td>
+                        <td>{{ $item->created_at->setTimezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }}</td>
                         <td>{{$item -> name}}</td>
                         <td>{{$item-> email}}</td>
                         <td><span class="badge @if ($item->role_id == 2)
@@ -57,6 +59,7 @@
             <tfoot>
                 <tr>
                     <th>No</th>
+                    <th>Tanggal Masuk</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
