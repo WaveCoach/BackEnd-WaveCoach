@@ -36,7 +36,7 @@
                     @endif
                 </div>
             </div>
-            <a href="{{ route('coach.index') }}" class="btn btn-warning">Kembali</a>
+            <a href="{{ route('assesment-aspect.index') }}" class="btn btn-warning">Kembali</a>
         </form>
     </div>
 </div>

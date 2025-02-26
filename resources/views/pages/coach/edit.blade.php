@@ -34,6 +34,14 @@
                         <option value="3" {{ $coach->role_id == 3 ? 'selected' : '' }}>Master Coach</option>
                     </select>
                 </div>
+                <div class="col-6 mb-3">
+                    <label for="specialization" class="form-label">Status</label>
+                    <select class="form-select" required name="status" id="specialization">
+                        <option value="" disabled>Pilih Role</option>
+                        <option value="active" {{ $coach->coach->status == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ $coach->coach->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

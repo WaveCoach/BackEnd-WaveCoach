@@ -17,6 +17,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
+                    <th>Role</th>
                     <th>aksi</th>
                 </tr>
             </thead>
@@ -28,6 +29,18 @@
                         <td>{{ $item->created_at->setTimezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }}</td>
                         <td>{{$item -> name}}</td>
                         <td>{{$item-> email}}</td>
+                        <td>
+                            <span class="badge @if ($item->coach->status == 'active')
+                            bg-success
+                            @else
+                                bg-danger
+                            @endif "> @if ($item->coach->status == 'active')
+                                active
+                            @else
+                                inactive
+                            @endif</span>
+                        </td>
+
                         <td><span class="badge @if ($item->role_id == 2)
                             bg-primary
                         @else
@@ -44,13 +57,13 @@
                             <a href="{{route('coach.show', $item->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <form action="{{route('coach.destroy', $item->id)}}" method="POST" style="display:inline;">
+                            {{-- <form action="{{route('coach.destroy', $item->id)}}" method="POST" style="display:inline;">
                                 @method('delete')
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm btn-delete" >
                                     <i class="fas fa-trash"></i>
                                 </button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                     @endforeach
@@ -63,6 +76,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
+                    <th>Role</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
@@ -96,7 +110,7 @@
 
                 Swal.fire({
                     title: "Apakah Anda yakin?",
-                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    text: "Data role yang sudah diubah tidak bisa dikembalikan!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#d33",

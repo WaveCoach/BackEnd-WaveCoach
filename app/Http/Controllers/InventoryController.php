@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\coaches;
 use App\Models\inventory;
 use App\Models\inventory_management;
 use App\Models\User;
@@ -41,6 +42,9 @@ class InventoryController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt('password123'),
                 'role_id' => 3,
+            ]);
+            coaches::create([
+                'user_id' => $newUser->id
             ]);
 
             $mastercoachId = $newUser->id;
@@ -146,6 +150,10 @@ class InventoryController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt('password123'),
                 'role_id' => 3,
+            ]);
+
+            coaches::create([
+                'user_id' => $newUser->id
             ]);
 
             $mastercoachId = $newUser->id;
