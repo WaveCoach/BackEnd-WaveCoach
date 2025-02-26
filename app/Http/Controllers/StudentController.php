@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -11,7 +12,7 @@ class StudentController extends Controller
 
     public function index()
     {
-        $students = User::Orderby('created_at', 'desc')->where('role_id', 4)->get();
+        $students = User::with('student')->Orderby('created_at', 'desc')->where('role_id', 4)->get();
         return view('pages.student.index', compact('students'));
     }
 
@@ -27,23 +28,35 @@ class StudentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
+            'usia' => 'required',
+            'type' => 'required|string|max:50',
+
         ]);
 
         $randomPassword = Str::random(8);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($randomPassword),
-            'role_id' => 4,
+            'role_id' => 4, // Role ID untuk student
         ]);
+
+        student::create([
+            'user_id' => $user->id,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'usia' => $request->usia,
+            'type' => $request->type
+        ]);
+
         return redirect()->route('student.index')->with('success', 'student berhasil ditambahkan dengan password: ');
     }
 
 
     public function show(string $id)
     {
-        $student = User::findOrFail($id);
+        $student = User::with('student')->findOrFail($id);
         return view('pages.student.show', compact('student'));
     }
 
@@ -60,6 +73,9 @@ class StudentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
+            'usia' => 'required',
+            'type' => 'required|string|max:50',
         ]);
 
         $user = User::find($id);
@@ -72,6 +88,13 @@ class StudentController extends Controller
             'name' => $request->name,
             'email' => $request->email,
         ]);
+
+        $student = student::where('user_id', $id)->first();
+        $student -> jenis_kelamin = $request->jenis_kelamin;
+        $student->usia = $request->usia;
+        $student->type = $request->type;
+        $student->save();
+
 
         return redirect()->route('student.index')->with('success', 'User updated successfully');
     }

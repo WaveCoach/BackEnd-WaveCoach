@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class student extends Model
 {
@@ -12,5 +13,11 @@ class student extends Model
         'user_id',
         'usia',
         'jenis_kelamin',
+        'type'
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->integer('usia');
+            $table->string('usia');
             $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('type');
             $table->timestamps();
         });
     }
