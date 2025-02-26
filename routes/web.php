@@ -10,7 +10,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
@@ -24,6 +23,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::resource('location', LocationController::class);
     Route::resource('schedule', ScheduleController::class);
+    Route::get('/get-student', [ScheduleController::class, 'getStudent']);
     Route::resource('coach', CoachController::class);
     Route::resource('mastercoach', MasterCoachController::class);
     Route::resource('student', StudentController::class);
@@ -34,10 +34,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::delete('/inventory-delete/{id}', [InventoryController::class, 'inventDestroy'])->name('inventory.detaildelete');
     Route::resource('admin', AdminController::class);
     Route::resource('assesment-aspect', AssesmentAspectController::class);
-    route::get('assesment-aspect/edit/{id}', [AssesmentAspectController::class, 'asessmentedit'])->name('assesmentaspect.edit');
-    route::put('assesment-aspect/update/{id}', [AssesmentAspectController::class, 'asessmentupdate'])->name('assesmentaspect.update');
+    Route::get('assesment-aspect/edit/{id}', [AssesmentAspectController::class, 'asessmentedit'])->name('assesmentaspect.edit');
+    Route::put('assesment-aspect/update/{id}', [AssesmentAspectController::class, 'asessmentupdate'])->name('assesmentaspect.update');
     Route::resource('assesment-category', AssesmentCategoryController::class);
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 

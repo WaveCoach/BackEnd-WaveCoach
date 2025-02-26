@@ -107,6 +107,17 @@ class ScheduleController extends Controller
         return view('pages.schedule.edit', compact('coaches', 'students', 'locations', 'schedule'));
     }
 
+    public function getStudent(Request $request) {
+        $coach = schedule::where('coach_id', $request->coach_id)->latest()->first();
+
+        if (!$coach) {
+            return response()->json(['error' => 'Coach tidak ditemukan'], 404);
+        }
+
+        $students = schedule_detail::with('user')->where('schedule_id', $coach->id)->get();
+
+        return response()->json(['students' => $students]);
+    }
 
 
     public function update(Request $request, $id) {
