@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\coaches;
 use App\Models\location;
 use App\Models\schedule;
 use App\Models\schedule_detail;
@@ -20,6 +21,7 @@ class ScheduleController extends Controller
 
 
     public function store(Request $request) {
+        // dd($request->all());
         $request->validate([
             'date' => 'required|date',
             'start_time' => 'required',
@@ -42,6 +44,10 @@ class ScheduleController extends Controller
                 ]
             );
             $coachId = $coach->id;
+
+            coaches::create([
+                'user_id' => $coach->id
+            ]);
         }
 
         if (is_numeric($request->location_id)) {
@@ -123,6 +129,11 @@ class ScheduleController extends Controller
                 ]
             );
             $coachId = $coach->id;
+
+            coaches::create([
+                'user_id' => $coach->id
+            ]);
+
         } else {
             $coachId = $request->coach_id;
         }

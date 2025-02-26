@@ -79,18 +79,18 @@ class UsersSeeder extends Seeder
         ]);
 
         // Tambahkan 10 user tambahan dengan role_id 4
-        $additionalUsers = [];
-        for ($i = 4; $i <= 13; $i++) {
-            $additionalUsers[] = [
-                'name' => "User $i",
-                'email' => "user$i@example.com",
-                'password' => Hash::make('password'),
-                'role_id' => 4,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
-        }
+        // $additionalUsers = [];
+        // for ($i = 4; $i <= 13; $i++) {
+        //     $additionalUsers[] = [
+        //         'name' => "User $i",
+        //         'email' => "user$i@example.com",
+        //         'password' => Hash::make('password'),
+        //         'role_id' => 4,
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now()
+        //     ];
+        // }
 
-        DB::table('users')->insert($additionalUsers);
+        // DB::table('users')->insert($additionalUsers);
     }
 }
