@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
@@ -38,7 +39,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::put('assesment-aspect/update/{id}', [AssesmentAspectController::class, 'asessmentupdate'])->name('assesmentaspect.update');
     Route::resource('assesment-category', AssesmentCategoryController::class);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+    Route::get('profile/{id}', [ProfileController::class, 'index'])->name('profile');
+    Route::get('profile-edit/{id}', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile-update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 
 });
 
