@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
@@ -42,6 +43,8 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('profile/{id}', [ProfileController::class, 'index'])->name('profile');
     Route::get('profile-edit/{id}', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile-update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.get');
+
 
 });
 

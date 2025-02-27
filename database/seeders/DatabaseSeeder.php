@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RolesTableSeeder::class,
+            // NotificationSeeder::class,
             UsersSeeder::class,            // Seeder untuk pengguna (admin, assessor, user)
             // AssessmentsSeeder::class,      // Seeder untuk tabel assessments
             // AssessmentsDetailsSeeder::class, // Seeder untuk tabel assessments_details
