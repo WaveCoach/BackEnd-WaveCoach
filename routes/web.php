@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssesmentAspectController;
 use App\Http\Controllers\AssesmentCategoryController;
 use App\Http\Controllers\AssesmentReportController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Models\Announcement;
 use Illuminate\Support\Facades\Route;
 
 
@@ -28,6 +30,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/get-student', [ScheduleController::class, 'getStudent']);
     Route::resource('coach', CoachController::class);
     Route::resource('mastercoach', MasterCoachController::class);
+    Route::resource('announcement', AnnouncementController::class);
     Route::resource('student', StudentController::class);
     Route::resource('assesment-report', AssesmentReportController::class);
     Route::resource('inventory', InventoryController::class);

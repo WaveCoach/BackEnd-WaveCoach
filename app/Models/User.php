@@ -73,4 +73,10 @@ class User extends Authenticatable
         return $this->hasOne(student::class, 'user_id');
     }
 
+    public function announcements()
+    {
+        return $this->belongsToMany(Announcement::class, 'announcement_user');
+    }
+
+
 }

@@ -32,4 +32,7 @@
     <li class="{{ request()->is('admin') ? 'active-page' : '' }}">
         <a href="{{route('admin.index')}}"><i data-feather="user-minus"></i>Admin</a>
     </li>
+    <li class="{{ request()->is('announcement') ? 'active-page' : '' }}">
+        <a href="{{route('announcement.index')}}"><i data-feather="user-minus"></i>announcement</a>
+    </li>
   </ul>
