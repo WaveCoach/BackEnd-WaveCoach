@@ -10,7 +10,7 @@
             <i class="fas fa-plus"></i> Tambah Jadwal
         </a>
 
-        <a href="{{route('importSchedule.create')}}">Upload Excel</a>
+        <a href="{{route('importSchedule.create')}}" class="btn btn-primary mb-4"><i class="fas fa-file"></i></a>
         <table id="zero-conf" class="display table" style="width:100%">
             <thead>
                 <tr>

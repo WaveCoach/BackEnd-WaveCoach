@@ -10,6 +10,7 @@ use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ScheduleImport implements ToModel, WithStartRow
 {
@@ -35,12 +36,16 @@ class ScheduleImport implements ToModel, WithStartRow
             ? Carbon::createFromFormat('Y-m-d', gmdate("Y-m-d", ($row[2] - 25569) * 86400))
             : Carbon::parse($row[2]);
 
+            $startTime = Carbon::parse(Date::excelToDateTimeObject($row[3]), 'Asia/Jakarta')->format('H:i:s');
+            $endTime = Carbon::parse(Date::excelToDateTimeObject($row[4]), 'Asia/Jakarta')->format('H:i:s');
+        // dd(Date::excelToDateTimeObject($row[3]));
+
         $schedule = Schedule::create([
             'coach_id'   => $coach->id,
             'location_id' => $location->id,
             'date'       => $date->format('Y-m-d'), // Format ke Y-m-d
-            'start_time' => $row[3],
-            'end_time'   => $row[4],
+            'start_time' => $startTime,
+            'end_time'   => $endTime,
         ]);
 
         $userEmails = explode(',', $row[5]);

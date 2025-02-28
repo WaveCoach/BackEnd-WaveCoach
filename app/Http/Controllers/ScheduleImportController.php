@@ -16,6 +16,6 @@ class ScheduleImportController extends Controller
 
         Excel::import(new ScheduleImport, $request->file('file'));
 
-        return back()->with('success', 'Schedule berhasil diimport.');
+        return redirect()->route('schedule.index')->with('success', 'Data berhasil diperbarui!');
     }
 }

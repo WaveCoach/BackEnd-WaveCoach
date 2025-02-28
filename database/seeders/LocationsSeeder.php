@@ -31,7 +31,7 @@ class LocationsSeeder extends Seeder
                 'name' => 'Branch Office Bandung',
                 'address' => 'Jl. Asia Afrika No. 10, Bandung',
                 'maps' => 'https://goo.gl/maps/example2',
-                'code_loc' => array_pop($codes),
+                'code_loc' => 4654,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'deleted_at' => null
@@ -49,7 +49,7 @@ class LocationsSeeder extends Seeder
                 'name' => 'Branch Office Medan',
                 'address' => 'Jl. Gatot Subroto No. 50, Medan',
                 'maps' => 'https://goo.gl/maps/example4',
-                'code_loc' => array_pop($codes),
+                'code_loc' => 5496,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'deleted_at' => null
