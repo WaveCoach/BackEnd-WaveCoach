@@ -29,10 +29,15 @@ class LocationController extends Controller
             'maps'=> 'required|url'
         ]);
 
-        location::create([
+        do {
+            $code = random_int(1000, 9999);
+        } while (Location::where('code_loc', $code)->exists());
+
+        Location::create([
             'name' => $request->name,
             'address' => $request->address,
-            'maps' => $request->maps
+            'maps' => $request->maps,
+            'code_loc' => $code
         ]);
 
         return redirect()->route('location.index')->with('success', 'Data berhasil disimpan!');

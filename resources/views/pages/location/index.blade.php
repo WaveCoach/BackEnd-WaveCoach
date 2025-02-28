@@ -15,6 +15,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>alamat</th>
+                    <th>Code Loc</th>
                     <th>Link Gmaps</th>
                     <th>aksi</th>
                 </tr>
@@ -25,6 +26,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{$location -> name}}</td>
                         <td>{{$location -> address}}</td>
+                        <td>{{$location -> code_loc}}</td>
                         <td><a href="{{$location->maps}}">klik disini</a></td>
                         <td class="d-flex">
                             <a href="{{route('location.edit', $location->id)}}" class="btn btn-warning btn-sm ">
@@ -45,6 +47,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Alamat</th>
+                    <th>Code Loc</th>
                     <th>Link Gmaps</th>
                     <th>aksi</th>
                 </tr>

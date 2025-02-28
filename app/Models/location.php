@@ -12,7 +12,8 @@ class location extends Model
     protected $fillable = [
         'name',
         'address',
-        'maps'
+        'maps',
+        'code_loc'
     ];
 
     protected $dates = ['deleted_at'];

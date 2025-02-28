@@ -15,6 +15,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RescheduleRequestController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScheduleImportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Announcement;
@@ -50,8 +51,8 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('profile-edit/{id}', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile-update/{id}', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.get');
-
-
+    Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
+    Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
 });
 
 

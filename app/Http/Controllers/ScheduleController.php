@@ -13,9 +13,18 @@ use Illuminate\Support\Facades\Hash;
 class ScheduleController extends Controller
 {
 
+    private function generateUniqueCode()
+    {
+        do {
+            $code = random_int(1000, 9999);
+        } while (Location::where('code_loc', $code)->exists());
+
+        return $code;
+    }
+
     public function index()
     {
-        $schedules = Schedule::with(['coach', 'students'])->get();
+        $schedules = Schedule::OrderBy('created_at', 'desc')->with(['coach', 'students'])->get();
         return view('pages.schedule.index', compact('schedules'));
     }
 
@@ -56,9 +65,12 @@ class ScheduleController extends Controller
             $locationId = $request->location_id;
         } else {
             $location = Location::firstOrCreate(
-                ['name' => $request->location_id],
-                ['address' => $request->address],
-                ['maps' => $request->maps],
+                ['name' => $request->location_id], // Jika nama sudah ada, gunakan data ini
+                [
+                    'address' => $request->address,
+                    'maps' => $request->maps,
+                    'code_loc' => $this->generateUniqueCode() // Generate code unik saat firstOrCreate
+                ]
             );
             $locationId = $location->id;
         }
@@ -202,6 +214,10 @@ class ScheduleController extends Controller
         $schedule->delete();
 
         return redirect()->route('schedule.index')->with('success', 'Peserta berhasil dihapus.');
+    }
+
+    public function createExcel(){
+        return view('pages.schedule.import_schedule');
     }
 
 

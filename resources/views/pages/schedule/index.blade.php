@@ -9,6 +9,8 @@
         <a href="{{ route('schedule.create') }}" class="btn btn-success btn-sm mb-4">
             <i class="fas fa-plus"></i> Tambah Jadwal
         </a>
+
+        <a href="{{route('importSchedule.create')}}">Upload Excel</a>
         <table id="zero-conf" class="display table" style="width:100%">
             <thead>
                 <tr>
