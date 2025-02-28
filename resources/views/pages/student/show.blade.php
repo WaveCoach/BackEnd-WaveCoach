@@ -19,10 +19,10 @@
                     <label for="usia" class="form-label">Umur</label>
                     <input type="text" class="form-control" value="{{ $student->student->usia }}" name="usia" id="usia" disabled>
                 </div>
-                <div class="col-6 mb-3">
+                {{-- <div class="col-6 mb-3">
                     <label for="type" class="form-label">Type</label>
                     <input type="text" class="form-control" value="{{ $student->student->type }}" name="type" id="type" disabled>
-                </div>
+                </div> --}}
                 <!-- Tambahan Radio Button untuk Jenis Kelamin -->
                 <div class="col-6 mb-3">
                     <label class="form-label">Jenis Kelamin</label>

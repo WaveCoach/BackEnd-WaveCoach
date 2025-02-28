@@ -13,10 +13,12 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RescheduleRequestController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Models\Announcement;
+use App\Models\RescheduleRequest;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,6 +29,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::resource('location', LocationController::class);
     Route::resource('schedule', ScheduleController::class);
+    Route::resource('reschedule', RescheduleRequestController::class);
     Route::get('/get-student', [ScheduleController::class, 'getStudent']);
     Route::resource('coach', CoachController::class);
     Route::resource('mastercoach', MasterCoachController::class);

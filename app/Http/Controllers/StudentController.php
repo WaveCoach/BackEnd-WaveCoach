@@ -30,7 +30,7 @@ class StudentController extends Controller
             'email' => 'required|email|unique:users,email',
             'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
             'usia' => 'required',
-            'type' => 'required|string|max:50',
+            'type' => 'nullable|string|max:50',
 
         ]);
 
@@ -75,7 +75,7 @@ class StudentController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
             'usia' => 'required',
-            'type' => 'required|string|max:50',
+            'type' => 'nullable|string|max:50',
         ]);
 
         $user = User::find($id);

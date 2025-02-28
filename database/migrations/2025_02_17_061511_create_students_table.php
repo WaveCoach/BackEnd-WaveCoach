@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('usia');
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('type');
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }
