@@ -68,31 +68,33 @@ class AnnouncementController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'content' => 'required',
-            'image' => 'nullable|image|max:2048',
+            'content' => 'required|string',
             'published_at' => 'nullable|date',
-            'user_ids' => 'nullable|array',
-            'user_ids.*' => 'exists:users,id'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'student_id' => 'required|array',
+            'student_id.*' => 'exists:users,id',
         ]);
 
-        $data = $request->except('user_ids');
+        $data = $request->except('student_id');
 
         if ($request->hasFile('image')) {
             if ($announcement->image) {
                 Storage::delete($announcement->image);
             }
 
-            $data['image'] = $request->file('image')->store('images', 'public');  // Menyimpan di folder public/images
+            $data['image'] = $request->file('image')->store('images', 'public');
         }
 
         $announcement->update($data);
 
-        if ($request->has('user_ids')) {
-            $announcement->users()->sync($request->user_ids);
+        if ($request->has('student_id')) {
+            $announcement->users()->sync($request->student_id);  // Sync hanya user yang ada dalam 'student_id'
         }
 
         return redirect()->route('announcement.index')->with('success', 'Pengumuman berhasil diupdate!');
     }
+
+
 
 
     public function destroy(Announcement $announcement)
