@@ -30,21 +30,27 @@ class AnnouncementController extends Controller
             'content' => 'required|string',
             'published_at' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'student_id' => 'required|array',  // Pastikan student_id dipilih
-            'student_id.*' => 'exists:users,id', // Validasi id pengguna yang dipilih
+            'student_id' => 'required|array',
+            'student_id.*' => 'exists:users,id',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+        }
 
         $announcement = Announcement::create([
             'title' => $request->title,
             'content' => $request->content,
             'published_at' => $request->published_at,
-            'image' => $request->file('image') ? $request->file('image')->store('public/images') : null,  // Menyimpan gambar jika ada
+            'image' => $imagePath,  // Menyimpan path gambar
         ]);
 
         $announcement->users()->attach($request->student_id);
 
         return redirect()->route('announcement.index')->with('success', 'Pengumuman berhasil dibuat');
     }
+
 
     public function show(Announcement $announcement)
     {
@@ -60,7 +66,6 @@ class AnnouncementController extends Controller
 
     public function update(Request $request, Announcement $announcement)
     {
-        // Validasi input
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required',
@@ -77,7 +82,7 @@ class AnnouncementController extends Controller
                 Storage::delete($announcement->image);
             }
 
-            $data['image'] = $request->file('image')->store('announcements', 'public');
+            $data['image'] = $request->file('image')->store('images', 'public');  // Menyimpan di folder public/images
         }
 
         $announcement->update($data);
@@ -86,7 +91,7 @@ class AnnouncementController extends Controller
             $announcement->users()->sync($request->user_ids);
         }
 
-        return redirect()->route('announcements.index')->with('success', 'Announcement updated!');
+        return redirect()->route('announcement.index')->with('success', 'Pengumuman berhasil diupdate!');
     }
 
 
