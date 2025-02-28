@@ -2,6 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\assesment;
+use App\Models\assesment_aspect;
+use App\Models\assesment_category;
+use App\Models\assessments_detail;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,31 +19,31 @@ class AssessmentsSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // Ambil semua assessor (role_id 2 & 3)
-        $assessors = DB::table('users')->whereIn('role_id', [2, 3])->pluck('id');
+        $users = User::where('role_id', 4)->get();
+        $assessors = User::whereIn('role_id', [2, 3])->get();
+        $categories = assesment_category::with('aspects')->get();
 
-        // Ambil semua user yang akan dinilai (role_id 4)
-        $users = DB::table('users')->where('role_id', 4)->pluck('id');
+        foreach ($users as $user) {
+            $assessor = $assessors->random();
 
-        // Jika ada data yang ditemukan
-        if ($assessors->isNotEmpty() && $users->isNotEmpty()) {
-            $data = [];
-            foreach ($users as $user_id) {
-                // Pilih assessor secara acak
-                $assessor_id = $assessors->random();
+            $assessment = Assesment::create([
+                'user_id' => $user->id,
+                'assessor_id' => $assessor->id,
+                'assesment_date' => Carbon::now()
+            ]);
 
-                $data[] = [
-                    'user_id' => $user_id,
-                    'assessor_id' => $assessor_id,
-                    'assessment_date' => Carbon::now()->subDays(rand(1, 30)),
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ];
+            foreach ($categories as $category) {
+                foreach ($category->aspects as $aspect) {
+                    assessments_detail::create([
+                        'assessment_id' => $assessment->id,
+                        'aspect_id' => $aspect->id,
+                        'score' => rand(50, 100),
+                        'remarks' => 'Sample remark'
+                    ]);
+                }
             }
-
-            DB::table('assessments')->insert($data);
         }
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id');
             $table->bigInteger('assessor_id');
-            $table->date('assessment_date');
+            $table->date('assesment_date')->nullable();
             $table->timestamps();
         });
     }

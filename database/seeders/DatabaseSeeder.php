@@ -18,17 +18,13 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RolesTableSeeder::class,
-            // NotificationSeeder::class,
             UsersSeeder::class,            // Seeder untuk pengguna (admin, assessor, user)
-            // AssessmentsSeeder::class,      // Seeder untuk tabel assessments
-            // AssessmentsDetailsSeeder::class, // Seeder untuk tabel assessments_details
             LocationsSeeder::class,        // Seeder untuk tabel locations
             SchedulesSeeder::class,        // Seeder untuk tabel schedules
-            // ScheduleDetailsSeeder::class,  // Seeder untuk tabel schedule_details
-            // AssesmentAspectsSeeder::class,
-            // AssesmentCategoriesSeeder::class,
-            // InventorySeeder::class
-            RescheduleRequestSeeder::class
+            AssesmentAspectsSeeder::class,
+            AssesmentCategoriesSeeder::class,
+            RescheduleRequestSeeder::class,
+            // AssessmentsSeeder::class
         ]);
 
     }
