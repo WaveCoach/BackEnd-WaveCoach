@@ -16,7 +16,12 @@ class LocationImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $existingLocation = Location::where('name', $row['name'])->first();
+
         if ($existingLocation) {
+            $existingLocation->update([
+                'address' => $row['address'] ?? null,
+                'maps'    => $row['maps'] ?? null,
+            ]);
             return null;
         }
 
