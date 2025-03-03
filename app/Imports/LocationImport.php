@@ -15,13 +15,17 @@ class LocationImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
+        $existingLocation = Location::where('name', $row['name'])->first();
+        if ($existingLocation) {
+            return null;
+        }
+
         return new Location([
-            'name'      => $row['name'],
+            'name'      => $row['name'] ?? null,
             'address'   => $row['address'] ?? null,
             'maps'      => $row['maps'] ?? null,
-            'code_loc'  => $this->generateUniqueCode(), // Generate otomatis
+            'code_loc'  => $this->generateUniqueCode(),
         ]);
-
     }
 
     private function generateUniqueCode()
