@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('inventory_landings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('inventory_landings_id')->nullable();
             $table->unsignedBigInteger('inventory_id');
-            $table->unsignedBigInteger('borrower_id');
-            $table->unsignedBigInteger('borrowed_to_id');
-            $table->integer('inventory_quantity');
+            $table->unsignedBigInteger('mastercoach_id');
+            $table->unsignedBigInteger('coach_id');
+            $table->integer('qty_in')->nullable();
+            $table->integer('qty_out')->nullable();
             $table->timestamps();
         });
     }

@@ -24,7 +24,10 @@ class DatabaseSeeder extends Seeder
             AssesmentAspectsSeeder::class,
             AssesmentCategoriesSeeder::class,
             RescheduleRequestSeeder::class,
-            NotificationSeeder::class
+            NotificationSeeder::class,
+            InventoryLandingSeeder::class,
+            InventoryManagementSeeder::class,
+            InventorySeeder::class
             // AssessmentsSeeder::class
 
         ]);

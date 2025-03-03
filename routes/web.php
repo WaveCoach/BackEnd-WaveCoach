@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\InventorylandingController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
 use App\Http\Controllers\NotificationController;
@@ -41,6 +42,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('student', StudentController::class);
     Route::resource('assesment-report', AssesmentReportController::class);
     Route::resource('inventory', InventoryController::class);
+    Route::resource('inventory-landing-history', InventorylandingController::class);
     Route::get('/inventory-edit/{id}', [InventoryController::class, 'inventedit'])->name('inventory.detailedit');
     Route::put('/inventory-update/{id}', [InventoryController::class, 'inventUpdate'])->name('inventory.detailupdate');
     Route::delete('/inventory-delete/{id}', [InventoryController::class, 'inventDestroy'])->name('inventory.detaildelete');

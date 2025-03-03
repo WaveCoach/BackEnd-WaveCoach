@@ -9,10 +9,12 @@ class inventory_landing extends Model
     protected $table = 'inventory_management';
 
     protected $fillable = [
+        'inventory_landings_id',
         'inventory_id',
-        'borrower_id',
-        'borrowed_to_id',
-        'inventory_quantity',
+        'mastercoach_id',
+        'coach_id',
+        'qty_in',
+        'qty_out'
     ];
 
     public function inventory()
@@ -20,13 +22,13 @@ class inventory_landing extends Model
         return $this->belongsTo(Inventory::class, 'inventory_id');
     }
 
-    public function borrower()
+    public function coach()
     {
-        return $this->belongsTo(User::class, 'borrower_id');
+        return $this->belongsTo(User::class, 'coach_id');
     }
 
-    public function borrowedTo()
+    public function mastercoach()
     {
-        return $this->belongsTo(User::class, 'borrowed_to_id');
+        return $this->belongsTo(User::class, 'mastercoach_id');
     }
 }

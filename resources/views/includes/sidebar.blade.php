@@ -14,6 +14,9 @@
     <li class="{{ request()->is('inventory') ? 'active-page' : '' }}">
         <a href="{{route('inventory.index')}}"><i data-feather="archive"></i>Inventory</a>
     </li>
+    <li class="{{ request()->is('inventory-landing-history') ? 'active-page' : '' }}">
+        <a href="{{route('inventory-landing-history.index')}}"><i data-feather="book-open"></i>History Inventory</a>
+    </li>
     <li class="{{ request()->is('coach') ? 'active-page' : '' }}">
         <a href="{{route('coach.index')}}"><i data-feather="user"></i>Coach</a>
     </li>
