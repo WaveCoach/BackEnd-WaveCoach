@@ -31,19 +31,17 @@ class ScheduleImport implements ToModel, WithStartRow
             return null;
         }
 
-        // Konversi angka serial Excel ke format Y-m-d
         $date = is_numeric($row[2])
             ? Carbon::createFromFormat('Y-m-d', gmdate("Y-m-d", ($row[2] - 25569) * 86400))
             : Carbon::parse($row[2]);
 
             $startTime = Carbon::parse(Date::excelToDateTimeObject($row[3]), 'Asia/Jakarta')->format('H:i:s');
             $endTime = Carbon::parse(Date::excelToDateTimeObject($row[4]), 'Asia/Jakarta')->format('H:i:s');
-        // dd(Date::excelToDateTimeObject($row[3]));
 
         $schedule = Schedule::create([
             'coach_id'   => $coach->id,
             'location_id' => $location->id,
-            'date'       => $date->format('Y-m-d'), // Format ke Y-m-d
+            'date'       => $date->format('Y-m-d'),
             'start_time' => $startTime,
             'end_time'   => $endTime,
         ]);

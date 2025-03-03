@@ -29,6 +29,9 @@ Route::post('/login-check', [AuthController::class, 'loginCheck'])->name('login.
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::resource('location', LocationController::class);
+    Route::post('/import-location', [LocationController::class, 'import'])->name('import.location');
+    Route::get('/import-location', [LocationController::class, 'importCreate'])->name('import.location.create');
+    Route::get('/export-location', [LocationController::class, 'exportLocations'])->name('export.location');
     Route::resource('schedule', ScheduleController::class);
     Route::resource('reschedule', RescheduleRequestController::class);
     Route::get('/get-student', [ScheduleController::class, 'getStudent']);

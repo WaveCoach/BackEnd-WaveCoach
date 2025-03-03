@@ -9,6 +9,18 @@
         <a href="{{route('location.create')}}" class="btn btn-success btn-sm mb-4">
             <i class="fas fa-plus"></i> Tambah
         </a>
+
+        <a href="{{route('export.location')}}" class="btn btn-primary mb-4">
+            <!-- Export (Panah Keluar) -->
+            <i class="fas fa-file-export"></i> Export
+        </a>
+
+        <a href="{{route('import.location.create')}}" class="btn btn-info mb-4">
+            <!-- Import (Panah Masuk) -->
+            <i class="fas fa-file-import"></i> Import
+        </a>
+
+
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>

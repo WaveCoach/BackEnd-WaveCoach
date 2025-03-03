@@ -23,4 +23,6 @@ class location extends Model
         return $this->hasMany(Schedule::class, 'location_id');
     }
 
+
+
 }

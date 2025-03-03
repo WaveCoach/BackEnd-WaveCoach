@@ -24,7 +24,9 @@ class DatabaseSeeder extends Seeder
             AssesmentAspectsSeeder::class,
             AssesmentCategoriesSeeder::class,
             RescheduleRequestSeeder::class,
+            NotificationSeeder::class
             // AssessmentsSeeder::class
+
         ]);
 
     }

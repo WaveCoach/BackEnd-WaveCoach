@@ -3,14 +3,14 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Import Schedule</h5>
-            <p class="card-description">Silakan unggah file jadwal yang ingin diimport.</p>
+            <h5 class="card-title">Import Location</h5>
+            <p class="card-description">Silakan unggah file location yang ingin diimport.</p>
 
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
-            <form action="{{ route('import.schedule') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('import.location') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="file" class="form-label">Pilih File</label>

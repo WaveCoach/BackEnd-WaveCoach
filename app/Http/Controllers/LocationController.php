@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LocationExport;
+use App\Imports\LocationImport;
 use App\Models\location;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LocationController extends Controller
 {
@@ -83,5 +87,26 @@ class LocationController extends Controller
         $location = Location::findOrFail($id);
         $location->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
+
+    }
+
+    public function exportLocations(): BinaryFileResponse
+    {
+        return Excel::download(new LocationExport, 'Location.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv',
+        ]);
+
+        Excel::import(new LocationImport, $request->file('file'));
+
+        return redirect()->route('location.index')->with('success', 'Data berhasil diperbarui!');
+    }
+
+    public function importCreate(){
+        return view('pages.location.import-location');
     }
 }
