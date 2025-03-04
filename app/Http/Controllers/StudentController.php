@@ -29,7 +29,7 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
-            'usia' => 'required',
+            'tanggal_lahir' => 'required|date',
             'type' => 'nullable|string|max:50',
 
         ]);
@@ -39,14 +39,14 @@ class StudentController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($randomPassword),
+            'password' => bcrypt('12345678'),
             'role_id' => 4, // Role ID untuk student
         ]);
 
         student::create([
             'user_id' => $user->id,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'usia' => $request->usia,
+            'tanggal_lahir' => $request->tanggal_lahir,
             'type' => $request->type
         ]);
 
@@ -74,7 +74,7 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'jenis_kelamin' => 'required|in:L,P', // L = Laki-laki, P = Perempuan
-            'usia' => 'required',
+            'tanggal_lahir' => 'required|date',
             'type' => 'nullable|string|max:50',
         ]);
 
@@ -91,7 +91,7 @@ class StudentController extends Controller
 
         $student = student::where('user_id', $id)->first();
         $student -> jenis_kelamin = $request->jenis_kelamin;
-        $student->usia = $request->usia;
+        $student->tanggal_lahir = $request->tanggal_lahir;
         $student->type = $request->type;
         $student->save();
 

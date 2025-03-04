@@ -26,8 +26,8 @@
                     <input type="email" class="form-control" name="email" id="email">
                 </div>
                 <div class="col-6 mb-3">
-                    <label for="usia" class="form-label">Umur</label>
-                    <input type="text" class="form-control" name="usia" id="usia">
+                    <label for="usia" class="form-label">Tanggal Lahir</label>
+                    <input type="date" class="form-control" name="tanggal_lahir" id="usia">
                 </div>
                 {{-- <div class="col-6 mb-3">
                     <label for="type" class="form-label">Type</label>

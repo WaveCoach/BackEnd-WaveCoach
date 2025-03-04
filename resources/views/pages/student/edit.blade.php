@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-6 mb-3">
                     <label for="usia" class="form-label">Umur</label>
-                    <input type="text" class="form-control" value="{{$student->student->usia}}" name="usia" id="usia">
+                    <input type="date" class="form-control" value="{{$student->student->tanggal_lahir}}" name="tanggal_lahir" id="usia">
                 </div>
                 {{-- <div class="col-6 mb-3">
                     <label for="type" class="form-label">Type</label>

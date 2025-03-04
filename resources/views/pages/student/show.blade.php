@@ -16,8 +16,13 @@
                     <input type="text" class="form-control" required value="{{ $student->email }}" name="email" id="email" disabled>
                 </div>
                 <div class="col-6 mb-3">
-                    <label for="usia" class="form-label">Umur</label>
-                    <input type="text" class="form-control" value="{{ $student->student->usia }}" name="usia" id="usia" disabled>
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                    <input type="text" class="form-control" value="{{ $student->student->tanggal_lahir }}" name="usia" id="usia" disabled>
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="usia" class="form-label">Usia</label>
+                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($student->student->tanggal_lahir)->age }} tahun" name="usia" id="usia" disabled>
                 </div>
                 {{-- <div class="col-6 mb-3">
                     <label for="type" class="form-label">Type</label>

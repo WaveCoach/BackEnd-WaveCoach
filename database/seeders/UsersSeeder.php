@@ -59,16 +59,16 @@ class UsersSeeder extends Seeder
 
 
         $students = [
-            ['name' => 'Student One', 'email' => 'student1@gmail.com', 'usia' => '15', 'jenis_kelamin' => 'L'],
-            ['name' => 'Student Two', 'email' => 'student2@gmail.com', 'usia' => '16', 'jenis_kelamin' => 'P'],
-            ['name' => 'Student Three', 'email' => 'student3@gmail.com', 'usia' => '17', 'jenis_kelamin' => 'L'],
-            ['name' => 'Student Four', 'email' => 'student4@gmail.com', 'usia' => '18', 'jenis_kelamin' => 'P'],
-            ['name' => 'Student Five', 'email' => 'student5@gmail.com', 'usia' => '15', 'jenis_kelamin' => 'L'],
-            ['name' => 'Student Six', 'email' => 'student6@gmail.com', 'usia' => '16', 'jenis_kelamin' => 'P'],
-            ['name' => 'Student Seven', 'email' => 'student7@gmail.com', 'usia' => '17', 'jenis_kelamin' => 'L'],
-            ['name' => 'Student Eight', 'email' => 'student8@gmail.com', 'usia' => '18', 'jenis_kelamin' => 'P'],
-            ['name' => 'Student Nine', 'email' => 'student9@gmail.com', 'usia' => '15', 'jenis_kelamin' => 'L'],
-            ['name' => 'Student Ten', 'email' => 'student10@gmail.com', 'usia' => '16', 'jenis_kelamin' => 'P'],
+            ['name' => 'Student One', 'email' => 'student1@gmail.com', 'tanggal_lahir' => '2010-01-01', 'jenis_kelamin' => 'L'],
+            ['name' => 'Student Two', 'email' => 'student2@gmail.com', 'tanggal_lahir' => '2009-01-01', 'jenis_kelamin' => 'P'],
+            ['name' => 'Student Three', 'email' => 'student3@gmail.com', 'tanggal_lahir' => '2008-01-01', 'jenis_kelamin' => 'L'],
+            ['name' => 'Student Four', 'email' => 'student4@gmail.com', 'tanggal_lahir' => '2007-01-01', 'jenis_kelamin' => 'P'],
+            ['name' => 'Student Five', 'email' => 'student5@gmail.com', 'tanggal_lahir' => '2010-01-01', 'jenis_kelamin' => 'L'],
+            ['name' => 'Student Six', 'email' => 'student6@gmail.com', 'tanggal_lahir' => '2009-01-01', 'jenis_kelamin' => 'P'],
+            ['name' => 'Student Seven', 'email' => 'student7@gmail.com', 'tanggal_lahir' => '2008-01-01', 'jenis_kelamin' => 'L'],
+            ['name' => 'Student Eight', 'email' => 'student8@gmail.com', 'tanggal_lahir' => '2007-01-01', 'jenis_kelamin' => 'P'],
+            ['name' => 'Student Nine', 'email' => 'student9@gmail.com', 'tanggal_lahir' => '2010-01-01', 'jenis_kelamin' => 'L'],
+            ['name' => 'Student Ten', 'email' => 'student10@gmail.com', 'tanggal_lahir' => '2009-01-01', 'jenis_kelamin' => 'P'],
         ];
 
         foreach ($students as $student) {
@@ -83,7 +83,7 @@ class UsersSeeder extends Seeder
 
             DB::table('students')->insert([
                 'user_id' => $userId,
-                'usia' => $student['usia'],
+                'tanggal_lahir' => $student['tanggal_lahir'],
                 'jenis_kelamin' => $student['jenis_kelamin'],
                 'type' => null,
                 'created_at' => Carbon::now(),
