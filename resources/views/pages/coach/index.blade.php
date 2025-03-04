@@ -13,7 +13,7 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Tanggal Masuk</th>
+                    <th>Tanggal Terdaftar</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Status</th>
@@ -57,13 +57,14 @@
                             <a href="{{route('coach.show', $item->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            {{-- <form action="{{route('coach.destroy', $item->id)}}" method="POST" style="display:inline;">
-                                @method('delete')
+                            <form action="{{route('coach.updatePassword', $item->id)}}" method="POST" style="display:inline;">
+                                @method('put')
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm btn-delete" >
-                                    <i class="fas fa-trash"></i>
+                                <button type="submit" class="btn btn-warning btn-sm btn-delete" >
+                                    <i class="fas fa-key"></i>
+
                                 </button>
-                            </form> --}}
+                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -110,12 +111,12 @@
 
                 Swal.fire({
                     title: "Apakah Anda yakin?",
-                    text: "Data role yang sudah diubah tidak bisa dikembalikan!",
+                    text: "Password dari coach ini akan direset!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#d33",
                     cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Ya, hapus!",
+                    confirmButtonText: "Ya, reset!",
                     cancelButtonText: "Batal"
                 }).then((result) => {
                     if (result.isConfirmed) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\coaches;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class CoachController extends Controller
@@ -31,12 +32,12 @@ class CoachController extends Controller
             'role_id' => 'required|integer'
         ]);
 
-        $randomPassword = Str::random(8);
+        // '12345678 = Str::random(8);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($randomPassword),
+            'password' => bcrypt('12345678'),
             'role_id' => $request->role_id
         ]);
 
@@ -104,5 +105,20 @@ class CoachController extends Controller
         }
 
         return redirect()->route('coach.index')->with('success', 'User deleted successfully');
+    }
+
+    public function resetPassword($id)
+    {
+        $user = Coaches::where('user_id', $id)->first();
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User tidak ditemukan!');
+        }
+
+        $user->update([
+            'password' => Hash::make('12345678'),
+        ]);
+
+        return redirect()->back()->with('success', 'Password berhasil direset ke 12345678!');
     }
 }
