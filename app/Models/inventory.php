@@ -17,6 +17,7 @@ class inventory extends Model
     protected $fillable = [
         'name',
         'total_quantity',
+        'inventory_image'
     ];
 
     public function inventoryManagements(): HasMany

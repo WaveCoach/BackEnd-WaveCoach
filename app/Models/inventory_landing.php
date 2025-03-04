@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class inventory_landing extends Model
 {
-    protected $table = 'inventory_management';
+    protected $table = 'inventory_landings';
 
     protected $fillable = [
         'inventory_landings_id',
         'inventory_id',
         'mastercoach_id',
         'coach_id',
+        'status',
         'qty_in',
         'qty_out'
     ];

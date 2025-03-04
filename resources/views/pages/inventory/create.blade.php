@@ -14,7 +14,7 @@
             </ul>
         </div>
         @endif
-        <form method="POST" action="{{ route('inventory.store') }}" id="jobPositionForm">
+        <form method="POST" action="{{ route('inventory.store') }}" id="jobPositionForm" enctype="multipart/form-data">
             @csrf
             <div class="row mb-4">
                 <div class="col-6 mb-3">
@@ -25,6 +25,10 @@
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-6 mb-3" id="imageField" style="display: none;">
+                    <label for="image" class="form-label">Gambar Inventaris Baru</label>
+                    <input type="file" class="form-control" name="inventory_image" id="imageInput" placeholder="Masukkan image">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="total_quantity" class="form-label">Qty</label>
@@ -84,6 +88,32 @@
                 } else {
                     $('#emailField').hide();
                     $('#emailInput').removeAttr('required');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%',
+                placeholder: "Pilih atau Tambah Opsi",
+                allowClear: true,
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    return term === '' ? null : { id: term, text: term, newTag: true };
+                }
+            });
+
+            $('#inventorySelect').on('select2:select', function(e) {
+                var data = e.params.data;
+                if (data.newTag) {
+                    $('#imageField').show();
+                    $('#imageInput').attr('required', true);
+                } else {
+                    $('#imageField').hide();
+                    $('#imageInput').removeAttr('required');
                 }
             });
         });

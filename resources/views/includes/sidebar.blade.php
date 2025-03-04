@@ -17,6 +17,9 @@
     <li class="{{ request()->is('inventory-landing-history') ? 'active-page' : '' }}">
         <a href="{{route('inventory-landing-history.index')}}"><i data-feather="book-open"></i>History Inventory</a>
     </li>
+    <li class="{{ request()->is('deleted-inventory') ? 'active-page' : '' }}">
+        <a href="{{route('deleted-inventory.index')}}"><i data-feather="book-open"></i>Deleted Inventory</a>
+    </li>
     <li class="{{ request()->is('coach') ? 'active-page' : '' }}">
         <a href="{{route('coach.index')}}"><i data-feather="user"></i>Coach</a>
     </li>

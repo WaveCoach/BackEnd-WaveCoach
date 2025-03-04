@@ -3,52 +3,55 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Daftar Inventory</h5>
-        <p>Menu "inventory" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi daftar Inventory secara efisien</p>
+        <h5 class="card-title">History Inventory</h5>
+        <p>Menu "History inventory" memungkinkan admin  memantau informasi daftar History Inventory secara efisien</p>
 
-        <a href="{{route('inventory.create')}}" class="btn btn-success btn-sm mb-4">
-            <i class="fas fa-plus"></i> Tambah
-        </a>
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>qty</th>
-                    <th>aksi</th>
+                    <th>Waktu</th>
+                    <th>Nama Barang</th>
+                    <th>Mastercoach</th>
+                    <th>Coach Peminjam</th>
+                    <th>Status</th>
+                    <th>Qty</th>
                 </tr>
             </thead>
             <tbody>
-                    {{-- @foreach ($inventorys as $inventory) --}}
+                    @foreach ($inventorys as $inventory)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{$inventory -> name}}</td>
-                        <td>{{ $inventory->inventory_managements_sum_qty ?? 0 }}</td>
-                        <td class="d-flex">
-                            <a href="{{route('inventory.edit', $inventory->id)}}" class="btn btn-warning btn-sm ">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{{route('inventory.show', $inventory->id)}}" class="btn btn-info btn-sm mx-2">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <form action="{{ route('inventory.destroy', $inventory->id) }}" method="POST" class="delete-form" data-id="{{ $inventory->id }}" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-btn">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-
+                        <td>{{$inventory->created_at}}</td>
+                        <td>{{$inventory->inventory->name}}</td>
+                        <td>{{$inventory->coach->name}}</td>
+                        <td>{{$inventory->mastercoach->name}}</td>
+                        <td>
+                            @if ($inventory->status == 'dipinjam')
+                                <span class="badge bg-warning">Dipinjam</span>
+                            @elseif ($inventory->status == 'dikembalikan')
+                                <span class="badge bg-success">Dikembalikan</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($inventory->status == 'dipinjam')
+                                 {{ $inventory->qty_out }}
+                            @elseif ($inventory->status == 'dikembalikan')
+                                {{ $inventory->qty_in }}
+                            @endif
                         </td>
                     </tr>
-                    {{-- @endforeach --}}
+                    @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>qty</th>
-                    <th>aksi</th>
+                    <th>Waktu</th>
+                    <th>Nama Barang</th>
+                    <th>Mastercoach</th>
+                    <th>Coach Peminjam</th>
+                    <th>Status</th>
+                    <th>Qty</th>
                 </tr>
             </tfoot>
         </table>

@@ -15,6 +15,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>qty</th>
+                    <th>image</th>
                     <th>aksi</th>
                 </tr>
             </thead>
@@ -24,6 +25,15 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{$inventory -> name}}</td>
                         <td>{{ $inventory->inventory_managements_sum_qty ?? 0 }}</td>
+                        <td>
+                            @if($inventory->inventory_image)
+                            <a href="{{ asset('storage/' . $inventory->inventory_image) }}" target="_blank">
+                                <i class="fas fa-eye"></i> Lihat Gambar
+                            </a>
+                            @else
+                                <span>Tidak ada gambar</span>
+                            @endif
+                        </td>
                         <td class="d-flex">
                             <a href="{{route('inventory.edit', $inventory->id)}}" class="btn btn-warning btn-sm ">
                                 <i class="fas fa-edit"></i>

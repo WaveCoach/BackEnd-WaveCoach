@@ -7,6 +7,7 @@ use App\Models\inventory;
 use App\Models\inventory_management;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends Controller
 {
@@ -30,9 +31,11 @@ class InventoryController extends Controller
         $request->validate([
             'inventory_id' => 'required',
             'qty' => 'required|integer|min:1',
+            'inventory_image' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'mastercoach_id' => 'required',
             'email' => 'nullable|email|max:255|unique:users,email',
         ]);
+
 
         if (is_numeric($request->mastercoach_id)) {
             $mastercoachId = $request->mastercoach_id;
@@ -53,8 +56,15 @@ class InventoryController extends Controller
         if (is_numeric($request->inventory_id)) {
             $inventoryId = $request->inventory_id;
         } else {
+            if ($request->hasFile('inventory_image')) {
+                $imagePath = $request->file('inventory_image')->store('inventory_images', 'public');
+            } else {
+                $imagePath = null;
+            }
+
             $newInventory = Inventory::create([
                 'name' => $request->inventory_id,
+                'inventory_image' => $imagePath,
             ]);
 
             $inventoryId = $newInventory->id;
@@ -96,17 +106,34 @@ class InventoryController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        // dd($request->all());
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'inventory_image' => 'required|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $inventory = inventory::findOrFail($id);
+        // dd('Validasi berhasil', $validated);
+
+        $inventory = Inventory::findOrFail($id);
+
+        if ($request->hasFile('inventory_image')) {
+            if ($inventory->inventory_image) {
+                Storage::disk('public')->delete($inventory->inventory_image);
+            }
+
+            $imagePath = $request->file('inventory_image')->store('inventory_images', 'public');
+        } else {
+            $imagePath = $inventory->inventory_image;
+        }
+
         $inventory->update([
             'name' => $request->name,
+            'inventory_image' => $imagePath,
         ]);
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui!');
+        return redirect()->route('inventory.index')->with('success', 'Data berhasil diperbarui!');
     }
+
 
 
     public function destroy($id)

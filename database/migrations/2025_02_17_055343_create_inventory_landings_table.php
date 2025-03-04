@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('inventory_id');
             $table->unsignedBigInteger('mastercoach_id');
             $table->unsignedBigInteger('coach_id');
+            $table->enum('status', ['dipinjam', 'dikembalikan'])->default('dipinjam');
             $table->integer('qty_in')->nullable();
             $table->integer('qty_out')->nullable();
             $table->timestamps();
