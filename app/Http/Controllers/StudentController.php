@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -34,20 +35,24 @@ class StudentController extends Controller
 
         ]);
 
-        $randomPassword = Str::random(8);
+        $tahunMasuk = Carbon::now()->format('y');
+        $lastStudent = Student::where('nis', 'like', $tahunMasuk . '%')->orderBy('nis', 'desc')->first();
+        $nextNumber = $lastStudent ? ((int)substr($lastStudent->nis, 2) + 1) : 1;
+        $nis = $tahunMasuk . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt('12345678'),
-            'role_id' => 4, // Role ID untuk student
+            'role_id' => 4
         ]);
 
         student::create([
             'user_id' => $user->id,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'type' => $request->type
+            'type' => $request->type,
+            'nis' => $nis
         ]);
 
         return redirect()->route('student.index')->with('success', 'student berhasil ditambahkan dengan password: ');

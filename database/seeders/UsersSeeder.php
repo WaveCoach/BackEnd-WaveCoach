@@ -72,6 +72,16 @@ class UsersSeeder extends Seeder
         ];
 
         foreach ($students as $student) {
+            $tahunMasuk = Carbon::now()->format('y');
+            $lastStudent = DB::table('students')
+                ->where('nis', 'like', $tahunMasuk . '%')
+                ->orderBy('nis', 'desc')
+                ->first();
+
+            $nextNumber = $lastStudent ? ((int)substr($lastStudent->nis, 2) + 1) : 1;
+
+            $nis = $tahunMasuk . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
             $userId = DB::table('users')->insertGetId([
                 'name' => $student['name'],
                 'email' => $student['email'],
@@ -85,6 +95,7 @@ class UsersSeeder extends Seeder
                 'user_id' => $userId,
                 'tanggal_lahir' => $student['tanggal_lahir'],
                 'jenis_kelamin' => $student['jenis_kelamin'],
+                'nis' => $nis,
                 'type' => null,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
