@@ -5,13 +5,22 @@
         <div class="card-body">
             <h5 class="card-title">Tambah Aspek Penilaian Baru</h5>
             <p class="card-description">Halaman ini memungkinkan admin untuk menambahkan Aspek Penilaian baru</p>
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             <form method="POST" action="{{ route('schedule.store') }}" id="jobPositionForm">
                 @csrf
                 <div class="row mb-4">
                     <!-- Pilihan Coach -->
                     <div class="col-6 mb-3">
                         <label for="coach_id" class="form-label">Coach</label>
-                        <select class="select2 form-control" required name="coach_id" id="coach-select">
+                        <select class="select2 form-control"  name="coach_id" id="coach-select">
                             <option value="" disabled selected>Pilih Coach</option>
                             @foreach ($coach as $c)
                                 <option value="{{ $c->id }}">{{ $c->name }}</option>
@@ -30,25 +39,25 @@
                     <!-- Pilihan Tanggal -->
                     <div class="col-6 mb-3">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" required name="date">
+                        <input type="date" class="form-control"  name="date">
                     </div>
 
                     <!-- Pilihan Waktu Mulai -->
                     <div class="col-6 mb-3">
                         <label for="start_time" class="form-label">Start Time</label>
-                        <input type="time" class="form-control" required name="start_time">
+                        <input type="time" class="form-control"  name="start_time">
                     </div>
 
                     <!-- Pilihan Waktu Selesai -->
                     <div class="col-6 mb-3">
                         <label for="end_time" class="form-label">End Time</label>
-                        <input type="time" class="form-control" required name="end_time">
+                        <input type="time" class="form-control"  name="end_time">
                     </div>
 
                     <!-- Pilihan Student -->
                     <div class="col-6 mb-3">
                         <label for="student_id" class="form-label">Student</label>
-                        <select class="select2 form-control" required name="student_id[]" id="student-select" multiple>
+                        <select class="select2 form-control"  name="student_id[]" id="student-select" multiple>
                             {{-- <option value="">Pilih Student</option> --}}
                             @foreach ($students as $student)
                                 <option value="{{ $student->id }}"
@@ -62,7 +71,7 @@
                     <!-- Pilihan Lokasi -->
                     <div class="col-6 mb-3">
                         <label for="location_id" class="form-label">Location</label>
-                        <select class="select2 form-control" required name="location_id" id="location-select">
+                        <select class="select2 form-control"  name="location_id" id="location-select">
                             <option value="" disabled selected>Pilih Location</option>
                             @foreach ($location as $loc)
                                 <option value="{{ $loc->id }}">{{ $loc->name }}</option>

@@ -39,8 +39,8 @@ class ScheduleController extends Controller
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
-            'maps' => 'required',
-            'email' => 'required'
+            'maps' => 'nullable',
+            'email' => 'nullable'
         ]);
 
         if (is_numeric($request->coach_id)) {
@@ -141,8 +141,8 @@ class ScheduleController extends Controller
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
-            'maps' => 'required',
-            'email' => 'required'
+            'maps' => 'nullable',
+            'email' => 'nullable'
         ]);
 
         $schedule = Schedule::findOrFail($id);

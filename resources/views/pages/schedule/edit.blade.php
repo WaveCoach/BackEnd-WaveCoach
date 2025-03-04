@@ -5,6 +5,15 @@
         <div class="card-body">
             <h5 class="card-title">Edit Jadwal</h5>
             <p class="card-description">Halaman ini memungkinkan admin untuk mengedit jadwal yang ada</p>
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
             <form method="POST" action="{{ route('schedule.update', $schedule->id) }}" id="scheduleForm">
                 @csrf
                 @method('PUT')
