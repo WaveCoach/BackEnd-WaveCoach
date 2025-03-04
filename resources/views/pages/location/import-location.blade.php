@@ -4,7 +4,8 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Import Location</h5>
-            <p class="card-description">Silakan unggah file location yang ingin diimport.</p>
+            <p class="card-description">Silakan unggah file location yang ingin diimport <a href="{{ asset('assets/templates/location_format.xlsx') }}" class="">Download Format</a>.</p>
+
 
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

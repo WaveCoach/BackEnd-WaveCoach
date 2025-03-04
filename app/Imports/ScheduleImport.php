@@ -6,10 +6,12 @@ use App\Models\Location;
 use App\Models\Schedule;
 use App\Models\schedule_detail;
 use App\Models\ScheduleDetail;
+use App\Models\student;
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\StudentT;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ScheduleImport implements ToModel, WithStartRow
@@ -47,13 +49,13 @@ class ScheduleImport implements ToModel, WithStartRow
         ]);
 
         $userEmails = explode(',', $row[5]);
-        foreach ($userEmails as $email) {
-            $email = trim($email);
-            $user = User::where('email', $email)->first();
+        foreach ($userEmails as $nis) {
+            $nis = trim($nis);
+            $user = student::where('nis', $nis)->first();
             if ($user) {
                 schedule_detail::create([
                     'schedule_id' => $schedule->id,
-                    'user_id' => $user->id,
+                    'user_id' => $user->user_id,
                 ]);
             }
         }
@@ -69,7 +71,7 @@ class ScheduleImport implements ToModel, WithStartRow
             '*.date'        => 'required',
             '*.start_time'  => 'required|date_format:H:i',
             '*.end_time'    => 'required|date_format:H:i',
-            '*.user_emails' => 'required|string',
+            '*.nis' => 'required',
         ];
     }
 
