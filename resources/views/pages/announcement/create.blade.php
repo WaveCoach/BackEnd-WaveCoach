@@ -4,6 +4,15 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Tambah Pengumuman</h5>
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="{{ route('announcement.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
@@ -23,8 +32,11 @@
                 <input type="file" class="form-control" id="image" name="image">
             </div>
             <div class="mb-3">
-                <label for="student_id" class="form-label">Student</label>
-                <select class="select2 form-control" required name="student_id[]" id="student-select" multiple>
+                <label for="student_id" class="form-label">Kepada</label>
+                <select class="select2 form-control" required name="user_id[]" id="student-select" multiple>
+                    <option value="semua">Semua Orang</option>
+                    <option value="mastercoach">Semua Mastercoach</option>
+                    <option value="coach">Semua Coach</option>
                     @foreach ($users as $student)
                         <option value="{{ $student->id }}">
                             {{ $student->name }}

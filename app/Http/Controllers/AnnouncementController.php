@@ -19,7 +19,6 @@ class AnnouncementController extends Controller
     public function create()
     {
         $users = User::whereIn('role_id', [2, 3])->get();
-        // dd($users);
         return view('pages.announcement.create', compact('users'));
     }
 
@@ -30,9 +29,23 @@ class AnnouncementController extends Controller
             'content' => 'required|string',
             'published_at' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'student_id' => 'required|array',
-            'student_id.*' => 'exists:users,id',
+            'user_id' => 'required|array',
+            'user_id.*' => ['nullable', function ($attribute, $value, $fail) {
+                if (!in_array($value, ['semua', 'mastercoach', 'coach']) && !is_numeric($value)) {
+                    $fail("Pilihan $value tidak valid.");
+                }
+            }],
         ]);
+
+        if (in_array('semua', $request->user_id)) {
+            $userIds = User::whereIn('role_id', [2, 3])->pluck('id')->toArray();
+        } elseif (in_array('mastercoach', $request->user_id)) {
+            $userIds = User::where('role_id', 3)->pluck('id')->toArray();
+        } elseif (in_array('coach', $request->user_id)) {
+            $userIds = User::where('role_id', 2)->pluck('id')->toArray();
+        } else {
+            $userIds = $request->user_id;
+        }
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -43,10 +56,10 @@ class AnnouncementController extends Controller
             'title' => $request->title,
             'content' => $request->content,
             'published_at' => $request->published_at,
-            'image' => $imagePath,  // Menyimpan path gambar
+            'image' => $imagePath,
         ]);
 
-        $announcement->users()->attach($request->student_id);
+        $announcement->users()->attach($userIds);
 
         return redirect()->route('announcement.index')->with('success', 'Pengumuman berhasil dibuat');
     }
