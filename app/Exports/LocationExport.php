@@ -12,9 +12,13 @@ class LocationExport implements FromCollection
     */
     public function collection()
     {
-        return Location::select('id', 'name', 'address', 'code_loc', 'maps') // Pilih kolom yang ingin diekspor
-        ->whereNull('deleted_at') // Ambil hanya data yang belum dihapus
-        ->get();
+        return Location::select('name', 'address', 'code_loc', 'maps')
+            ->whereNull('deleted_at')
+            ->get();
+    }
 
+    public function headings(): array
+    {
+        return ["Name", "Address", "Code Loc", "Maps"]; // Header di Excel
     }
 }
