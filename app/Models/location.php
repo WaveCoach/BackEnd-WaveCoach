@@ -18,7 +18,7 @@ class Location extends Model
         'code_loc'
     ];
 
-    protected $dates = ['deleted_at'];
+    // protected $dates = ['deleted_at'];
 
     public function schedules(): HasMany
     {
