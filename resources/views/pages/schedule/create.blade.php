@@ -19,9 +19,9 @@
                 <div class="row mb-4">
                     <!-- Pilihan Coach -->
                     <div class="col-6 mb-3">
-                        <label for="mastercoach_id" class="form-label">Mastercoach</label>
+                        <label for="mastercoach_id" class="form-label">coach</label>
                         <select class="select2"  name="mastercoach_id" id="coachSelect">
-                            <option value="" disabled selected>Pilih Mastercoach</option>
+                            <option value="" disabled selected>Pilih coach</option>
                             @foreach($coach as $i)
                                 <option value="{{ $i->id }}">{{ $i->name }}</option>
                             @endforeach
