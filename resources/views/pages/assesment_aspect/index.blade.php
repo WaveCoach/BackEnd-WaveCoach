@@ -14,7 +14,7 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Category</th>
+                    <th>Gaya Renang</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -46,7 +46,7 @@
             <tfoot>
                 <tr>
                     <th>No</th>
-                    <th>Category</th>
+                    <th>Gaya Renang</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
