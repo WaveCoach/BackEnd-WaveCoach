@@ -12,6 +12,9 @@ class LocationExport implements FromCollection
     */
     public function collection()
     {
-        return Location::all();
+        return Location::select('id', 'name', 'address', 'code_loc', 'maps') // Pilih kolom yang ingin diekspor
+        ->whereNull('deleted_at') // Ambil hanya data yang belum dihapus
+        ->get();
+
     }
 }
