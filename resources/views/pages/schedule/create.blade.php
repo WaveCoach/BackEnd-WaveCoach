@@ -19,21 +19,17 @@
                 <div class="row mb-4">
                     <!-- Pilihan Coach -->
                     <div class="col-6 mb-3">
-                        <label for="coach_id" class="form-label">Coach</label>
-                        <select class="select2 form-control"  name="coach_id" id="coach-select">
-                            <option value="" disabled selected>Pilih Coach</option>
-                            @foreach ($coach as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <label for="mastercoach_id" class="form-label">Mastercoach</label>
+                        <select class="select2"  name="mastercoach_id" id="coachSelect">
+                            <option value="" disabled selected>Pilih Mastercoach</option>
+                            @foreach($coach as $i)
+                                <option value="{{ $i->id }}">{{ $i->name }}</option>
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- Email Coach (Muncul jika coach baru dipilih) -->
-                    <div class="col-6 mb-3" id="email-container" style="display: none;">
-                        <label class="form-label">Email Coach</label>
-                        <div id="email-list">
-                            <input type="email" class="form-control email-input" name="email" placeholder="Masukkan Email Coach">
-                        </div>
+                    <div class="col-6 mb-3" id="emailField" style="display: none;">
+                        <label for="email" class="form-label">Email coach Baru</label>
+                        <input type="email" class="form-control" name="email" id="emailInput" placeholder="Masukkan email">
                     </div>
 
                     <!-- Pilihan Tanggal -->
@@ -105,67 +101,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Inisialisasi Select2
-            $('#coach-select, #student-select, #location-select').select2({
-                width: '100%',
-                placeholder: "Pilih Opsi",
-                allowClear: true
-            });
-
-            // Event handler saat coach dipilih
-            // $('#coach-select').on('change', function() {
-            //     var coachId = $(this).val();
-            //     var studentSelect = $('#student-select');
-
-            //     studentSelect.empty().append('<option disabled selected>Loading...</option>');
-
-            //     if (coachId) {
-            //         $.ajax({
-            //             url: "{{ url('/get-student') }}",
-            //             type: "GET",
-            //             data: { coach_id: coachId },
-            //             success: function(response) {
-            //                 console.log(response);
-            //                 studentSelect.empty();
-
-            //                 if (response.students && response.students.length > 0) {
-            //                     $.each(response.students, function(key, student) {
-            //                         console.log("Student ID: " + student.id + " | Name: " + student.user.name);
-            //                         studentSelect.append('<option value="' + student.id + '" selected>' + student.user.name + '</option>');
-            //                     });
-            //                 } else {
-            //                     console.log("Tidak ada student tersedia.");
-            //                     studentSelect.append('<option disabled>Tidak ada student tersedia</option>');
-            //                 }
-            //             },
-            //             error: function(xhr, status, error) {
-            //                 console.error("AJAX Error: ", status, error);
-            //                 console.log(xhr.responseText);
-            //                 studentSelect.empty().append('<option disabled>Gagal mengambil data</option>');
-            //             }
-            //         });
-            //     }
-            // });
-
-
-            // Event handler untuk menampilkan/menghilangkan input email coach
-            $('#coach-select').on('select2:select', function(e) {
-                var data = e.params.data;
-                if (data.newTag) {
-                    $('#email-container').fadeIn();
-                } else {
-                    $('#email-container').fadeOut();
-                }
-            });
-
-            // Tambahkan input email baru saat Enter ditekan
-            $('#email-list').on('keypress', '.email-input', function(e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    $(this).after('<input type="email" class="form-control email-input mt-2" name="email" placeholder="Masukkan Email Coach">');
-                }
-            });
-
             // Select2 untuk lokasi dengan opsi custom
             $('#location-select').select2({
                 tags: true,
@@ -184,4 +119,31 @@
             });
         });
     </script>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            width: '100%',
+            placeholder: "Pilih atau Tambah Opsi",
+            allowClear: true,
+            tags: true,
+            createTag: function(params) {
+                var term = $.trim(params.term);
+                return term === '' ? null : { id: term, text: term, newTag: true };
+            }
+        });
+
+        $('#coachSelect').on('select2:select', function(e) {
+            var data = e.params.data;
+            if (data.newTag) {
+                $('#emailField').show();
+                $('#emailInput').attr('required', true);
+            } else {
+                $('#emailField').hide();
+                $('#emailInput').removeAttr('required');
+            }
+        });
+    });
+</script>
+
 @endpush

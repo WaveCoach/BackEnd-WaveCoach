@@ -15,6 +15,6 @@ class AssessmentAspect extends Model
 
     public function category()
     {
-        return $this->belongsTo(assesment_category::class, 'assesment_categories_id');
+        return $this->belongsTo(AssessmentCategory::class, 'assesment_categories_id');
     }
 }
