@@ -3,12 +3,9 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Daftar Coach</h5>
-        <p>Menu "Coach" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Coach secara efisien</p>
+        <h5 class="card-title">Daftar Request Reschedule</h5>
+        <p>Menu "Request Reschedule" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Request Reschedule secara efisien</p>
 
-        <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4">
-            <i class="fas fa-plus"></i> Tambah
-        </a>
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
