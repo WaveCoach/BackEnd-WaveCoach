@@ -7,4 +7,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
 //halo ini rhimba aulia 
+//halo ini rhimba
+
