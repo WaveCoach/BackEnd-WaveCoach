@@ -25,7 +25,7 @@ class Schedule extends Model
 
     public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class, 'location_id')->withTrashed();
+        return $this->belongsTo(Location::class, 'location_id');
     }
 
     public function students()
