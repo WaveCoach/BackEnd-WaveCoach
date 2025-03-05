@@ -26,7 +26,9 @@
 
                 <div class="col-6 mb-3">
                     <label for="usia" class="form-label">Usia</label>
-                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($student->student->tanggal_lahir)->age }} tahun" name="usia" id="usia" disabled>
+                    <input type="text" class="form-control"
+                        value="{{ \Carbon\Carbon::parse($student->student->tanggal_lahir)->diff(\Carbon\Carbon::now())->y < 1 ? \Carbon\Carbon::parse($student->student->tanggal_lahir)->diff(\Carbon\Carbon::now())->m . ' bulan' : \Carbon\Carbon::parse($student->student->tanggal_lahir)->age . ' tahun' }}"
+                        name="usia" id="usia" disabled>
                 </div>
                 {{-- <div class="col-6 mb-3">
                     <label for="type" class="form-label">Type</label>
