@@ -47,7 +47,7 @@ class StudentController extends Controller
             'role_id' => 4
         ]);
 
-        student::create([
+        Student::create([
             'user_id' => $user->id,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tanggal_lahir' => $request->tanggal_lahir,

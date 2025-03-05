@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assesment_aspect;
-use App\Models\inventory;
-use App\Models\location;
-use App\Models\schedule;
+use App\Models\Inventory;
+use App\Models\Location;
+use App\Models\Schedule;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
