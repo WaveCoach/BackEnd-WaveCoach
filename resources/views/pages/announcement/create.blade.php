@@ -32,7 +32,7 @@
                 <input type="file" class="form-control" id="image" name="image">
             </div>
             <div class="mb-3">
-                <label for="student_id" class="form-label">Kepada</label>
+                <label for="student_id" class="form-label">Ditunjukkan Kepada</label>
                 <select class="select2 form-control" required name="user_id[]" id="student-select" multiple>
                     <option value="semua">Semua Orang</option>
                     <option value="mastercoach">Semua Mastercoach</option>

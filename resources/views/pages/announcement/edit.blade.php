@@ -29,7 +29,7 @@
                 @endif
             </div>
             <div class="mb-3">
-                <label for="student_id" class="form-label">Student</label>
+                <label for="student_id" class="form-label">Ditunjukkan Kepada</label>
                 <select class="select2 form-control" required name="student_id[]" id="student-select" multiple>
                     @foreach ($users as $student)
                         <option value="{{ $student->id }}"

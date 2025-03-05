@@ -16,7 +16,7 @@
                     <th>Judul</th>
                     <th>Konten</th>
                     <th>Tanggal Publikasi</th>
-                    <th>Dibuat Oleh</th>
+                    <th>Ditunjukkan Kepada</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -52,7 +52,7 @@
                     <th>Judul</th>
                     <th>Konten</th>
                     <th>Tanggal Publikasi</th>
-                    <th>Dibuat Oleh</th>
+                    <th>Ditunjukkan Kepada</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>

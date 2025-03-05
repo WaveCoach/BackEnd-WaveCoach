@@ -37,15 +37,21 @@ class AnnouncementController extends Controller
             }],
         ]);
 
+        $selectedIds = array_filter($request->user_id, fn($id) => is_numeric($id));
+
+        $userIds = $selectedIds;
+
         if (in_array('semua', $request->user_id)) {
-            $userIds = User::whereIn('role_id', [2, 3])->pluck('id')->toArray();
-        } elseif (in_array('mastercoach', $request->user_id)) {
-            $userIds = User::where('role_id', 3)->pluck('id')->toArray();
-        } elseif (in_array('coach', $request->user_id)) {
-            $userIds = User::where('role_id', 2)->pluck('id')->toArray();
-        } else {
-            $userIds = $request->user_id;
+            $userIds = array_merge($userIds, User::whereIn('role_id', [2, 3])->pluck('id')->toArray());
         }
+        if (in_array('mastercoach', $request->user_id)) {
+            $userIds = array_merge($userIds, User::where('role_id', 3)->pluck('id')->toArray());
+        }
+        if (in_array('coach', $request->user_id)) {
+            $userIds = array_merge($userIds, User::where('role_id', 2)->pluck('id')->toArray());
+        }
+
+        $userIds = array_unique($userIds);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -62,6 +68,7 @@ class AnnouncementController extends Controller
         $announcement->users()->attach($userIds);
 
         return redirect()->route('announcement.index')->with('success', 'Pengumuman berhasil dibuat');
+
     }
 
 
