@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\coaches;
+use App\Models\Coaches;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class CoachController extends Controller
 {
@@ -83,7 +82,7 @@ class CoachController extends Controller
             'role_id' => $request->role_id
         ]);
 
-        $coach = coaches::where('user_id', $id)->first();
+        $coach = Coaches::where('user_id', $id)->first();
         $coach-> status = $request->status;
         $coach->save();
 

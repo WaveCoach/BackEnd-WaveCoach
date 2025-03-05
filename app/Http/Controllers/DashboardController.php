@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $coaches = User::whereIn('role_id', [2, 3])->count();
         $mastercoach = User::where('role_id', 3)->count();
         $student = User::where('role_id', 4)->count();
-        $schedule = schedule::count();
+        $schedule = Schedule::count();
 
         return view('pages.dashboard.index', compact('location', 'inventory', 'coaches', 'mastercoach', 'student', 'schedule'));
     }

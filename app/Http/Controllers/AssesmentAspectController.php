@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assesment_aspect;
-use App\Models\assesment_category;
+use App\Models\AssessmentAspect;
+use App\Models\AssessmentCategory;
 use Illuminate\Http\Request;
 
 class AssesmentAspectController extends Controller
@@ -11,7 +11,7 @@ class AssesmentAspectController extends Controller
 
     public function index()
     {
-        $categories = assesment_category::OrderBy('created_at', 'desc')->with('aspects')->get();
+        $categories = AssessmentCategory::OrderBy('created_at', 'desc')->with('aspects')->get();
         return view('pages.assesment_aspect.index', compact('categories'));
     }
 
@@ -19,7 +19,7 @@ class AssesmentAspectController extends Controller
 
     public function create()
     {
-        $categories = assesment_category::get();
+        $categories = AssessmentCategory::get();
         return view('pages.assesment_aspect.create', compact('categories'));
     }
 
@@ -35,7 +35,7 @@ class AssesmentAspectController extends Controller
         if (is_numeric($request->assesment_categories_id)) {
             $categoryId = $request->assesment_categories_id;
         } else {
-            $category = assesment_category::firstOrCreate(['name' => $request->assesment_categories_id]);
+            $category = AssessmentCategory::firstOrCreate(['name' => $request->assesment_categories_id]);
             $categoryId = $category->id;
         }
 
@@ -48,7 +48,7 @@ class AssesmentAspectController extends Controller
         foreach ($names as $item) {
             $name = is_array($item) && isset($item['value']) ? $item['value'] : $item;
 
-            assesment_aspect::create([
+            AssessmentAspect::create([
                 'assesment_categories_id' => $categoryId,
                 'name' => $name
             ]);
@@ -59,14 +59,14 @@ class AssesmentAspectController extends Controller
 
     public function show(string $id)
     {
-        // $aspect = assesment_aspect::findOrFail($id);
-        $category = assesment_category::with('aspects')->findOrFail($id);
+        // $aspect = AssessmentAspect::findOrFail($id);
+        $category = AssessmentCategory::with('aspects')->findOrFail($id);
         return view('pages.assesment_aspect.show', compact('category'));
     }
 
     public function edit(string $id)
     {
-        $aspect = assesment_aspect::findOrFail($id);
+        $aspect = AssessmentAspect::findOrFail($id);
         return view('pages.assesment_aspect.edit', compact('aspect'));
     }
 
@@ -77,7 +77,7 @@ class AssesmentAspectController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $aspect = assesment_aspect::findOrFail($id);
+        $aspect = AssessmentAspect::findOrFail($id);
 
         $aspect->update([
             'name' => $request->name,
@@ -90,7 +90,7 @@ class AssesmentAspectController extends Controller
 
     public function destroy(string $id)
     {
-        $aspect = assesment_aspect::find($id);
+        $aspect = AssessmentAspect::find($id);
 
         if (!$aspect) {
             return redirect()->route('assesment-aspect.index')->with('error', 'Aspek tidak ditemukan');
@@ -101,9 +101,9 @@ class AssesmentAspectController extends Controller
     }
 
     public function asessmentedit($id){
-        $categories = assesment_category::all(); // Ambil semua kategori untuk dropdown
-        $selectedCategory = assesment_category::find($id); // Kategori yang sedang diedit
-        $aspects = assesment_aspect::where('assesment_categories_id', $id)->get(); // Aspek yang terkait
+        $categories = AssessmentCategory::all(); // Ambil semua kategori untuk dropdown
+        $selectedCategory = AssessmentCategory::find($id); // Kategori yang sedang diedit
+        $aspects = AssessmentAspect::where('assesment_categories_id', $id)->get(); // Aspek yang terkait
 
         return view('pages.assesment_aspect.aspectedit', compact('categories', 'selectedCategory', 'aspects'));
     }
@@ -115,12 +115,12 @@ class AssesmentAspectController extends Controller
             'name.*' => 'required|string|max:255'
         ]);
 
-        $assesmentAspects = assesment_aspect::where('assesment_categories_id', $id)->get();
+        $assesmentAspects = AssessmentAspect::where('assesment_categories_id', $id)->get();
 
         if (is_numeric($request->assesment_categories_id)) {
             $categoryId = $request->assesment_categories_id;
         } else {
-            $category = assesment_category::firstOrCreate(['name' => $request->assesment_categories_id]);
+            $category = AssessmentCategory::firstOrCreate(['name' => $request->assesment_categories_id]);
             $categoryId = $category->id;
         }
 
@@ -139,12 +139,12 @@ class AssesmentAspectController extends Controller
 
         $existingNames = $assesmentAspects->pluck('name')->toArray();
         $namesToDelete = array_diff($existingNames, $names);
-        assesment_aspect::where('assesment_categories_id', $id)
+        AssessmentAspect::where('assesment_categories_id', $id)
             ->whereIn('name', $namesToDelete)
             ->delete();
 
         foreach ($names as $name) {
-            assesment_aspect::updateOrCreate(
+            AssessmentAspect::updateOrCreate(
                 ['assesment_categories_id' => $categoryId, 'name' => $name],
                 ['assesment_categories_id' => $categoryId, 'name' => $name]
             );

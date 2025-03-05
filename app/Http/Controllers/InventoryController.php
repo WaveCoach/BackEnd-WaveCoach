@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\coaches;
 use App\Models\inventory;
-use App\Models\inventory_management;
+use App\Models\InventoryManagement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -70,14 +70,14 @@ class InventoryController extends Controller
             $inventoryId = $newInventory->id;
         }
 
-        $inventoryManagement = inventory_management::where('inventory_id', $inventoryId)
+        $inventoryManagement = InventoryManagement::where('inventory_id', $inventoryId)
         ->where('mastercoach_id', $mastercoachId)
         ->first();
 
         if ($inventoryManagement) {
             $inventoryManagement->increment('qty', $request->qty);
         } else {
-            inventory_management::create([
+            InventoryManagement::create([
                 'inventory_id' => $inventoryId,
                 'qty' => $request->qty,
                 'mastercoach_id' => $mastercoachId,
@@ -92,7 +92,7 @@ class InventoryController extends Controller
     public function show(string $id)
     {
         $inventory_id = inventory::findOrFail($id);
-        $pemegang = inventory_management::with(['mastercoach', 'inventory'])->where('inventory_id', $id)->get();
+        $pemegang = InventoryManagement::with(['mastercoach', 'inventory'])->where('inventory_id', $id)->get();
         return view('pages.inventory.show', compact('pemegang'));
     }
 
@@ -139,20 +139,20 @@ class InventoryController extends Controller
     public function destroy($id)
     {
         $inventory = Inventory::findOrFail($id);
-        inventory_management::where('inventory_id', $id)->delete();
+        InventoryManagement::where('inventory_id', $id)->delete();
         $inventory->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
     }
 
     public function inventDestroy($id)
     {
-        $inventory_management = inventory_management::find($id);
+        $inventory_management = InventoryManagement::find($id);
         $inventory_management->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus');
     }
 
     public function inventedit($id){
-        $pemegang = inventory_management::with(['mastercoach', 'inventory'])->find($id);
+        $pemegang = InventoryManagement::with(['mastercoach', 'inventory'])->find($id);
         $inventories = inventory::all();
         $mastercoaches = User::where('role_id', 3)->get();
         return view('pages.inventory.detailEdit', compact('pemegang', 'inventories', 'mastercoaches'));
@@ -167,7 +167,7 @@ class InventoryController extends Controller
             'email' => 'nullable|email|max:255|unique:users,email,' . $id,
         ]);
 
-        $inventoryManagement = inventory_management::findOrFail($id);
+        $inventoryManagement = InventoryManagement::findOrFail($id);
 
         if (is_numeric($request->mastercoach_id)) {
             $mastercoachId = $request->mastercoach_id;

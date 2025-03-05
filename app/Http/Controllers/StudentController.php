@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\student;
+use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -94,7 +94,7 @@ class StudentController extends Controller
             'email' => $request->email,
         ]);
 
-        $student = student::where('user_id', $id)->first();
+        $student = Student::where('user_id', $id)->first();
         $student -> jenis_kelamin = $request->jenis_kelamin;
         $student->tanggal_lahir = $request->tanggal_lahir;
         $student->type = $request->type;

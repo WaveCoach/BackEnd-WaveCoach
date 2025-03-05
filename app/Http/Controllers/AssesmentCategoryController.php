@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assesment_aspect;
-use App\Models\assesment_category;
+use App\Models\AssessmentAspect;
+use App\Models\AssessmentCategory;
 use Illuminate\Http\Request;
 
 class AssesmentCategoryController extends Controller
@@ -11,7 +11,7 @@ class AssesmentCategoryController extends Controller
 
     public function index()
     {
-        $categories = assesment_category::all();
+        $categories = AssessmentCategory::all();
         return view('pages.assesment_category.index', compact('categories'));
     }
 
@@ -28,7 +28,7 @@ class AssesmentCategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        assesment_category::create([
+        AssessmentCategory::create([
             'name' => $request->name,
         ]);
 
@@ -38,14 +38,14 @@ class AssesmentCategoryController extends Controller
 
     public function show(string $id)
     {
-        $category = assesment_category::findOrFail($id);
+        $category = AssessmentCategory::findOrFail($id);
         return view('pages.assesment_category.show', compact('category'));
     }
 
 
     public function edit(string $id)
     {
-        $category = assesment_category::findOrFail($id);
+        $category = AssessmentCategory::findOrFail($id);
         return view('pages.assesment_category.edit', compact('category'));
     }
 
@@ -56,7 +56,7 @@ class AssesmentCategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $category = assesment_category::findOrFail($id);
+        $category = AssessmentCategory::findOrFail($id);
         $category->update([
             'name' => $request->name,
         ]);
@@ -67,9 +67,9 @@ class AssesmentCategoryController extends Controller
 
     public function destroy(string $id)
     {
-        $category = assesment_category::findOrFail($id);
+        $category = AssessmentCategory::findOrFail($id);
         $category->delete();
-        assesment_aspect::where('assesment_categories_id', $id)->delete();
+        AssessmentAspect::where('assesment_categories_id', $id)->delete();
 
         return redirect()->route('assesment-aspect.index')->with('success', 'Assessment category deleted successfully');
     }
