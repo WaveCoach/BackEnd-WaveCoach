@@ -64,7 +64,7 @@ class SchedulesSeeder extends Seeder
             $selectedStudents = collect($students)->shuffle()->take(rand(2, 5));
 
             foreach ($selectedStudents as $studentId) {
-                schedule_detail::create([
+                ScheduleDetail::create([
                     'schedule_id' => $createdSchedule->id,
                     'user_id' => $studentId,
                     'created_at' => now(),
