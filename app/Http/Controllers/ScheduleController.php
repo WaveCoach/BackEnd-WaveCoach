@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\coaches;
 use App\Models\location;
 use App\Models\schedule;
-use App\Models\schedule_detail;
+use App\Models\ScheduleDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -84,7 +84,7 @@ class ScheduleController extends Controller
         ]);
 
         foreach ($request->student_id as $studentId) {
-            schedule_detail::create([
+            ScheduleDetail::create([
                 'user_id' => $studentId,
                 'schedule_id' => $schedule->id,
             ]);
@@ -126,7 +126,7 @@ class ScheduleController extends Controller
             return response()->json(['error' => 'Coach tidak ditemukan'], 404);
         }
 
-        $students = schedule_detail::with('user')->where('schedule_id', $coach->id)->get();
+        $students = ScheduleDetail::with('user')->where('schedule_id', $coach->id)->get();
 
         return response()->json(['students' => $students]);
     }
@@ -188,13 +188,13 @@ class ScheduleController extends Controller
         $existingStudentIds = $schedule->students->pluck('id')->toArray();
         $newStudentIds = $request->student_id;
 
-        schedule_detail::where('schedule_id', $schedule->id)
+        ScheduleDetail::where('schedule_id', $schedule->id)
             ->whereNotIn('user_id', $newStudentIds)
             ->delete();
 
         foreach ($newStudentIds as $studentId) {
             if (!in_array($studentId, $existingStudentIds)) {
-                schedule_detail::create([
+                ScheduleDetail::create([
                     'user_id' => $studentId,
                     'schedule_id' => $schedule->id,
                 ]);
