@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\Location;
 use App\Models\Schedule;
-use App\Models\schedule_detail;
 use App\Models\ScheduleDetail;
 use App\Models\student;
 use App\Models\User;
@@ -53,7 +52,7 @@ class ScheduleImport implements ToModel, WithStartRow
             $nis = trim($nis);
             $user = student::where('nis', $nis)->first();
             if ($user) {
-                schedule_detail::create([
+                ScheduleDetail::create([
                     'schedule_id' => $schedule->id,
                     'user_id' => $user->user_id,
                 ]);
