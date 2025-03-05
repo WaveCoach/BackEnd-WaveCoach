@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class schedule_detail extends Model
+class ScheduleDetail extends Model
 {
     protected $table = 'schedule_details';
 

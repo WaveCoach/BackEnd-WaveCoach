@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class assesment_aspect extends Model
+class AssessmentAspect extends Model
 {
     protected $table = 'assesment_aspects';
 
@@ -17,5 +17,4 @@ class assesment_aspect extends Model
     {
         return $this->belongsTo(assesment_category::class, 'assesment_categories_id');
     }
-
 }

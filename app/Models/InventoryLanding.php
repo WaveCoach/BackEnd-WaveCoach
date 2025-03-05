@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class inventory_landing extends Model
+class InventoryLanding extends Model
 {
     protected $table = 'inventory_landings';
 

@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class inventory extends Model
+class Inventory extends Model
 {
-
     use HasFactory, SoftDeletes;
 
     protected $table = 'inventories';
@@ -22,6 +21,6 @@ class inventory extends Model
 
     public function inventoryManagements(): HasMany
     {
-        return $this->hasMany(inventory_management::class, 'inventory_id');
+        return $this->hasMany(InventoryManagement::class, 'inventory_id');
     }
 }

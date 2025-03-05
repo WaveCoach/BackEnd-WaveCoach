@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class coaches extends Model
+class Coaches extends Model
 {
     protected $table = "coaches";
     protected $fillable = ["user_id", "status"];

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class schedule extends Model
+class Schedule extends Model
 {
     protected $table = 'schedules';
 
@@ -32,7 +32,7 @@ class schedule extends Model
     {
         return $this->hasManyThrough(
             User::class,
-            schedule_detail::class,
+            ScheduleDetail::class,
             'schedule_id',
             'id',
             'id',
@@ -41,7 +41,7 @@ class schedule extends Model
     }
 
     public function scheduleDetail() {
-        return $this->hasMany(schedule_detail::class, 'schedule_id');
+        return $this->hasMany(ScheduleDetail::class, 'schedule_id');
     }
 
 }

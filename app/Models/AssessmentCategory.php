@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class assesment_category extends Model
+class AssessmentCategory extends Model
 {
     protected $table = 'assesment_categories';
 
@@ -14,10 +14,6 @@ class assesment_category extends Model
 
     public function aspects()
     {
-        return $this->hasMany(assesment_aspect::class, 'assesment_categories_id');
+        return $this->hasMany(AssessmentAspect::class, 'assesment_categories_id');
     }
-
-
-
-
 }

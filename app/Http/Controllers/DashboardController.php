@@ -12,8 +12,8 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
     public function index() {
-        $location = location::count();
-        $inventory = inventory::count();
+        $location = Location::count();
+        $inventory = Inventory::count();
         $coaches = User::whereIn('role_id', [2, 3])->count();
         $mastercoach = User::where('role_id', 3)->count();
         $student = User::where('role_id', 4)->count();
