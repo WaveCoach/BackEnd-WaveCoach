@@ -99,7 +99,7 @@ class InventoryController extends Controller
 
     public function edit(string $id)
     {
-        $inventory = inventory::findOrFail($id);
+        $inventory = Inventory::findOrFail($id);
         return view('pages.inventory.edit', compact('inventory'));
     }
 
@@ -109,7 +109,7 @@ class InventoryController extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'inventory_image' => 'required|file|mimes:jpg,jpeg,png|max:2048',
+            'inventory_image' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // dd('Validasi berhasil', $validated);
@@ -153,7 +153,7 @@ class InventoryController extends Controller
 
     public function inventedit($id){
         $pemegang = InventoryManagement::with(['mastercoach', 'inventory'])->find($id);
-        $inventories = inventory::all();
+        $inventories = Inventory::all();
         $mastercoaches = User::where('role_id', 3)->get();
         return view('pages.inventory.detailEdit', compact('pemegang', 'inventories', 'mastercoaches'));
     }
