@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\location;
+use App\Models\Location;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
 class LocationExport implements FromCollection
@@ -12,6 +12,6 @@ class LocationExport implements FromCollection
     */
     public function collection()
     {
-        return location::all();
+        return Location::all();
     }
 }

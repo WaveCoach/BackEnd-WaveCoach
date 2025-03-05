@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class location extends Model
+class Location extends Model
 {
     protected $table = 'locations';
 
@@ -22,7 +22,4 @@ class location extends Model
     {
         return $this->hasMany(Schedule::class, 'location_id');
     }
-
-
-
 }
