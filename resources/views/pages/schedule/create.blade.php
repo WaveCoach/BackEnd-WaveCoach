@@ -20,7 +20,7 @@
                     <!-- Pilihan Coach -->
                     <div class="col-6 mb-3">
                         <label for="mastercoach_id" class="form-label">coach</label>
-                        <select class="select2"  name="mastercoach_id" id="coachSelect">
+                        <select class="select2"  name="coach_id" id="coachSelect">
                             <option value="" disabled selected>Pilih coach</option>
                             @foreach($coach as $i)
                                 <option value="{{ $i->id }}">{{ $i->name }}</option>
