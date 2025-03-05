@@ -81,7 +81,6 @@
                         </div>
                     </div>
 
-
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update</button>
@@ -105,18 +104,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#category-select').on('change', function() {
-                $('#email-container').fadeIn();
+            $('#coach-select').select2({
+                width: '100%',
+                placeholder: "Pilih atau Tambah Opsi",
+                allowClear: true,
+                tags: true,
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true
+                    };
+                }
+            }).on('select2:select', function(e) {
+                var data = e.params.data;
+                if (data.newTag) {
+                    $('#email-container').show();
+                    $('#email-list').html('<input type="email" class="form-control email-input" name="email" placeholder="Masukkan Email Coach">');
+                } else {
+                    $('#email-container').hide();
+                    $('#email-list').empty();
+                }
             });
 
             $('#email-list').on('keypress', '.email-input', function(e) {
                 if (e.which === 13) {
-                    e.preventDefault();
-                    $(this).after('<input type="email" class="form-control email-input mt-2" name="email" placeholder="Masukkan Email Coach">');
+                    e.preventDefault(); // Mencegah input email bertambah terus saat tekan enter
                 }
             });
 
-            // Select2 untuk lokasi dengan opsi baru
             $('#location-select').select2({
                 width: '100%',
                 placeholder: "Pilih atau Tambah Opsi",
@@ -142,33 +162,7 @@
                 }
             });
 
-            $('#coach-select').select2({
-                width: '100%',
-                placeholder: "Pilih atau Tambah Opsi",
-                allowClear: true,
-                tags: true,
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-                    if (term === '') {
-                        return null;
-                    }
-                    return {
-                        id: term,
-                        text: term,
-                        newTag: true
-                    };
-                }
-            }).on('select2:select', function(e) {
-                var data = e.params.data;
-                if (data.newTag) {
-                    $('#email-container').show();
-                } else {
-                    $('#email-container').hide();
-                }
-            });
-
-            // Select2 untuk student dan coach
-            $('#student-select, #category-select').select2({
+            $('#student-select').select2({
                 width: '100%',
                 placeholder: "Pilih Opsi",
                 allowClear: true
