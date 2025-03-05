@@ -4,15 +4,7 @@
         <li class="nav-item">
           <a class="nav-link" id="sidebar-toggle" href="#"><i data-feather="arrow-left"></i></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Settings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Help</a>
-        </li>
+
       </ul>
       </div>
       <div class="logo">
