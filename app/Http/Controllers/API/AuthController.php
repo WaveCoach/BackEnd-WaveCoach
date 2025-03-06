@@ -34,7 +34,6 @@ class AuthController extends BaseController
 
     public function profile(Request $request)
     {
-        $user = $request->user()->load('coach');
-        return $this->SuccessResponse(['user' => $user], 'User profile retrieved successfully');
+        return $this->SuccessResponse(['user' => $request->user()], 'User profile retrieved successfully');
     }
 }

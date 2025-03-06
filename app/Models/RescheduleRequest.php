@@ -33,7 +33,7 @@ class RescheduleRequest extends Model
     {
         return $this->hasManyThrough(
             User::class,
-            ScheduleDetail::class,
+            schedule_detail::class,
             'schedule_id',
             'id',
             'id',
@@ -43,7 +43,7 @@ class RescheduleRequest extends Model
 
     public function scheduleDetails(): HasMany
     {
-        return $this->hasMany(ScheduleDetail::class, 'schedule_id');
+        return $this->hasMany(schedule_detail::class, 'schedule_id');
     }
 
     public function rescheduleRequests(): HasMany
