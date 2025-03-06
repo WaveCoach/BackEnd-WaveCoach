@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Schedule;
-use App\Models\schedule_detail;
 use App\Models\ScheduleDetail;
 use App\Models\User;
 use Carbon\Carbon;
