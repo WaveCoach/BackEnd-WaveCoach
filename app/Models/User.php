@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public function inventoryManagements(): HasMany
     {
-        return $this->hasMany(inventory_management::class, 'mastercoach_id');
+        return $this->hasMany(InventoryManagement::class, 'mastercoach_id');
     }
 
     public function coach(): HasOne
