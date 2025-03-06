@@ -13,5 +13,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/schedule', [HomeController::class, 'getSchedule']);
-
+    Route::get('/schedule/{id}', [HomeController::class, 'getDetailSchedule']);
 });

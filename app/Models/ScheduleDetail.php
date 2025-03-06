@@ -11,7 +11,7 @@ class ScheduleDetail extends Model
 
     protected $fillable = ['schedule_id', 'user_id'];
 
-    public function user(): BelongsTo
+    public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
