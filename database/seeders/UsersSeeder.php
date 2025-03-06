@@ -39,12 +39,14 @@ class UsersSeeder extends Seeder
             ['name' => 'Coach Ten', 'email' => 'coach10@gmail.com'],
         ];
 
-        foreach ($coaches as $coach) {
+        foreach ($coaches as $index => $coach) {
+            $roleId = in_array($index + 1, [3, 4, 5]) ? 3 : 2; // Coach 3, 4, 5 -> role_id = 3, lainnya tetap 2
+
             $userId = DB::table('users')->insertGetId([
                 'name' => $coach['name'],
                 'email' => $coach['email'],
                 'password' => Hash::make('password'),
-                'role_id' => 2,
+                'role_id' => $roleId,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
@@ -56,6 +58,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now()
             ]);
         }
+
 
 
         $students = [

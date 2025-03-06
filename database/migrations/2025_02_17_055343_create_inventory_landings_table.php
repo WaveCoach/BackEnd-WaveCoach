@@ -20,6 +20,10 @@ return new class extends Migration
             $table->enum('status', ['dipinjam', 'dikembalikan'])->default('dipinjam');
             $table->integer('qty_in')->nullable();
             $table->integer('qty_out')->nullable();
+            $table->date('tanggal_pinjam');
+            $table->date('tanggal_kembali');
+            $table->date('tanggal_dikembalikan')->nullable();
+            $table->string('alasan_pinjam')->nullable();
             $table->timestamps();
         });
     }

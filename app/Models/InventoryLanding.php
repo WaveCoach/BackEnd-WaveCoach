@@ -15,7 +15,11 @@ class InventoryLanding extends Model
         'coach_id',
         'status',
         'qty_in',
-        'qty_out'
+        'qty_out',
+        'tanggal_pinjam',
+        'tanggal_kembali',
+        'tanggal_dikembalikan',
+        'alasan_pinjam'
     ];
 
     public function inventory()

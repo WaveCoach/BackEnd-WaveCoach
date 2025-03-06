@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -22,30 +21,23 @@ class InventoryLandingSeeder extends Seeder
                 'qty_in' => null,
                 'qty_out' => 2,
                 'status' => 'dipinjam',
+                'tanggal_pinjam' => now(),
+                'tanggal_kembali' => now()->addDays(7), // Batas waktu pengembalian
+                'tanggal_dikembalikan' => null, // Belum dikembalikan
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'inventory_landings_id' => 1,
                 'inventory_id' => 1,
-                'inventory_landings_id' => 1,
                 'mastercoach_id' => 3,
                 'coach_id' => 6,
                 'qty_in' => 1,
                 'qty_out' => null,
                 'status' => 'dikembalikan',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'inventory_landings_id' => 1,
-                'inventory_id' => 1,
-                'inventory_landings_id' => 1,
-                'mastercoach_id' => 3,
-                'coach_id' => 6,
-                'qty_in' => 1,
-                'qty_out' => null,
-                'status' => 'dikembalikan',
+                'tanggal_pinjam' => now()->subDays(10),
+                'tanggal_kembali' => now()->subDays(3), // Seharusnya dikembalikan 3 hari lalu
+                'tanggal_dikembalikan' => now()->subDays(2), // Sebenarnya dikembalikan kemarin
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -57,6 +49,9 @@ class InventoryLandingSeeder extends Seeder
                 'qty_in' => null,
                 'qty_out' => 5,
                 'status' => 'dipinjam',
+                'tanggal_pinjam' => now(),
+                'tanggal_kembali' => now()->addDays(10), // Batas pengembalian
+                'tanggal_dikembalikan' => null, // Belum dikembalikan
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -68,6 +63,9 @@ class InventoryLandingSeeder extends Seeder
                 'qty_in' => 5,
                 'qty_out' => null,
                 'status' => 'dikembalikan',
+                'tanggal_pinjam' => now()->subDays(15),
+                'tanggal_kembali' => now()->subDays(5), // Seharusnya dikembalikan 5 hari lalu
+                'tanggal_dikembalikan' => now()->subDays(4), // Sebenarnya dikembalikan 4 hari lalu
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
