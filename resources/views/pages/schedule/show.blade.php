@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-6 mb-3">
                     <label class="form-label">Lokasi</label>
-                    <input type="text" class="form-control" disabled value="{{ $schedule->location->name }}">
+                    <input type="text" class="form-control" disabled value="{{ $schedule->location->name ?? '-' }}">
                 </div>
                 <div class="col-6 mb-3">
                     <label class="form-label">Pelatih</label>
