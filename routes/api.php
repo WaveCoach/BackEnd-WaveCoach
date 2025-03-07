@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('reschedule', [HomeController::class, 'requestReschedule']);
 
     Route::get('daftarinventory', [InventoryManagementController::class, 'index']);
-    Route::post('borrow-inventory', [InventoryController::class, 'borrowInventory']);
+    Route::post('request-loan', [InventoryController::class, 'requestLoan']);
+    Route::patch('update-loan-status/{requestId}', [InventoryController::class, 'updateLoanStatus']);
+    Route::post('return/{landingId}', [InventoryController::class, 'returnInventory']);
 
 });

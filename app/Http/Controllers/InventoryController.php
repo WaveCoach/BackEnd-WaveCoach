@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\coaches;
 use App\Models\inventory;
+use App\Models\InventoryLandings;
 use App\Models\InventoryManagement;
+use App\Models\InventoryReturns;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends Controller
@@ -203,6 +206,59 @@ class InventoryController extends Controller
         ]);
 
         return redirect()->route('inventory.index')->with('success', 'Inventory berhasil diperbarui!');
+    }
+
+    public function returnInventory(Request $request, $landingId)
+    {
+        $request->validate([
+            'qty_returned' => 'required|integer|min:1',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $landing = InventoryLandings::findOrFail($landingId);
+
+            if ($landing->status !== 'borrowed') {
+                return response()->json(['message' => 'Barang belum dipinjam atau sudah dikembalikan!'], 400);
+            }
+
+            if ($request->qty_returned > $landing->qty_out) {
+                return response()->json(['message' => 'Jumlah yang dikembalikan lebih dari yang dipinjam!'], 400);
+            }
+
+            $return = InventoryReturns::create([
+                'inventory_landing_id' => $landing->id,
+                'inventory_id'         => $landing->inventory_id,
+                'mastercoach_id'       => $landing->mastercoach_id,
+                'coach_id'             => $landing->coach_id,
+                'qty_returned'         => $request->qty_returned,
+                'returned_at'          => now(),
+            ]);
+
+            $inventory = InventoryManagement::where('inventory_id', $landing->inventory_id)
+                ->where('mastercoach_id', $landing->mastercoach_id)
+                ->first();
+
+            if ($inventory) {
+                $inventory->increment('qty', $request->qty_returned);
+            }
+
+            if ($request->qty_returned >= $landing->qty_out) {
+                $landing->update(['status' => 'returned']);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Barang berhasil dikembalikan!',
+                'return'  => $return,
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Gagal mengembalikan barang!', 'error' => $e->getMessage()], 400);
+        }
     }
 
 
