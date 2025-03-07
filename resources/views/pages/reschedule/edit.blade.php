@@ -28,7 +28,7 @@
                         <label class="form-label">Admin Message</label>
                         <input type="text" class="form-control email-input"
                                value="{{ $reschedules->response_message ?? '' }}"
-                               name="response_message" placeholder="Masukkan Email Coach">
+                               name="response_message" placeholder="ketik disini">
                     </div>
                 </div>
 
