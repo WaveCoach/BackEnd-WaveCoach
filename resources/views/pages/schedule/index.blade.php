@@ -10,32 +10,33 @@
             <i class="fas fa-plus"></i> Tambah Jadwal
         </a>
 
-        <a href="{{route('importSchedule.create')}}" class="btn btn-primary mb-4"><i class="fas fa-file"></i></a>
+        <a href="{{ route('importSchedule.create') }}" class="btn btn-primary mb-4">
+            <i class="fas fa-file"></i>
+        </a>
+
         <table id="zero-conf" class="display table" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
                     <th>Pelatih</th>
-                    <th>Location</th>
-                    <th>Time</th>
-                    {{-- <th>Peserta</th> --}}
+                    <th>Lokasi</th>
+                    <th>Waktu</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($schedules as $index => $schedule)
                     <tr>
-                        <td >{{ $index + 1 }}</td>
-                        <td >{{ $schedule->date }}
-
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $schedule->date }}</td>
+                        <td>{{ $schedule->coach->name ?? '-' }}</td>
+                        <td>{{ $schedule->location->name ?? '-' }}</td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} -
+                            {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
                         </td>
-                        <td >{{ $schedule->coach->name ?? '-' }}</td>
-                        <td >{{ $schedule->location->name }}</td>
-                        <td >
-                            {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
-                        </td>
-                        <td >
+                        <td>
                             <form action="{{ route('schedule.destroy', $schedule->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -51,21 +52,16 @@
                                 <i class="fas fa-edit"></i>
                             </a>
                         </td>
-
-
                     </tr>
                 @endforeach
             </tbody>
-
-
             <tfoot>
                 <tr>
                     <th>No</th>
                     <th>Tanggal</th>
                     <th>Pelatih</th>
-                    <th>Location</th>
-                    <th>Time</th>
-                    <th>Peserta</th>
+                    <th>Lokasi</th>
+                    <th>Waktu</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
@@ -75,27 +71,32 @@
 @endsection
 
 @push('custom-style')
-<link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-<link href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/plugins/font-awesome/css/all.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/plugins/perfectscroll/perfect-scrollbar.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/plugins/DataTables/datatables.min.css') }}" rel="stylesheet">
-
-<!-- Theme Styles -->
-<link href="{{ asset('assets/css/main.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/DataTables/datatables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/main.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
 @endpush
 
-@push('custom-script')
-<!-- Javascripts -->
+@push('custom-scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 
+    <script>
+        $(document).ready(function() {
+            console.log("Document Ready: Initializing DataTables");
 
-<script>
-    $(document).ready(function() {
-        if ($.fn.DataTable.isDataTable('#zero-conf')) {
-            $('#zero-conf').DataTable().clear().destroy();
-        }
-        $('#zero-conf').DataTable();
-    });
-</script>
+            $('#zero-conf').DataTable();
+
+            @if(session('success'))
+                setTimeout(() => {
+                    console.log("Session Success: Showing SweetAlert");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: "{{ session('success') }}",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }, 500);
+            @endif
+        });
+    </script>
 @endpush

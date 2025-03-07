@@ -87,6 +87,17 @@
         });
     @endif
 
+    // Notifikasi error jika gagal menghapus
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: "{{ session('error') }}",
+            showConfirmButton: true
+        });
+    @endif
+
+
     // Konfirmasi sebelum menghapus data
     $(document).on('submit', 'form.delete-form', function(e) {
         e.preventDefault();

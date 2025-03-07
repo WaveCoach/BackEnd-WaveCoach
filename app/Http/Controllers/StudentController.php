@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ScheduleDetail;
 use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
@@ -110,10 +111,16 @@ class StudentController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return redirect()->route('student.index')->with('error', 'User not found');
+            return redirect()->route('student.index')->with('error', 'User tidak ditemukan');
+        }
+
+        $existsInSchedule = ScheduleDetail::where('user_id', $id)->exists();
+
+        if ($existsInSchedule) {
+            return redirect()->route('student.index')->with('error', 'User tidak dapat dihapus karena masih terhubung dengan Schedule!');
         }
 
         $user->delete();
-        return redirect()->route('student.index')->with('success', 'User deleted successfully');
+        return redirect()->route('student.index')->with('success', 'User berhasil dihapus');
     }
 }
