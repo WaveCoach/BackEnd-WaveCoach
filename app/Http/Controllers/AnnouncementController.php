@@ -79,7 +79,7 @@ class AnnouncementController extends Controller
 
     public function edit(Announcement $announcement)
     {
-        $users = User::all();
+        $users = User::whereIn('role_id', [2, 3])->get();
         $announcementUser = AnnouncementUser::where('announcement_id', $announcement->id)->get();
         return view('pages.announcement.edit', compact('announcement', 'users'));
     }
