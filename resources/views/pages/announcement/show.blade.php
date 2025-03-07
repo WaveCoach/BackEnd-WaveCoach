@@ -15,7 +15,7 @@
             <img src="{{ asset('storage/' . $announcement->image) }}" alt="Image" width="150">
         @endif
 
-        <p><strong>Siswa yang Terhubung:</strong></p>
+        <p><strong>Ditunjukkan Kepada :</strong></p>
         <ul>
             @foreach ($announcement->users as $user)
                 <li>{{ $user->name }}</li>
