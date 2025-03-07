@@ -13,7 +13,7 @@
       <div class="" id="headerNav">
         <ul class="navbar-nav">
           <li class="nav-item dropdown">
-            <a class="nav-link search-dropdown" href="#" id="searchDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i data-feather="search"></i></a>
+            {{-- <a class="nav-link search-dropdown" href="#" id="searchDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i data-feather="search"></i></a> --}}
             <div class="dropdown-menu dropdown-menu-end dropdown-lg search-drop-menu" aria-labelledby="searchDropDown">
               <form>
                 <input class="form-control" type="text" placeholder="Type something.." aria-label="Search">
