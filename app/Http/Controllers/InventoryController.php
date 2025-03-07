@@ -142,10 +142,16 @@ class InventoryController extends Controller
     public function destroy($id)
     {
         $inventory = Inventory::findOrFail($id);
-        InventoryManagement::where('inventory_id', $id)->delete();
+
+        if (InventoryManagement::where('inventory_id', $id)->exists()) {
+            return redirect()->back()->with('error', 'Data tidak bisa dihapus karena masih memiliki data peminjam!');
+        }
+
         $inventory->delete();
+
         return redirect()->back()->with('success', 'Data berhasil dihapus!');
     }
+
 
     public function inventDestroy($id)
     {

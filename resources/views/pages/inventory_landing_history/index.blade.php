@@ -27,17 +27,17 @@
                         <td>{{$inventory->coach->name}}</td>
                         <td>{{$inventory->mastercoach->name}}</td>
                         <td>
-                            @if ($inventory->status == 'dipinjam')
+                            @if ($inventory->status == 'borrowed')
                                 <span class="badge bg-warning">Dipinjam</span>
-                            @elseif ($inventory->status == 'dikembalikan')
+                            @elseif ($inventory->status == 'returned')
                                 <span class="badge bg-success">Dikembalikan</span>
                             @endif
                         </td>
                         <td>
-                            @if ($inventory->status == 'dipinjam')
+                            @if ($inventory->status == 'borrowed')
                                  {{ $inventory->qty_out }}
-                            @elseif ($inventory->status == 'dikembalikan')
-                                {{ $inventory->qty_in }}
+                            @elseif ($inventory->status == 'returned')
+                                {{ $inventory->qty_out - $inventory->qty_remaining }}
                             @endif
                         </td>
                     </tr>
