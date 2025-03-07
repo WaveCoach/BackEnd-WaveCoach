@@ -6,7 +6,15 @@
         <h5 class="card-title">Tambah admin Baru</h5>
         <p class="card-description">Halaman ini memungkinkan admin untuk menambahkan admin baru</p>
         {{-- {{ dd(route('admin.store')) }} --}}
-
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <form method="POST" action="{{ route('admin.store') }}" id="jobPositionForm">
             @csrf
             <div class="row mb-4">
