@@ -29,9 +29,9 @@
                     <td>{{ \Carbon\Carbon::parse($item->published_at)->format('Y-m-d') }}</td>
                     {{-- <td>{{ $item->users->pluck('name')->join(', ') }}</td> --}}
                     <td class="d-flex">
-                        {{-- <a href="{{ route('announcement.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                        <a href="{{ route('announcement.edit', $item->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
-                        </a> --}}
+                        </a>
                         <a href="{{ route('announcement.show', $item->id) }}" class="btn btn-info btn-sm mx-2">
                             <i class="fas fa-eye"></i>
                         </a>

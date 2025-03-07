@@ -23,11 +23,7 @@
         </ul>
 
         <a href="{{ route('announcement.edit', $announcement->id) }}" class="btn btn-warning">Edit</a>
-        <form action="{{ route('announcement.destroy', $announcement->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
+
     </div>
 </div>
 @endsection
