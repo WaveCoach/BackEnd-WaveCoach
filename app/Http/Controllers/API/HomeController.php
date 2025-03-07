@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\RescheduleRequest;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use Carbon\Carbon;
@@ -61,6 +62,26 @@ class HomeController extends BaseController
         $student = ScheduleDetail::with('student')->where('schedule_id', $id)->get();
 
         return $this->SuccessResponse(['schedule' => $schedule, 'student' => $student], 'Schedule retrieved successfully');
+    }
+
+
+    public function requestReschedule(Request $request)
+    {
+        $validated = $request->validate([
+            'schedule_id' => 'required|exists:schedules,id',
+            'reason' => 'required|string',
+        ]);
+
+        $rescheduleRequest = RescheduleRequest::create([
+            'schedule_id' => $validated['schedule_id'],
+            'coach_id' => Auth::user()->id,
+            'reason' => $validated['reason'],
+            'status' => $validated['status'] ?? 'pending',
+            'admin_id' => null,
+            'response_message' => null,
+        ]);
+
+        return $this->SuccessResponse($rescheduleRequest, 'Permintaan reschedule berhasil dikirim', 201);
     }
 
 

@@ -11,14 +11,17 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [AuthController::class, 'profile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('profile', [AuthController::class, 'profile']);
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::post('absensi-coach', [AbsensiController::class, 'coachAbsent']);
+    Route::post('absensi-student', [AbsensiController::class, 'studentAbsent']);
+
+    Route::get('schedule', [HomeController::class, 'getSchedule']);
+    Route::get('schedule/{id}', [HomeController::class, 'getDetailSchedule']);
+    Route::post('reschedule', [HomeController::class, 'requestReschedule']);
 
     Route::get('daftarinventory', [InventoryManagementController::class, 'index']);
-    Route::post('absensi', [AbsensiController::class, 'store']);
-    Route::get('/schedule', [HomeController::class, 'getSchedule']);
-    Route::get('/schedule/{id}', [HomeController::class, 'getDetailSchedule']);
-
-    Route::post('/borrow-inventory', [InventoryController::class, 'borrowInventory']);
+    Route::post('borrow-inventory', [InventoryController::class, 'borrowInventory']);
 
 });

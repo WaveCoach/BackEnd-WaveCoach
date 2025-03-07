@@ -2,42 +2,54 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController;
 use App\Models\CoachAttendance;
+use App\Models\StudentAttendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class AbsensiController extends Controller
+class AbsensiController extends BaseController
 {
-    public function store(Request $request)
+    public function coachAbsent(Request $request)
     {
-        // Validasi request
         $validated = $request->validate([
-            'attendance_status' => 'required|string|in:Hadir,Tidak Hadir',
+            'attendance_status' => 'required|string',
             'remarks' => 'nullable|string',
-            'proof' => 'nullable|image|max:2048' // file gambar max 2MB
+            'proof' => 'nullable|image|max:2048',
+            'schedule_id' => 'required'
         ]);
 
-        // Jika ada gambar yang diunggah
         if ($request->hasFile('proof')) {
-            // Simpan file ke storage
             $path = $request->file('proof')->store('public/proofs');
             $validated['proof'] = Storage::url($path);
         }
 
-        // Simpan data absensi ke database
         $attendance = CoachAttendance::create([
-            'coach_id' => Auth::user()->id, // Asumsi coach login
+            'coach_id' => Auth::user()->id,
             'attendance_status' => $validated['attendance_status'],
             'remarks' => $validated['remarks'] ?? null,
             'proof' => $validated['proof'] ?? null,
+            'schedule_id' => $request->schedule_id
         ]);
 
-        // Kembalikan response sukses
-        return response()->json([
-            'message' => 'Absensi berhasil disimpan',
-            'attendance' => $attendance
-        ], 201);
+        return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
+    }
+
+    public function studentAbsent(Request $request)
+    {
+        $validated = $request->validate([
+            'attendance_status' => 'required|string|in:Hadir,Tidak Hadir',
+            'student_id' => 'required',
+            'schedule_id' => 'required'
+        ]);
+
+        $attendance = StudentAttendance::create([
+            'student_id' => $request->student_id,
+            'attendance_status' => $validated['attendance_status'],
+            'schedule_id' => $request->schedule_id
+        ]);
+
+        return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
     }
 }

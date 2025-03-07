@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('schedule_id')->constrained('schedules')->onDelete('cascade');
             $table->foreignId('coach_id')->constrained('users')->onDelete('cascade');
-            $table->date('requested_date');
-            $table->time('requested_time');
+            // $table->date('requested_date');
+            // $table->time('requested_time');
             $table->text('reason');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->foreignId('admin_id')->nullable()->constrained('users')->onDelete('set null');

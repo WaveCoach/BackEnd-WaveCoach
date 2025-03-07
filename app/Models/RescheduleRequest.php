@@ -12,7 +12,7 @@ class RescheduleRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['schedule_id', 'coach_id', 'requested_date', 'requested_time', 'reason', 'status', 'admin_id', 'response_message'];
+    protected $fillable = ['schedule_id', 'coach_id', 'reason', 'status', 'admin_id', 'response_message'];
 
     public function schedule()
     {

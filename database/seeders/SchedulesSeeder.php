@@ -29,7 +29,7 @@ class SchedulesSeeder extends Seeder
 
         $schedules = [
             [
-                'coach_id' => $coaches[array_rand($coaches)],
+                'coach_id' => 2,
                 'location_id' => 1,
                 'date' => Carbon::parse('2024-03-10'),
                 'start_time' => '10:00:00',
@@ -38,7 +38,7 @@ class SchedulesSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'coach_id' => $coaches[array_rand($coaches)],
+                'coach_id' => 2,
                 'location_id' => 2,
                 'date' => Carbon::parse('2024-03-12'),
                 'start_time' => '14:30:00',

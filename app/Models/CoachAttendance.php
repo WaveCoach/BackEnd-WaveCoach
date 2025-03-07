@@ -10,6 +10,7 @@ class CoachAttendance extends Model
     use HasFactory;
 
     protected $fillable = [
+        'schedule_id',
         'coach_id',
         'attendance_status',
         'remarks', //alasan
