@@ -32,6 +32,7 @@ class AssesmentAspectController extends Controller
             'name.*' => 'string|max:255'
         ]);
 
+        // Cek apakah ID kategori valid atau harus dibuat baru
         if (is_numeric($request->assesment_categories_id)) {
             $categoryId = $request->assesment_categories_id;
         } else {
@@ -45,17 +46,29 @@ class AssesmentAspectController extends Controller
             return back()->withErrors(['name' => 'Format data tidak valid.']);
         }
 
+        $existingAspects = AssessmentAspect::where('assesment_categories_id', $categoryId)
+            ->pluck('name')
+            ->toArray();
+
+        $newAspects = [];
         foreach ($names as $item) {
             $name = is_array($item) && isset($item['value']) ? $item['value'] : $item;
 
-            AssessmentAspect::create([
+            if (in_array($name, $existingAspects)) {
+                return back()->withErrors(['name' => "Aspek '{$name}' sudah ada dalam kategori ini."]);
+            }
+
+            $newAspects[] = [
                 'assesment_categories_id' => $categoryId,
                 'name' => $name
-            ]);
+            ];
         }
+
+        AssessmentAspect::insert($newAspects);
 
         return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil ditambahkan');
     }
+
 
     public function show(string $id)
     {
@@ -78,6 +91,15 @@ class AssesmentAspectController extends Controller
         ]);
 
         $aspect = AssessmentAspect::findOrFail($id);
+
+        $existingAspect = AssessmentAspect::where('assesment_categories_id', $aspect->assesment_categories_id)
+            ->where('name', $request->name)
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($existingAspect) {
+            return back()->withErrors(['name' => 'Aspek dengan nama ini sudah ada dalam kategori yang sama.']);
+        }
 
         $aspect->update([
             'name' => $request->name,
