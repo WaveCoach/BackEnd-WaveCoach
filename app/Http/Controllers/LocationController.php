@@ -101,10 +101,27 @@ class LocationController extends Controller
             'file' => 'required|mimes:xlsx,csv',
         ]);
 
-        Excel::import(new LocationImport, $request->file('file'));
+        try {
+            Excel::import(new LocationImport, $request->file('file'));
+            return redirect()->route('location.index')->with('success', 'Data berhasil diperbarui!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
 
-        return redirect()->route('location.index')->with('success', 'Data berhasil diperbarui!');
+            foreach ($failures as $failure) {
+                $errors[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+
+            return redirect()->route('location.index')
+                ->withErrors($errors)  // Menyimpan error agar bisa diakses dengan `$errors->any()`
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->route('location.index')
+                ->withErrors(['Format file tidak valid atau terjadi kesalahan!'])  // Format yang benar
+                ->withInput();
+        }
     }
+
 
     public function importCreate(){
         return view('pages.location.import-location');
