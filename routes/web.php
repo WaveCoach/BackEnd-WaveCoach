@@ -5,6 +5,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssesmentAspectController;
 use App\Http\Controllers\AssesmentCategoryController;
 use App\Http\Controllers\AssesmentReportController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\DashboardController;
@@ -29,6 +30,10 @@ Route::get('/login-user', [AuthController::class, 'login'])->name('login');
 Route::post('/login-check', [AuthController::class, 'loginCheck'])->name('login.loginCheck');
 
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::get('/student-attendance', [AttendanceController::class, 'studentAttendance'])->name('attendance.student');
+    Route::get('/student-attendance/{id}', [AttendanceController::class, 'studentAttendanceShow'])->name('attendance.student.show');
+    Route::get('/coach-attendance', [AttendanceController::class, 'coachAttendance'])->name('attendance.coach');
+    Route::get('/coach-attendance/{id}', [AttendanceController::class, 'coachAttendanceShow'])->name('attendance.coach.show');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::resource('location', LocationController::class);
     Route::post('/import-location', [LocationController::class, 'import'])->name('import.location');

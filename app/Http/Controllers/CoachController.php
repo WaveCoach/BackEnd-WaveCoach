@@ -31,8 +31,6 @@ class CoachController extends Controller
             'role_id' => 'required|integer'
         ]);
 
-        // '12345678 = Str::random(8);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

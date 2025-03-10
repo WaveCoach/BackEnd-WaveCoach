@@ -8,6 +8,12 @@
     <li class="sidebar-title">
       Apps
     </li>
+    <li class="{{ request()->is('student-attendance') ? 'active-page' : '' }}">
+        <a href="{{route('attendance.student')}}"><i data-feather="map-pin"></i>Student Attendance</a>
+    </li>
+    <li class="{{ request()->is('coach-attendance') ? 'active-page' : '' }}">
+        <a href="{{route('attendance.coach')}}"><i data-feather="archive"></i>Coach Attendance</a>
+    </li>
     <li class="{{ request()->is('location') ? 'active-page' : '' }}">
         <a href="{{route('location.index')}}"><i data-feather="map-pin"></i>Location</a>
     </li>
