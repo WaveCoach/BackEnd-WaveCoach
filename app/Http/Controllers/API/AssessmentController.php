@@ -88,36 +88,36 @@ class AssessmentController extends BaseController
         $query = Assessment::with(['student', 'assessor', 'package', 'category'])
         ->where('assessor_id', Auth::user()->id);
 
-    $search = $request->input('search'); // Input pencarian tunggal
+        $search = $request->input('search'); // Input pencarian tunggal
 
-    if ($search) {
-        $query->whereHas('package', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })->orWhereHas('student', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })->orWhereHas('category', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        });
-    }
-
-    $assessments = $query->get();
-
-    return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
-    }
-
-    public function getDetailHistory($id)
-    {
-        $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
-
-        if (!$assessment) {
-            return $this->ErrorResponse('Data tidak ditemukan', 404);
+        if ($search) {
+            $query->whereHas('package', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('student', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('category', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
         }
 
-        $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
+        $assessments = $query->get();
 
-        return $this->SuccessResponse([
-            'assessment' => $assessment,
-            'details' => $assessmentDetails
-        ], 'Data detail history berhasil diambil');
+        return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
+        }
+
+        public function getDetailHistory($id)
+        {
+            $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
+
+            if (!$assessment) {
+                return $this->ErrorResponse('Data tidak ditemukan', 404);
+            }
+
+            $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
+
+            return $this->SuccessResponse([
+                'assessment' => $assessment,
+                'details' => $assessmentDetails
+            ], 'Data detail history berhasil diambil');
     }
 }

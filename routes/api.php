@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\InventoryController;
 use App\Http\Controllers\API\InventoryManagementController;
 use App\Models\Assessment;
+use App\Models\Inventory;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,6 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('request-loan', [InventoryController::class, 'requestLoan']);
     Route::patch('update-loan-status/{requestId}', [InventoryController::class, 'updateLoanStatus']);
     Route::post('return/{landingId}', [InventoryController::class, 'returnInventory']);
+    Route::patch('update-return-status/{returnId}', [InventoryController::class, 'updateReturnStatus']);
+
 
     Route::get('assesment-category', [AssessmentController::class, 'getCategory']);
     Route::get('assessment-aspect/{id}', [AssessmentController::class, 'getAspect']);

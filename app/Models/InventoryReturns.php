@@ -13,6 +13,8 @@ class InventoryReturns extends Model
         'coach_id',
         'qty_returned',
         'returned_at',
+        'status',
+        'rejection_reason'
     ];
 
     public function landing()

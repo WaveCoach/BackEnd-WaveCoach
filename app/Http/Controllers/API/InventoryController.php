@@ -107,7 +107,7 @@ class InventoryController extends BaseController
                         'request_id'   => $loanRequest->id,
                         'inventory_id' => $item->inventory_id,
                         'coach_id'     => $loanRequest->coach_id,
-                        'mastercoach_id' => Auth::user()->id,
+                        'mastercoach_id' => $loanRequest->mastercoach_id,
                         'tanggal_pinjam' => $loanRequest->tanggal_pinjam,
                         'tanggal_kembali' => $loanRequest->tanggal_kembali,
                         'qty_out' => $item->qty_requested,
@@ -194,6 +194,8 @@ class InventoryController extends BaseController
 
         try {
             $returnRequest = InventoryReturns::findOrFail($returnId);
+
+            // dd($returnRequest);
 
             if ($returnRequest->status !== 'pending') {
                 return response()->json(['message' => 'Pengembalian sudah diproses sebelumnya!'], 400);
