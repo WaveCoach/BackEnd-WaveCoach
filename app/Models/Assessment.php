@@ -9,6 +9,6 @@ class Assessment extends Model
     protected $table = 'assessments';
 
     protected $fillable = [
-        'user_id',  'assessor_id', 'assesment_date'
+        'student_id',  'assessor_id', 'assessment_date', 'package_id', 'assessement_category_id'
     ];
 }

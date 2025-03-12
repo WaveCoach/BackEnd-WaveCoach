@@ -21,15 +21,12 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,            // Seeder untuk pengguna (admin, assessor, user)
             LocationsSeeder::class,        // Seeder untuk tabel locations
             SchedulesSeeder::class,        // Seeder untuk tabel schedules
-            AssesmentAspectsSeeder::class,
-            AssesmentCategoriesSeeder::class,
             RescheduleRequestSeeder::class,
             NotificationSeeder::class,
-            // InventoryLandingSeeder::class,
             InventoryManagementSeeder::class,
-            InventorySeeder::class
-            // AssessmentsSeeder::class
-
+            InventorySeeder::class,
+            AssessmentAspectSeeder::class,
+            AssessmentCategoriesSeeder::class
         ]);
 
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AbsensiController;
+use App\Http\Controllers\API\AssessmentController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('update-loan-status/{requestId}', [InventoryController::class, 'updateLoanStatus']);
     Route::post('return/{landingId}', [InventoryController::class, 'returnInventory']);
 
+    Route::get('assesment-category', [AssessmentController::class, 'getCategory']);
+    Route::get('assessment-aspect/{id}', [AssessmentController::class, 'getAspect']);
+    Route::post('post-assessment', [AssessmentController::class, 'postAssessment']);
 });

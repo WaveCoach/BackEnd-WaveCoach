@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assesment_aspects', function (Blueprint $table) {
+        Schema::create('assessment_categories', function (Blueprint $table) {
             $table->id();
-            $table->integer('assesment_categories_id');
             $table->string('name');
             $table->timestamps();
         });
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assesment_aspects');
+        Schema::dropIfExists('assessment_categories');
     }
 };

@@ -6,14 +6,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class AssesmentCategoriesSeeder extends Seeder
+class AssessmentCategoriesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('assesment_categories')->insert([
+        DB::table('assessment_categories')->insert([
             ['id' => 1, 'name' => 'gaya kupu kupu', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 2, 'name' => 'gaya bebas', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['id' => 3, 'name' => 'gaya dada', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assesment_categories', function (Blueprint $table) {
+        Schema::create('assessment_aspects', function (Blueprint $table) {
             $table->id();
+            $table->integer('assesment_categories_id');
             $table->string('name');
+            $table->longText('desc')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assesment_categories');
+        Schema::dropIfExists('assessment_aspects');
     }
 };

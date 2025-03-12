@@ -3,17 +3,18 @@
 namespace Database\Seeders;
 
 use Carbon\Carbon;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class AssesmentAspectsSeeder extends Seeder
+class AssessmentAspectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('assesment_aspects')->insert([
+        DB::table('assessment_aspects')->insert([
             ['assesment_categories_id' => 1, 'name' => 'Kecepatan', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['assesment_categories_id' => 1, 'name' => 'Ketahanan', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
             ['assesment_categories_id' => 2, 'name' => 'Teknik', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],

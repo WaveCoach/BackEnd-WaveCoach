@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('assessments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
+            $table->bigInteger('student_id');
             $table->bigInteger('assessor_id');
-            $table->date('assesment_date')->nullable();
+            $table->bigInteger('package_id')->nullable();
+            $table->bigInteger('assessement_category_id')->nullable();
+            $table->date('assessment_date')->nullable();
             $table->timestamps();
         });
     }

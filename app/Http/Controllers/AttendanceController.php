@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\CoachAttendance;
 use App\Models\StudentAttendance;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
@@ -47,7 +46,6 @@ class AttendanceController extends Controller
 
     public function coachAttendanceShow($id)
     {
-        // dd($id);
         $schedule = CoachAttendance::with(['coach', 'schedule'])->where('coach_id', $id)->get();
         return view('pages.coachAttendance.show', compact('schedule'));
     }
