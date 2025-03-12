@@ -15,7 +15,6 @@ class Inventory extends Model
 
     protected $fillable = [
         'name',
-        'total_quantity',
         'inventory_image'
     ];
 

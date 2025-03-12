@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Inventory;
 use App\Models\InventoryLandings;
 use App\Models\InventoryManagement;
 use App\Models\InventoryRequestItem;
@@ -279,6 +280,32 @@ class InventoryController extends BaseController
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
+
+    public function getList()
+    {
+        $inventory = Inventory::leftJoin('inventory_landings', function ($join) {
+            $join->on('inventories.id', '=', 'inventory_landings.inventory_id')
+                ->where('inventory_landings.status', 'borrowed')
+                ->where('inventory_landings.coach_id', Auth::id());
+        })
+        ->select(
+            'inventories.id as inventory_id',
+            'inventories.name',
+            DB::raw('COALESCE(SUM(inventory_landings.qty_out), 0) as total_qty_borrowed')
+        )
+        ->groupBy('inventories.id', 'inventories.name')
+        ->get();
+
+        return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
+
+    }
+
+    public function getListDetail($inventoryId)
+    {
+        $inventory_landing = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])->where('coach_id', Auth::user()->id)->where('inventory_id', $inventoryId)->where('status', 'borrowed')->get();
+        return $this->SuccessResponse($inventory_landing, 'Data peminjaman berhasil diambil.');
+    }
+
 
 
 
