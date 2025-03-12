@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use App\Models\InventoryLanding;
 use App\Models\InventoryLandings;
 use App\Models\InventoryManagement;
 use App\Models\InventoryRequestItem;
@@ -57,20 +55,18 @@ class InventoryController extends BaseController
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Permintaan peminjaman berhasil diajukan!',
-                'request' => $loanRequest->load('items'),
-            ], 201);
+            return $this->SuccessResponse(
+                $loanRequest->load('items'),
+                'Permintaan peminjaman berhasil diajukan!',
+                201
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Gagal mengajukan peminjaman!',
-                'error'   => $e->getMessage(),
-            ], 400);
+            return $this->ErrorResponse('Gagal mengajukan peminjaman!', 400, ['error' => $e->getMessage()]);
         }
     }
+
 
     public function updateLoanStatus(Request $request, $requestId)
     {
@@ -85,9 +81,7 @@ class InventoryController extends BaseController
             $loanRequest = InventoryRequests::with('items')->findOrFail($requestId);
 
             if (!in_array($loanRequest->status, ['pending', 'approved'])) {
-                return response()->json([
-                    'message' => 'Permintaan peminjaman sudah diproses sebelumnya!',
-                ], 400);
+                return $this->ErrorResponse('Permintaan peminjaman sudah diproses sebelumnya!', 400);
             }
 
             if ($request->status === 'approved') {
@@ -111,7 +105,7 @@ class InventoryController extends BaseController
                         'tanggal_pinjam' => $loanRequest->tanggal_pinjam,
                         'tanggal_kembali' => $loanRequest->tanggal_kembali,
                         'qty_out' => $item->qty_requested,
-                        'status'       => 'borrowed',
+                        'status'  => 'borrowed',
                     ]);
                 }
 
@@ -125,20 +119,14 @@ class InventoryController extends BaseController
 
             DB::commit();
 
-            return response()->json([
-                'message' => "Permintaan peminjaman telah {$request->status}!",
-                'request' => $loanRequest,
-            ], 200);
+            return $this->SuccessResponse($loanRequest, "Permintaan peminjaman telah {$request->status}!", 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Gagal memperbarui status peminjaman!',
-                'error'   => $e->getMessage(),
-            ], 400);
+            return $this->ErrorResponse('Gagal memperbarui status peminjaman!', 400, ['error' => $e->getMessage()]);
         }
     }
+
 
     public function returnInventory(Request $request, $landingId)
     {
@@ -152,11 +140,11 @@ class InventoryController extends BaseController
             $landing = InventoryLandings::findOrFail($landingId);
 
             if ($landing->status !== 'borrowed') {
-                return response()->json(['message' => 'Barang belum dipinjam atau sudah dikembalikan!'], 400);
+                return $this->ErrorResponse('Barang belum dipinjam atau sudah dikembalikan!', 400);
             }
 
             if ($request->qty_returned > $landing->qty_out) {
-                return response()->json(['message' => 'Jumlah yang dikembalikan lebih dari yang dipinjam!'], 400);
+                return $this->ErrorResponse('Jumlah yang dikembalikan lebih dari yang dipinjam!', 400);
             }
 
             // Buat pengajuan pengembalian dengan status 'pending'
@@ -172,16 +160,14 @@ class InventoryController extends BaseController
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Pengajuan pengembalian berhasil dibuat, menunggu persetujuan mastercoach.',
-                'return'  => $return,
-            ], 200);
+            return $this->SuccessResponse($return, 'Pengajuan pengembalian berhasil dibuat, menunggu persetujuan mastercoach.', 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Gagal mengajukan pengembalian!', 'error' => $e->getMessage()], 400);
+            return $this->ErrorResponse('Gagal mengajukan pengembalian!', 400, ['error' => $e->getMessage()]);
         }
     }
+
 
     public function updateReturnStatus(Request $request, $returnId)
     {
@@ -195,10 +181,8 @@ class InventoryController extends BaseController
         try {
             $returnRequest = InventoryReturns::findOrFail($returnId);
 
-            // dd($returnRequest);
-
             if ($returnRequest->status !== 'pending') {
-                return response()->json(['message' => 'Pengembalian sudah diproses sebelumnya!'], 400);
+                return $this->ErrorResponse('Pengembalian sudah diproses sebelumnya!', 400);
             }
 
             if ($request->status === 'approved') {
@@ -217,7 +201,7 @@ class InventoryController extends BaseController
 
                 $inventory = InventoryManagement::where('mastercoach_id', $returnRequest->mastercoach_id)
                     ->where('inventory_id', $returnRequest->inventory_id)
-                    ->firstOrFail(); // Lebih baik menggunakan firstOrFail()
+                    ->firstOrFail();
 
                 $inventory->increment('qty', $returnRequest->qty_returned);
 
@@ -232,19 +216,70 @@ class InventoryController extends BaseController
 
             DB::commit();
 
-            return response()->json([
-                'message' => "Pengembalian telah {$request->status}!",
-                'return' => $returnRequest,
-            ], 200);
+            return $this->SuccessResponse($returnRequest, "Pengembalian telah {$request->status}!", 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Gagal memperbarui status pengembalian!',
-                'error' => $e->getMessage()
-            ], 400);
+            return $this->ErrorResponse('Gagal memperbarui status pengembalian!', 400, ['error' => $e->getMessage()]);
         }
     }
+
+
+    public function getHistory(Request $request)
+    {
+        $userId = Auth::id();
+        $filter = $request->input('filter');
+
+        $requestsQuery = DB::table('inventory_requests')
+            ->select(
+                'inventory_requests.id',
+                'inventory_requests.mastercoach_id',
+                'inventory_requests.coach_id',
+                'inventory_requests.status',
+                'inventory_requests.created_at',
+                'inventory_requests.updated_at',
+                DB::raw("'request' AS type"),
+                'users.name AS coach_name'
+            )
+            ->leftJoin('users', 'users.id', '=', 'inventory_requests.coach_id');
+
+        $returnsQuery = DB::table('inventory_returns')
+            ->select(
+                'inventory_returns.id',
+                'inventory_returns.mastercoach_id',
+                'inventory_returns.coach_id',
+                'inventory_returns.status',
+                'inventory_returns.created_at',
+                'inventory_returns.updated_at',
+                DB::raw("'return' AS type"),
+                'users.name AS coach_name'
+            )
+            ->leftJoin('users', 'users.id', '=', 'inventory_returns.coach_id');
+
+        // Filter berdasarkan tipe history
+        if ($filter === 'masuk') {
+            $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
+            $returnsQuery->where('inventory_returns.mastercoach_id', $userId);
+        } elseif ($filter === 'keluar') {
+            $requestsQuery->where('inventory_requests.coach_id', $userId);
+            $returnsQuery->where('inventory_returns.coach_id', $userId);
+        } else {
+            $requestsQuery->where(function ($query) use ($userId) {
+                $query->where('inventory_requests.mastercoach_id', $userId)
+                    ->orWhere('inventory_requests.coach_id', $userId);
+            });
+
+            $returnsQuery->where(function ($query) use ($userId) {
+                $query->where('inventory_returns.mastercoach_id', $userId)
+                    ->orWhere('inventory_returns.coach_id', $userId);
+            });
+        }
+
+        $inventory = $requestsQuery->union($returnsQuery)->get();
+
+        return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
+    }
+
 
 
 }
