@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
             InventoryManagementSeeder::class,
             InventorySeeder::class,
             AssessmentAspectSeeder::class,
-            AssessmentCategoriesSeeder::class
+            AssessmentCategoriesSeeder::class,
+            PackageSeeder::class
         ]);
 
     }

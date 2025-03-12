@@ -33,7 +33,7 @@ class AssessmentController extends BaseController
             'assessor_id' => 'required|exists:users,id',
             'assessment_date' => 'required|date',
             'package_id' => 'required',
-            'assessement_category_id' => 'required',
+            'assessment_category_id' => 'required',
             'details' => 'required|array',
             'details.*.aspect_id' => 'required|exists:assessment_aspects,id',
             'details.*.score' => 'required|numeric|min:0|max:100',
@@ -47,7 +47,7 @@ class AssessmentController extends BaseController
             'assessor_id' => $validated['assessor_id'],
             'assessment_date' => $validated['assessment_date'],
             'package_id' => $validated['package_id'],
-            'assessement_category_id' => $validated['assessement_category_id'],
+            'assessment_category_id' => $validated['assessment_category_id'],
         ])->exists();
 
         if ($existingAssessment) {
@@ -61,7 +61,7 @@ class AssessmentController extends BaseController
                 'assessor_id' => $validated['assessor_id'],
                 'assessment_date' => $validated['assessment_date'],
                 'package_id' => $validated['package_id'],
-                'assessement_category_id' => $validated['assessement_category_id'],
+                'assessment_category_id' => $validated['assessment_category_id'],
             ]);
 
             $details = array_map(fn($detail) => [
@@ -84,8 +84,40 @@ class AssessmentController extends BaseController
         }
     }
 
-    public function getHistoryAssessment(){
-        $assessment = Assessment::where('assessor_id', Auth::user()->id)->get();
+    public function getHistory(Request $request){
+        $query = Assessment::with(['student', 'assessor', 'package', 'category'])
+        ->where('assessor_id', Auth::user()->id);
 
+    $search = $request->input('search'); // Input pencarian tunggal
+
+    if ($search) {
+        $query->whereHas('package', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })->orWhereHas('student', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })->orWhereHas('category', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        });
+    }
+
+    $assessments = $query->get();
+
+    return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
+    }
+
+    public function getDetailHistory($id)
+    {
+        $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
+
+        if (!$assessment) {
+            return $this->ErrorResponse('Data tidak ditemukan', 404);
+        }
+
+        $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
+
+        return $this->SuccessResponse([
+            'assessment' => $assessment,
+            'details' => $assessmentDetails
+        ], 'Data detail history berhasil diambil');
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\API\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\InventoryController;
 use App\Http\Controllers\API\InventoryManagementController;
+use App\Models\Assessment;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -30,4 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('assesment-category', [AssessmentController::class, 'getCategory']);
     Route::get('assessment-aspect/{id}', [AssessmentController::class, 'getAspect']);
     Route::post('post-assessment', [AssessmentController::class, 'postAssessment']);
+    Route::get('history-assessment', [AssessmentController::class, 'getHistory']);
+    Route::get('history-assessment/{id}', [AssessmentController::class, 'getDetailHistory']);
 });

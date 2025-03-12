@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assessments', function (Blueprint $table) {
+        Schema::create('packages', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('student_id');
-            $table->bigInteger('assessor_id');
-            $table->bigInteger('package_id')->nullable();
-            $table->bigInteger('assessment_category_id')->nullable();
-            $table->date('assessment_date')->nullable();
+            $table->text('name');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assesments');
+        Schema::dropIfExists('packages');
     }
 };

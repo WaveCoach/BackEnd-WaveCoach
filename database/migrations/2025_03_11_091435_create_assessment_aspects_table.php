@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assessment_aspects', function (Blueprint $table) {
             $table->id();
-            $table->integer('assesment_categories_id');
+            $table->integer('assessment_categories_id');
             $table->string('name');
             $table->longText('desc')->nullable();
             $table->timestamps();
