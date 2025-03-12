@@ -159,6 +159,7 @@ class InventoryController extends BaseController
                 return response()->json(['message' => 'Jumlah yang dikembalikan lebih dari yang dipinjam!'], 400);
             }
 
+            // Buat pengajuan pengembalian dengan status 'pending'
             $return = InventoryReturns::create([
                 'inventory_landing_id' => $landing->id,
                 'inventory_id'         => $landing->inventory_id,
@@ -166,31 +167,82 @@ class InventoryController extends BaseController
                 'coach_id'             => $landing->coach_id,
                 'qty_returned'         => $request->qty_returned,
                 'returned_at'          => now(),
+                'status'               => 'pending', // Pengembalian menunggu persetujuan
             ]);
-
-            $inventory = InventoryManagement::where('inventory_id', $landing->inventory_id)
-                ->where('mastercoach_id', $landing->mastercoach_id)
-                ->first();
-
-            if ($inventory) {
-                $inventory->increment('qty', $request->qty_returned);
-            }
-
-            if ($request->qty_returned >= $landing->qty_out) {
-                $landing->update(['status' => 'returned']);
-            }
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Barang berhasil dikembalikan!',
+                'message' => 'Pengajuan pengembalian berhasil dibuat, menunggu persetujuan mastercoach.',
                 'return'  => $return,
             ], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Gagal mengembalikan barang!', 'error' => $e->getMessage()], 400);
+            return response()->json(['message' => 'Gagal mengajukan pengembalian!', 'error' => $e->getMessage()], 400);
         }
     }
+
+    public function updateReturnStatus(Request $request, $returnId)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,rejected',
+            'rejection_reason' => 'nullable|string|required_if:status,rejected',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $returnRequest = InventoryReturns::findOrFail($returnId);
+
+            if ($returnRequest->status !== 'pending') {
+                return response()->json(['message' => 'Pengembalian sudah diproses sebelumnya!'], 400);
+            }
+
+            if ($request->status === 'approved') {
+                $landing = InventoryLandings::findOrFail($returnRequest->inventory_landing_id);
+
+                if ($landing->qty_out < $returnRequest->qty_returned) {
+                    throw new \Exception("Jumlah qty_out tidak mencukupi untuk dikembalikan.");
+                }
+
+                $landing->decrement('qty_out', $returnRequest->qty_returned);
+
+                // Jika semua barang telah dikembalikan, ubah statusnya
+                if ($landing->qty_out == 0) {
+                    $landing->update(['status' => 'returned']);
+                }
+
+                $inventory = InventoryManagement::where('mastercoach_id', $returnRequest->mastercoach_id)
+                    ->where('inventory_id', $returnRequest->inventory_id)
+                    ->firstOrFail(); // Lebih baik menggunakan firstOrFail()
+
+                $inventory->increment('qty', $returnRequest->qty_returned);
+
+                $returnRequest->updateOrFail(['status' => 'approved']);
+
+            } elseif ($request->status === 'rejected') {
+                $returnRequest->updateOrFail([
+                    'status' => 'rejected',
+                    'rejection_reason' => $request->rejection_reason,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => "Pengembalian telah {$request->status}!",
+                'return' => $returnRequest,
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal memperbarui status pengembalian!',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
 
 }

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('coach_id')->constrained('users')->onDelete('cascade');
             $table->integer('qty_returned');
             $table->dateTime('returned_at')->useCurrent();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });
     }
