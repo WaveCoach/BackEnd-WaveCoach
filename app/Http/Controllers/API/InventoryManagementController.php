@@ -6,16 +6,34 @@ use App\Http\Controllers\Controller;
 use App\Models\InventoryManagement;
 use Illuminate\Http\Request;
 
-class InventoryManagementController extends Controller
+class InventoryManagementController extends BaseController
 {
     public function index()
     {
-        // Mengambil data semua inventory management bersama dengan relasi mastercoach dan inventory
-        $inventoryManagement = InventoryManagement::with(['mastercoach', 'inventory'])
-            ->get()
-            ->groupBy('mastercoach_id'); // Mengelompokkan berdasarkan mastercoach_id
+        $inventoryByCoach = InventoryManagement::with(['mastercoach', 'inventory'])
+    ->select('mastercoach_id', 'inventory_id')
+    ->selectRaw('SUM(qty) as total_qty')
+    ->groupBy('mastercoach_id', 'inventory_id')
+    ->get()
+    ->groupBy('mastercoach_id');
 
-        // Mengembalikan response dalam format JSON
-        return response()->json($inventoryManagement);
+$response = $inventoryByCoach->map(function ($inventories, $mastercoachId) {
+    $mastercoach = $inventories->first()->mastercoach;
+
+    return [
+        'mastercoach_id' => $mastercoachId,
+        'mastercoach_name' => $mastercoach->name ?? 'Unknown',
+        'items' => $inventories->map(function ($item) {
+            return [
+                'inventory_id' => $item->inventory_id,
+                'inventory_name' => $item->inventory->name ?? 'Unknown',
+                'total_qty' => $item->total_qty
+            ];
+        })->values()
+    ];
+})->values();
+
+return $this->SuccessResponse($response, 'Data inventory berhasil diambil');
+
     }
 }
