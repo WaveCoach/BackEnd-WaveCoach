@@ -9,12 +9,12 @@ class AssessmentAspect extends Model
     protected $table = 'assessment_aspects';
 
     protected $fillable = [
-        'assesment_categories_id',
+        'assessment_categories_id',
         'name',
     ];
 
     public function category()
     {
-        return $this->belongsTo(AssessmentCategory::class, 'assesment_categories_id');
+        return $this->belongsTo(AssessmentCategory::class, 'assessment_categories_id');
     }
 }
