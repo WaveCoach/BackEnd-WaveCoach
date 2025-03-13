@@ -69,7 +69,7 @@ class AssesmentCategoryController extends Controller
     {
         $category = AssessmentCategory::findOrFail($id);
         $category->delete();
-        AssessmentAspect::where('assesment_categories_id', $id)->delete();
+        AssessmentAspect::where('assessment_categories_id', $id)->delete();
 
         return redirect()->route('assesment-aspect.index')->with('success', 'Assessment category deleted successfully');
     }
