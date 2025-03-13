@@ -14,6 +14,6 @@ class AssessmentCategory extends Model
 
     public function aspects()
     {
-        return $this->hasMany(AssessmentAspect::class, 'assesment_categories_id');
+        return $this->hasMany(AssessmentAspect::class, 'assessment_categories_id');
     }
 }
