@@ -125,7 +125,7 @@ class AssesmentAspectController extends Controller
     public function asessmentedit($id){
         $categories = AssessmentCategory::all(); // Ambil semua kategori untuk dropdown
         $selectedCategory = AssessmentCategory::find($id); // Kategori yang sedang diedit
-        $aspects = AssessmentAspect::where('assesment_categories_id', $id)->get(); // Aspek yang terkait
+        $aspects = AssessmentAspect::where('assessment_categories_id', $id)->get(); // Aspek yang terkait
 
         return view('pages.assesment_aspect.aspectedit', compact('categories', 'selectedCategory', 'aspects'));
     }
