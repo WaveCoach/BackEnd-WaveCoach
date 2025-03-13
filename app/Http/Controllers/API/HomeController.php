@@ -14,55 +14,82 @@ class HomeController extends BaseController
     public function getSchedule(Request $request) {
         $schedule = Schedule::with(['coach', 'location'])->where('coach_id', Auth::user()->id);
 
-        if ($request->day) {
-            $daysMap = [
-                'minggu' => 1,
-                'senin' => 2,
-                'selasa' => 3,
-                'rabu' => 4,
-                'kamis' => 5,
-                'jumat' => 6,
-                'sabtu' => 7
+        if ($request->has('history')) {
+            $schedule->where('date', '<', Carbon::today()->toDateString()); // Pakai Carbon langsung
+        }
+        elseif ($request->month) {
+            $monthsMap = [
+                'januari' => 1, 'februari' => 2, 'maret' => 3, 'april' => 4,
+                'mei' => 5, 'juni' => 6, 'juli' => 7, 'agustus' => 8,
+                'september' => 9, 'oktober' => 10, 'november' => 11, 'desember' => 12
             ];
 
-            $dayNumber = $daysMap[strtolower($request->day)] ?? null;
+            $monthNumber = is_numeric($request->month) ? (int) $request->month : ($monthsMap[strtolower($request->month)] ?? null);
 
-            if ($dayNumber) {
-                $schedule->whereRaw('DAYOFWEEK(date) = ?', [$dayNumber]);
+            if ($monthNumber) {
+                $schedule->whereRaw('MONTH(date) = ?', [$monthNumber]);
             }
         }
+        else {
+            $schedule->where('date', '>=', Carbon::today()->toDateString()); // Pakai Carbon juga untuk konsistensi
+        }
 
-        // Ambil data dan format tanggal
         $schedule = $schedule->get()->map(function ($item) {
             $date = Carbon::parse($item->date)->locale('id');
 
-            $item->formatted_date = $date->translatedFormat('l, d F Y'); // Senin, 20 Agustus 2025
-            $item->day_number = $date->translatedFormat('d'); // 20
-            $item->month = $date->translatedFormat('F'); // Agustus
-            $item->year = $date->translatedFormat('Y'); // 2025
-
-            return $item;
+            return [
+                'id' => $item->id,
+                'date' => $item->date,
+                'start_time' => $item->start_time,
+                'end_time' => $item->end_time,
+                'status' => $item->status,
+                'formatted_date' => $date->translatedFormat('l, d F Y'),
+                'coach_name' => $item->coach->name,
+                'location_name' => $item->location->name,
+                'location_address' => $item->location->address,
+                'location_maps' => $item->location->maps,
+            ];
         });
 
         return $this->SuccessResponse(['schedule' => $schedule], 'Schedule retrieved successfully');
     }
 
-
-    public function getDetailSchedule($id){
+    public function getDetailSchedule($id)
+    {
         $schedule = Schedule::with(['coach', 'location'])->find($id);
 
-        if ($schedule) {
-            $date = Carbon::parse($schedule->date)->locale('id');
-            $schedule->date = $date->translatedFormat('l, d F Y');
-            $schedule->day_number = $date->translatedFormat('d'); // 20
-            $schedule->month = $date->translatedFormat('F'); // Agustus
-            $schedule->year = $date->translatedFormat('Y'); // 2025
+        if (!$schedule) {
+            return $this->ErrorResponse('Schedule not found', 404);
         }
 
-        $student = ScheduleDetail::with('student')->where('schedule_id', $id)->get();
+        $date = Carbon::parse($schedule->date)->locale('id');
 
-        return $this->SuccessResponse(['schedule' => $schedule, 'student' => $student], 'Schedule retrieved successfully');
+        $formattedSchedule = [
+            'id' => $schedule->id,
+            'date' => $schedule->date,
+            'start_time' => $schedule->start_time,
+            'end_time' => $schedule->end_time,
+            'status' => $schedule->status,
+            'formatted_date' => $date->translatedFormat('l, d F Y'),
+            'coach_name' => $schedule->coach->name,
+            'location_name' => $schedule->location->name,
+            'location_address' => $schedule->location->address,
+            'location_maps' => $schedule->location->maps,
+        ];
+
+        $students = ScheduleDetail::with('student')
+        ->where('schedule_id', $id)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->student->id,
+                'name' => $item->student->name,
+            ];
+        });
+
+        return $this->SuccessResponse(['schedule' => $formattedSchedule, 'students' => $students], 'Schedule retrieved successfully');
     }
+
 
 
     public function requestReschedule(Request $request)
@@ -71,6 +98,15 @@ class HomeController extends BaseController
             'schedule_id' => 'required|exists:schedules,id',
             'reason' => 'required|string',
         ]);
+
+        $existingRequest = RescheduleRequest::where('schedule_id', $validated['schedule_id'])
+            ->where('coach_id', Auth::user()->id)
+            ->where('status', 'pending') // Hanya cek jika masih pending
+            ->exists();
+
+        if ($existingRequest) {
+            return $this->ErrorResponse('Permintaan reschedule sudah ada dan masih dalam proses.', 400);
+        }
 
         $rescheduleRequest = RescheduleRequest::create([
             'schedule_id' => $validated['schedule_id'],
@@ -83,6 +119,7 @@ class HomeController extends BaseController
 
         return $this->SuccessResponse($rescheduleRequest, 'Permintaan reschedule berhasil dikirim', 201);
     }
+
 
 
 

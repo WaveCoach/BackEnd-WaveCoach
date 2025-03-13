@@ -38,8 +38,8 @@ class InventoryRequests extends Model
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
-    protected static function booted()
-    {
-        static::observe(InventoryRequestObserver::class);
-    }
+    // protected static function booted()
+    // {
+    //     static::observe(InventoryRequestObserver::class);
+    // }
 }
