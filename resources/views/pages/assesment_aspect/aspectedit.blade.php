@@ -21,8 +21,8 @@
             <div class="row mb-4">
                 <!-- Select2 untuk Kategori -->
                 <div class="col-6 mb-3">
-                    <label for="assesment_categories_id" class="form-label">Kategori</label>
-                    <select class="select2" required name="assesment_categories_id" id="myselect">
+                    <label for="assessment_categories_id" class="form-label">Kategori</label>
+                    <select class="select2" required name="assessment_categories_id" id="myselect">
                         <option value="" disabled>Pilih Kategori</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" {{ $selectedCategory->id == $category->id ? 'selected' : '' }}>
