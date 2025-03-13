@@ -27,16 +27,16 @@ class AssesmentAspectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'assesment_categories_id' => 'required',
+            'assessment_categories_id' => 'required',
             'name' => 'required|array|min:1',
             'name.*' => 'string|max:255'
         ]);
 
         // Cek apakah ID kategori valid atau harus dibuat baru
-        if (is_numeric($request->assesment_categories_id)) {
-            $categoryId = $request->assesment_categories_id;
+        if (is_numeric($request->assessment_categories_id)) {
+            $categoryId = $request->assessment_categories_id;
         } else {
-            $category = AssessmentCategory::firstOrCreate(['name' => $request->assesment_categories_id]);
+            $category = AssessmentCategory::firstOrCreate(['name' => $request->assessment_categories_id]);
             $categoryId = $category->id;
         }
 
@@ -46,7 +46,7 @@ class AssesmentAspectController extends Controller
             return back()->withErrors(['name' => 'Format data tidak valid.']);
         }
 
-        $existingAspects = AssessmentAspect::where('assesment_categories_id', $categoryId)
+        $existingAspects = AssessmentAspect::where('assessment_categories_id', $categoryId)
             ->pluck('name')
             ->toArray();
 
@@ -59,7 +59,7 @@ class AssesmentAspectController extends Controller
             }
 
             $newAspects[] = [
-                'assesment_categories_id' => $categoryId,
+                'assessment_categories_id' => $categoryId,
                 'name' => $name
             ];
         }
@@ -92,7 +92,7 @@ class AssesmentAspectController extends Controller
 
         $aspect = AssessmentAspect::findOrFail($id);
 
-        $existingAspect = AssessmentAspect::where('assesment_categories_id', $aspect->assesment_categories_id)
+        $existingAspect = AssessmentAspect::where('assessment_categories_id', $aspect->assessment_categories_id)
             ->where('name', $request->name)
             ->where('id', '!=', $id)
             ->exists();
@@ -132,17 +132,17 @@ class AssesmentAspectController extends Controller
 
     public function asessmentupdate(Request $request, $id){
         $request->validate([
-            'assesment_categories_id' => 'required',
+            'assessment_categories_id' => 'required',
             'name' => 'required|array|min:1',
             'name.*' => 'required|string|max:255'
         ]);
 
-        $assesmentAspects = AssessmentAspect::where('assesment_categories_id', $id)->get();
+        $assesmentAspects = AssessmentAspect::where('assessment_categories_id', $id)->get();
 
-        if (is_numeric($request->assesment_categories_id)) {
-            $categoryId = $request->assesment_categories_id;
+        if (is_numeric($request->assessment_categories_id)) {
+            $categoryId = $request->assessment_categories_id;
         } else {
-            $category = AssessmentCategory::firstOrCreate(['name' => $request->assesment_categories_id]);
+            $category = AssessmentCategory::firstOrCreate(['name' => $request->assessment_categories_id]);
             $categoryId = $category->id;
         }
 
@@ -161,14 +161,14 @@ class AssesmentAspectController extends Controller
 
         $existingNames = $assesmentAspects->pluck('name')->toArray();
         $namesToDelete = array_diff($existingNames, $names);
-        AssessmentAspect::where('assesment_categories_id', $id)
+        AssessmentAspect::where('assessment_categories_id', $id)
             ->whereIn('name', $namesToDelete)
             ->delete();
 
         foreach ($names as $name) {
             AssessmentAspect::updateOrCreate(
-                ['assesment_categories_id' => $categoryId, 'name' => $name],
-                ['assesment_categories_id' => $categoryId, 'name' => $name]
+                ['assessment_categories_id' => $categoryId, 'name' => $name],
+                ['assessment_categories_id' => $categoryId, 'name' => $name]
             );
         }
 
