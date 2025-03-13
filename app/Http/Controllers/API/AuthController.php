@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends BaseController
 {
@@ -36,4 +42,75 @@ class AuthController extends BaseController
     {
         return $this->SuccessResponse(['user' => $request->user()], 'User profile retrieved successfully');
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return $this->ErrorResponse('Email not found.', 404);
+        }
+
+        $plainToken = Str::random(60);
+        $hashedToken = Hash::make($plainToken);
+
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $user->email],
+            [
+                'email' => $user->email,
+                'token' => $hashedToken,
+                'created_at' => Carbon::now()
+            ]
+        );
+
+        return $this->SuccessResponse([
+            'token' => $plainToken,
+            'email' => $user->email
+        ], 'Reset token generated!');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $tokenData = DB::table('password_resets')->where('email', $request->email)->first();
+
+        if (!$tokenData || !Hash::check($request->token, $tokenData->token)) {
+            return $this->ErrorResponse('Invalid token.', 400);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->update(['password' => Hash::make($request->password)]);
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
+
+        return $this->SuccessResponse([], 'Password has been reset successfully.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = $request->user(); // User yang sedang login
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->ErrorResponse('Password lama salah.', 400, ['current_password' => ['Password lama salah.']]);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return $this->SuccessResponse([], 'Password berhasil diubah.');
+    }
+
 }
