@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Observers\InventoryRequestObserver;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class InventoryRequests extends Model
 {
@@ -29,5 +31,15 @@ class InventoryRequests extends Model
     public function items()
     {
         return $this->hasMany(InventoryRequestItem::class, 'request_id');
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+    protected static function booted()
+    {
+        static::observe(InventoryRequestObserver::class);
     }
 }

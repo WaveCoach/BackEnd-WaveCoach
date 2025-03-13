@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Observers\InventoryReturnObserver;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class InventoryReturns extends Model
 {
@@ -35,5 +37,15 @@ class InventoryReturns extends Model
     public function coach()
     {
         return $this->belongsTo(User::class, 'coach_id');
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+    protected static function booted()
+    {
+        static::observe(InventoryReturnObserver::class);
     }
 }
