@@ -20,7 +20,7 @@
                 <!-- Select2 untuk Kategori -->
                 <div class="col-6 mb-3">
                     <label for="assesment_categories_id" class="form-label">Kategori</label>
-                    <select class="select2"  name="assesment_categories_id" id="myselect">
+                    <select class="select2"  name="assessment_categories_id" id="myselect">
                         <option value="" disabled selected>Pilih Kategori</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
