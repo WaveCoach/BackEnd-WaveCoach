@@ -28,7 +28,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'profile_images'
+        'profile_images',
+        'no_telf'
     ];
 
     /**

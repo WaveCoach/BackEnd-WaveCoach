@@ -30,6 +30,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>No Telf</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -39,6 +40,7 @@
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->name}}</td>
                     <td>{{$item->email}}</td>
+                    <td>{{ $item->no_telf ?? '-' }}</td>
                     <td class="d-flex">
                         <form action="{{route('admin.destroy', $item->id)}}" method="POST" class="delete-form" style="display:inline;">
                             @method('delete')
@@ -56,6 +58,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>No Telf</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>

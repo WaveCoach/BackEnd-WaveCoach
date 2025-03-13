@@ -27,6 +27,10 @@
                     <input type="text" class="form-control" required name="email" id="email">
                 </div>
                 <div class="col-4 mb-3">
+                    <label for="no_telf" class="form-label">No Telf</label>
+                    <input type="text" class="form-control" required name="no_telf" id="no_telf">
+                </div>
+                <div class="col-4 mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" required name="password" id="password">
                 </div>

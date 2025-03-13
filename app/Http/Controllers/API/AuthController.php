@@ -113,4 +113,12 @@ class AuthController extends BaseController
         return $this->SuccessResponse([], 'Password berhasil diubah.');
     }
 
+    public function listAdmin()
+    {
+        $admin = User::where('role_id', 1)->get();
+
+        return $this->SuccessResponse($admin, 'Daftar admin berhasil diambil.');
+    }
+
+
 }

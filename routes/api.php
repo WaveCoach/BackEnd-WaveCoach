@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
-
+    Route::get('list-admin', [AuthController::class, 'listAdmin']);
 
     Route::post('absensi-coach', [AbsensiController::class, 'coachAbsent']);
     Route::post('absensi-student', [AbsensiController::class, 'studentAbsent']);

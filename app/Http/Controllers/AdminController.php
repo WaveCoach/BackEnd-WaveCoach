@@ -28,6 +28,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'no_telf' => 'required|string|max:15',
         ]);
 
         // dd($request->all());
@@ -35,6 +36,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'no_telf' => $request->no_telf,
             'role_id' => 1,
         ]);
         return redirect()->route('admin.index')->with('success', 'admin berhasil ditambahkan dengan password: ');
