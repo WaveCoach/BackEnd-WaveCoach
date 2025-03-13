@@ -26,6 +26,22 @@ class InventoryController extends BaseController
             'items.*.qty_requested' => 'required|integer|min:1',
         ]);
 
+        // Ambil daftar inventory_id yang diajukan
+        $requestedInventoryIds = collect($request->items)->pluck('inventory_id');
+
+        // Cek apakah ada peminjaman di hari yang sama dengan barang yang sama
+        $existingLoan = InventoryRequestItem::whereHas('request', function ($query) use ($request) {
+                $query->where('mastercoach_id', $request->mastercoach_id)
+                      ->where('coach_id', Auth::user()->id)
+                      ->whereDate('tanggal_pinjam', $request->tanggal_pinjam);
+            })
+            ->whereIn('inventory_id', $requestedInventoryIds)
+            ->exists();
+
+        if ($existingLoan) {
+            return $this->ErrorResponse('Beberapa barang sudah dipinjam pada hari ini.', 400);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -42,6 +58,10 @@ class InventoryController extends BaseController
                 $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
                     ->where('inventory_id', $item['inventory_id'])
                     ->first();
+
+                if (!$inventory) {
+                    throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
+                }
 
                 if (!$inventory || $inventory->qty < $item['qty_requested']) {
                     throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
@@ -67,6 +87,7 @@ class InventoryController extends BaseController
             return $this->ErrorResponse('Gagal mengajukan peminjaman!', 400, ['error' => $e->getMessage()]);
         }
     }
+
 
 
     public function updateLoanStatus(Request $request, $requestId)
@@ -148,6 +169,15 @@ class InventoryController extends BaseController
                 return $this->ErrorResponse('Jumlah yang dikembalikan lebih dari yang dipinjam!', 400);
             }
 
+            // Cek apakah sudah ada pengajuan pengembalian yang masih pending untuk barang ini
+            $existingReturn = InventoryReturns::where('inventory_landing_id', $landing->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            if ($existingReturn) {
+                return $this->ErrorResponse('Pengajuan pengembalian untuk barang ini sudah dibuat dan masih menunggu persetujuan!', 400);
+            }
+
             // Buat pengajuan pengembalian dengan status 'pending'
             $return = InventoryReturns::create([
                 'inventory_landing_id' => $landing->id,
@@ -168,6 +198,7 @@ class InventoryController extends BaseController
             return $this->ErrorResponse('Gagal mengajukan pengembalian!', 400, ['error' => $e->getMessage()]);
         }
     }
+
 
 
     public function updateReturnStatus(Request $request, $returnId)
