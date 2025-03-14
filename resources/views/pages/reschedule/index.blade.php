@@ -11,8 +11,8 @@
                 <tr>
                     <th>No</th>
                     <th>coach</th>
-                    <th>date</th>
-                    <th>time start</th>
+                    {{-- <th>date</th>
+                    <th>time start</th> --}}
                     <th>reason</th>
                     <th>Admin Reason</th>
                     <th>Status</th>
@@ -24,8 +24,8 @@
                     <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{$item->coach->name}}</td>
-                        <td>{{$item->requested_date}}</td>
-                        <td>{{$item->requested_time}}</td>
+                        {{-- <td>{{$item->requested_date}}</td>
+                        <td>{{$item->requested_time}}</td> --}}
                         <td>{{$item->reason}}</td>
                         <td>{{$item->response_message}}</td>
                         <td>
@@ -60,8 +60,8 @@
                 <tr>
                     <th>No</th>
                     <th>coach</th>
-                    <th>date</th>
-                    <th>time start</th>
+                    {{-- <th>date</th>
+                    <th>time start</th> --}}
                     <th>reason</th>
                     <th>Admin Reason</th>
                     <th>Status</th>
