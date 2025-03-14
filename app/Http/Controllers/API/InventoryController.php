@@ -384,25 +384,38 @@ class InventoryController extends BaseController
 
     public function getListDetail($inventoryId)
     {
-        $inventory_landing = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
-            ->where('coach_id', Auth::user()->id)
-            ->where('inventory_id', $inventoryId)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item -> id,
-                    'tanggal_pinjam' => $item->tanggal_pinjam,
-                    'tanggal_kembali' => $item->tanggal_kembali,
-                    'status' => $item->status,
-                    'qty_out' => $item->qty_out,
-                    'coach_name' => $item->coach->name ?? null,
-                    'mastercoach_name' => $item->mastercoach->name ?? null,
-                    'inventory_name' => $item->inventory->name ?? null,
-                ];
-            });
+        $userId = Auth::id();
 
-        return $this->SuccessResponse($inventory_landing, 'Data peminjaman berhasil diambil.');
+        if (!$userId) {
+            return $this->ErrorResponse('Unauthorized', 401);
+        }
+
+        $inventory_landing = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
+            ->where('coach_id', $userId)
+            ->where('inventory_id', $inventoryId)
+            ->get();
+
+        // Validasi jika data tidak ditemukan
+        if ($inventory_landing->isEmpty()) {
+            return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
+        }
+
+        $data = $inventory_landing->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'tanggal_pinjam' => $item->tanggal_pinjam,
+                'tanggal_kembali' => $item->tanggal_kembali,
+                'status' => $item->status,
+                'qty_out' => $item->qty_out,
+                'coach_name' => $item->coach->name ?? null,
+                'mastercoach_name' => $item->mastercoach->name ?? null,
+                'inventory_name' => $item->inventory->name ?? null,
+            ];
+        });
+
+        return $this->SuccessResponse($data, 'Data peminjaman berhasil diambil.');
     }
+
 
 
 
