@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             LocationsSeeder::class,        // Seeder untuk tabel locations
             SchedulesSeeder::class,        // Seeder untuk tabel schedules
             RescheduleRequestSeeder::class,
-            NotificationSeeder::class,
+            // NotificationSeeder::class,
             InventoryManagementSeeder::class,
             InventorySeeder::class,
             AssessmentAspectSeeder::class,

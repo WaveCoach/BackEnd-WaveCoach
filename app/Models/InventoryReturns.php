@@ -44,8 +44,5 @@ class InventoryReturns extends Model
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
-    // protected static function booted()
-    // {
-    //     static::observe(InventoryReturnObserver::class);
-    // }
+
 }
