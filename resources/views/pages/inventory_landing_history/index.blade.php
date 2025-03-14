@@ -24,8 +24,8 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{$inventory->created_at}}</td>
                         <td>{{$inventory->inventory->name}}</td>
-                        <td>{{$inventory->coach->name}}</td>
                         <td>{{$inventory->mastercoach->name}}</td>
+                        <td>{{$inventory->coach->name}}</td>
                         <td>
                             @if ($inventory->status == 'borrowed')
                                 <span class="badge bg-warning">Dipinjam</span>
