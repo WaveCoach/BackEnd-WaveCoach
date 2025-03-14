@@ -15,78 +15,76 @@ use Illuminate\Support\Facades\DB;
 class InventoryController extends BaseController
 {
     public function requestLoan(Request $request)
-    {
-        $request->validate([
-            'mastercoach_id'   => 'required|exists:users,id',
-            'tanggal_pinjam'   => 'required|date',
-            'tanggal_kembali'  => 'required|date|after:tanggal_pinjam',
-            'alasan_pinjam'    => 'required|string',
-            'items'            => 'required|array',
-            'items.*.inventory_id' => 'required|exists:inventories,id',
-            'items.*.qty_requested' => 'required|integer|min:1',
+{
+    $request->validate([
+        'mastercoach_id'   => 'required|exists:users,id',
+        'tanggal_pinjam'   => 'required|date',
+        'tanggal_kembali'  => 'required|date|after:tanggal_pinjam',
+        'alasan_pinjam'    => 'required|string',
+        'items'            => 'required|array',
+        'items.*.inventory_id' => 'required|exists:inventories,id',
+        'items.*.qty_requested' => 'required|integer|min:1',
+    ]);
+
+    // Cek apakah sudah ada permintaan di hari yang sama dengan mastercoach dan coach yang sama
+    $existingRequest = InventoryRequests::where('mastercoach_id', $request->mastercoach_id)
+    ->where('coach_id', Auth::id())
+    ->whereDate('tanggal_pinjam', $request->tanggal_pinjam)
+    ->where('status', 'pending')
+    ->exists();
+
+    if ($existingRequest) {
+        return $this->ErrorResponse(
+            'Anda sudah mengajukan permintaan untuk tanggal ini. Silakan ajukan lagi besok!',
+            400
+        );
+    }
+
+    DB::beginTransaction();
+
+    try {
+        $loanRequest = InventoryRequests::create([
+            'mastercoach_id'  => $request->mastercoach_id,
+            'coach_id'        => Auth::id(),
+            'tanggal_pinjam'  => $request->tanggal_pinjam,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'alasan_pinjam'   => $request->alasan_pinjam,
+            'status'          => 'pending',
         ]);
 
-        // Ambil daftar inventory_id yang diajukan
-        $requestedInventoryIds = collect($request->items)->pluck('inventory_id');
+        foreach ($request->items as $item) {
+            $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
+                ->where('inventory_id', $item['inventory_id'])
+                ->first();
 
-        // Cek apakah ada peminjaman di hari yang sama dengan barang yang sama
-        $existingLoan = InventoryRequestItem::whereHas('request', function ($query) use ($request) {
-                $query->where('mastercoach_id', $request->mastercoach_id)
-                      ->where('coach_id', Auth::user()->id)
-                      ->whereDate('tanggal_pinjam', $request->tanggal_pinjam);
-            })
-            ->whereIn('inventory_id', $requestedInventoryIds)
-            ->exists();
-
-        if ($existingLoan) {
-            return $this->ErrorResponse('Beberapa barang sudah dipinjam pada hari ini.', 400);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            $loanRequest = InventoryRequests::create([
-                'mastercoach_id'  => $request->mastercoach_id,
-                'coach_id'        => Auth::user()->id,
-                'tanggal_pinjam'  => $request->tanggal_pinjam,
-                'tanggal_kembali' => $request->tanggal_kembali,
-                'alasan_pinjam'   => $request->alasan_pinjam,
-                'status'          => 'pending',
-            ]);
-
-            foreach ($request->items as $item) {
-                $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
-                    ->where('inventory_id', $item['inventory_id'])
-                    ->first();
-
-                if (!$inventory) {
-                    throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
-                }
-
-                if (!$inventory || $inventory->qty < $item['qty_requested']) {
-                    throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
-                }
-
-                InventoryRequestItem::create([
-                    'request_id'   => $loanRequest->id,
-                    'inventory_id' => $item['inventory_id'],
-                    'qty_requested' => $item['qty_requested'],
-                ]);
+            if (!$inventory) {
+                throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
             }
 
-            DB::commit();
+            if ($inventory->qty < $item['qty_requested']) {
+                throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
+            }
 
-            return $this->SuccessResponse(
-                $loanRequest->load('items'),
-                'Permintaan peminjaman berhasil diajukan!',
-                201
-            );
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->ErrorResponse('Gagal mengajukan peminjaman!', 400, ['error' => $e->getMessage()]);
+            InventoryRequestItem::create([
+                'request_id'   => $loanRequest->id,
+                'inventory_id' => $item['inventory_id'],
+                'qty_requested' => $item['qty_requested'],
+            ]);
         }
+
+        DB::commit();
+
+        return $this->SuccessResponse(
+            $loanRequest->load('items'),
+            'Permintaan peminjaman berhasil diajukan!',
+            201
+        );
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return $this->ErrorResponse('Gagal mengajukan peminjaman!', 400, ['error' => $e->getMessage()]);
     }
+}
 
 
 
@@ -336,7 +334,6 @@ class InventoryController extends BaseController
         $inventory_landing = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
             ->where('coach_id', Auth::user()->id)
             ->where('inventory_id', $inventoryId)
-            ->where('status', 'borrowed')
             ->get()
             ->map(function ($item) {
                 return [
