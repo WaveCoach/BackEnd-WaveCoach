@@ -13,13 +13,15 @@ use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends BaseController
 {
-    public function getCategory(){
-        $category = AssessmentCategory::all();
+    public function getCategory()
+    {
+        $category = AssessmentCategory::select('id', 'name')->get();
         return $this->SuccessResponse($category, 'Data kategori berhasil diambil');
     }
 
-    public function getAspect($id){
-        $aspect = AssessmentAspect::where('assesment_categories_id', $id)->get();
+
+    public function getAspect($CategoryId){
+        $aspect = AssessmentAspect::select('id', 'assessment_categories_id', 'name', 'desc')->where('assessment_categories_id', $CategoryId)->get();
         if ($aspect->isEmpty()) {
             return $this->ErrorResponse('Data aspek tidak ditemukan', 404);
         }
@@ -29,7 +31,7 @@ class AssessmentController extends BaseController
     public function postAssessment(Request $request)
     {
         $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'student_id' => 'required|exists:users,id',
             'assessor_id' => 'required|exists:users,id',
             'assessment_date' => 'required|date',
             'package_id' => 'required',
@@ -84,26 +86,48 @@ class AssessmentController extends BaseController
         }
     }
 
-    public function getHistory(Request $request){
-        $query = Assessment::with(['student', 'assessor', 'package', 'category'])
+    public function getHistory(Request $request)
+{
+    $query = Assessment::with(['student', 'assessor', 'package', 'category'])
         ->where('assessor_id', Auth::user()->id);
 
-        $search = $request->input('search'); // Input pencarian tunggal
+    $search = $request->input('search');
 
-        if ($search) {
-            $query->whereHas('package', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhereHas('student', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhereHas('category', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
+    if ($search) {
+        $query->whereHas('package', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })->orWhereHas('student', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })->orWhereHas('category', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        });
+    }
 
-        $assessments = $query->get();
+    $assessments = $query->get()->map(function ($assessment) {
+        return [
+            'id' => $assessment->id,
+            'student' => [
+                'id' => $assessment->student->id ?? null,
+                'name' => $assessment->student->name ?? null,
+            ],
+            'assessor' => [
+                'id' => $assessment->assessor->id ?? null,
+                'name' => $assessment->assessor->name ?? null,
+            ],
+            'package' => [
+                'id' => $assessment->package->id ?? null,
+                'name' => $assessment->package->name ?? null,
+            ],
+            'category' => [
+                'id' => $assessment->category->id ?? null,
+                'name' => $assessment->category->name ?? null,
+            ],
+        ];
+    });
 
-        return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
-        }
+    return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
+}
+
 
         public function getDetailHistory($id)
         {
