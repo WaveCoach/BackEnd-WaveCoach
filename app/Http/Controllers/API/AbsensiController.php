@@ -20,6 +20,15 @@ class AbsensiController extends BaseController
             'schedule_id' => 'required'
         ]);
 
+        // Cek apakah absensi sudah ada
+        $existingAttendance = CoachAttendance::where('coach_id', Auth::user()->id)
+            ->where('schedule_id', $request->schedule_id)
+            ->exists();
+
+        if ($existingAttendance) {
+            return $this->ErrorResponse('Anda sudah melakukan absensi untuk jadwal ini!', 400);
+        }
+
         if ($request->hasFile('proof')) {
             $path = $request->file('proof')->store('public/proofs');
             $validated['proof'] = Storage::url($path);
@@ -44,6 +53,15 @@ class AbsensiController extends BaseController
             'schedule_id' => 'required'
         ]);
 
+        // Cek apakah absensi sudah ada
+        $existingAttendance = StudentAttendance::where('student_id', $request->student_id)
+            ->where('schedule_id', $request->schedule_id)
+            ->exists();
+
+        if ($existingAttendance) {
+            return $this->ErrorResponse('Siswa ini sudah melakukan absensi untuk jadwal ini!', 400);
+        }
+
         $attendance = StudentAttendance::create([
             'student_id' => $request->student_id,
             'attendance_status' => $validated['attendance_status'],
@@ -52,4 +70,5 @@ class AbsensiController extends BaseController
 
         return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
     }
+
 }
