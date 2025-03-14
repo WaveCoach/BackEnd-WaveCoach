@@ -45,4 +45,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('history-assessment/{id}', [AssessmentController::class, 'getDetailHistory']);
 
     Route::get('notification', [NotificationController::class, 'getNotif']);
+    Route::get('notification/{NotifId}', [NotificationController::class, 'getDetailNotif']);
 });
