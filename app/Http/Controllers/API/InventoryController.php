@@ -276,7 +276,7 @@ class InventoryController extends BaseController
                     'pengirim_id' => $returnRequest->mastercoach_id,
                     'user_id'  => $returnRequest->coach_id, // Coach yang mengajukan
                     'title'    => 'Pengembalian Barang Disetujui',
-                    'message'  => "Pengembalian barang ID {$returnRequest->inventory_id} telah disetujui oleh Mastercoach.",
+                    'message'  => "Pengembalian barang telah disetujui oleh Mastercoach.",
                     'type'     => 'return_approved',
                     'is_read'  => 0,
                 ]);
@@ -291,7 +291,7 @@ class InventoryController extends BaseController
                     'pengirim_id' => $returnRequest->mastercoach_id,
                     'user_id'  => $returnRequest->coach_id, // Coach yang mengajukan
                     'title'    => 'Pengembalian Barang Ditolak',
-                    'message'  => "Pengembalian barang ID {$returnRequest->inventory_id} ditolak. Alasan: {$request->rejection_reason}.",
+                    'message'  => "Pengembalian barang ditolak. Alasan: {$request->rejection_reason}.",
                     'type'     => 'return_rejected',
                     'is_read'  => 0,
                 ]);

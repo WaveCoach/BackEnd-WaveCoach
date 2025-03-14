@@ -7,6 +7,7 @@ use App\Http\Controllers\API\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\InventoryController;
 use App\Http\Controllers\API\InventoryManagementController;
+use App\Http\Controllers\API\NotificationController;
 use App\Models\Assessment;
 use App\Models\Inventory;
 
@@ -42,4 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('post-assessment', [AssessmentController::class, 'postAssessment']);
     Route::get('history-assessment', [AssessmentController::class, 'getHistory']);
     Route::get('history-assessment/{id}', [AssessmentController::class, 'getDetailHistory']);
+
+    Route::get('notification', [NotificationController::class, 'getNotif']);
 });

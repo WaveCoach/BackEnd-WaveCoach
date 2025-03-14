@@ -31,6 +31,11 @@ class Notification extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function pengirim()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function scopeUnread($query)
     {
         return $query->where('is_read', false);
