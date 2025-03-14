@@ -49,8 +49,8 @@ class AbsensiController extends BaseController
     {
         $validated = $request->validate([
             'attendance_status' => 'required|string|in:Hadir,Tidak Hadir',
-            'student_id' => 'required',
-            'schedule_id' => 'required'
+            'student_id' => 'required|exists:users,id',
+            'schedule_id' => 'required|exists:schedules,id',
         ]);
 
         // Cek apakah absensi sudah ada
