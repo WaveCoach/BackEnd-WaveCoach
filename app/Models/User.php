@@ -33,6 +33,8 @@ class User extends Authenticatable
         'no_telf'
     ];
 
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -83,8 +85,9 @@ class User extends Authenticatable
 
     public function getProfileImagesAttribute($value)
     {
-        return $value ? url(Storage::url($value)) : null;
+        return $value ? url(Storage::url('public/' . $value)) : null;
     }
+
 
 
 }
