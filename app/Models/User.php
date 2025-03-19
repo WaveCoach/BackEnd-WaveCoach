@@ -83,9 +83,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Announcement::class, 'announcement_user');
     }
 
-    public function getProfileImagesAttribute($value)
+    public function getProfileImageAttribute($value)
     {
-        return $value ? url(Storage::url('public/' . $value)) : null;
+        return $value ? url(Storage::url($value)) : null;
     }
 
 

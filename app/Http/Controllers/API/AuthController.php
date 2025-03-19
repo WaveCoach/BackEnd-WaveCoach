@@ -115,7 +115,10 @@ class AuthController extends BaseController
 
     public function listAdmin()
     {
-        $admin = User::where('role_id', 1)->get();
+        $admin = User::where('role_id', 1)
+                 ->get()
+                 ->makeHidden(['profile_images'])
+                 ->makeVisible(['profile_image']);
 
         return $this->SuccessResponse($admin, 'Daftar admin berhasil diambil.');
     }
