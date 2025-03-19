@@ -83,11 +83,7 @@ class User extends Authenticatable
 
     public function getProfileImagesAttribute($value)
     {
-        if (!$value) {
-            return null;
-        }
-
-        return Storage::url($value);
+        return $value ? url(Storage::url($value)) : null;
     }
 
 
