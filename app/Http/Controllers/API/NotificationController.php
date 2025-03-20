@@ -25,7 +25,6 @@ class NotificationController extends BaseController
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Cek apakah ada notifikasi untuk user tersebut
         if ($notifications->isEmpty()) {
             return $this->ErrorResponse('Notifikasi tidak ditemukan', 404);
         }
@@ -39,19 +38,21 @@ class NotificationController extends BaseController
                 'is_read' => $notif->is_read,
                 'type' => $notif->type,
                 'created_at' => Carbon::parse($notif->created_at)->translatedFormat('d F Y, H:i'),
-                'user' => [
+                'user' => $notif->user ? [
                     'id' => $notif->user->id,
                     'name' => $notif->user->name,
-                ],
-                'pengirim' => [
+                ] : null, // Jika user null, set null
+
+                'pengirim' => $notif->pengirim ? [
                     'id' => $notif->pengirim->id,
                     'name' => $notif->pengirim->name,
-                ],
+                ] : null, // Jika pengirim null, set null
             ];
         });
 
         return $this->SuccessResponse($formattedNotifications, 'Daftar notifikasi');
     }
+
 
 
     public function getDetailNotif($NotifId)
@@ -111,6 +112,4 @@ class NotificationController extends BaseController
             'items' => $items
         ], 'Detail notifikasi');
     }
-
-
 }
