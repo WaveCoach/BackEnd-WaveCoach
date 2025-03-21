@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Mail\ResetPasswordMail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules\Password as PasswordRule;
-use Illuminate\Validation\ValidationException;
+
 
 class AuthController extends BaseController
 {
@@ -65,10 +65,12 @@ class AuthController extends BaseController
             ]
         );
 
+        // Kirim email reset password
+        Mail::to($user->email)->send(new ResetPasswordMail($plainToken, $user->email));
+
         return $this->SuccessResponse([
-            'token' => $plainToken,
-            'email' => $user->email
-        ], 'Reset token generated!');
+            'message' => 'Reset link has been sent to your email!'
+        ], 'Email sent!');
     }
 
     public function resetPassword(Request $request)
@@ -116,12 +118,10 @@ class AuthController extends BaseController
     public function listAdmin()
     {
         $admin = User::where('role_id', 1)
-                 ->get()
-                 ->makeHidden(['profile_images'])
-                 ->makeVisible(['profile_image']);
+            ->get()
+            ->makeHidden(['profile_images'])
+            ->makeVisible(['profile_image']);
 
         return $this->SuccessResponse($admin, 'Daftar admin berhasil diambil.');
     }
-
-
 }

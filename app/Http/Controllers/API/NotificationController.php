@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Models\InventoryRequests;
 use App\Models\InventoryReturns;
 use App\Models\Notification;
