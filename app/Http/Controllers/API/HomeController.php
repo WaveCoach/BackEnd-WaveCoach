@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\RescheduleRequest;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
+use App\Models\StudentAttendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,14 +79,20 @@ class HomeController extends BaseController
         ];
 
         $students = ScheduleDetail::with('student')
-        ->where('schedule_id', $id)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->student->id,
-                'name' => $item->student->name,
-            ];
-        });
+    ->where('schedule_id', $id)
+    ->get()
+    ->map(function ($item) use ($id) {
+        $attendance = StudentAttendance::where('schedule_id', $id)
+            ->where('student_id', $item->student->id)
+            ->first();
+
+        return [
+            'id' => $item->student->id,
+            'name' => $item->student->name,
+            'attendance_status' => $attendance ? $attendance->attendance_status : null,
+        ];
+    });
+
 
         return $this->SuccessResponse(['schedule' => $formattedSchedule, 'students' => $students], 'Schedule retrieved successfully');
     }
