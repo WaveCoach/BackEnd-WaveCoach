@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\CoachAttendance;
 use App\Models\RescheduleRequest;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
@@ -72,30 +73,47 @@ class HomeController extends BaseController
             'end_time' => $schedule->end_time,
             'status' => $schedule->status,
             'formatted_date' => $date->translatedFormat('l, d F Y'),
-            'coach_name' => $schedule->coach->name,
-            'location_name' => $schedule->location->name,
-            'location_address' => $schedule->location->address,
-            'location_maps' => $schedule->location->maps,
+        ];
+
+        $location = [
+            'name' => $schedule->location->name,
+            'address' => $schedule->location->address,
+            'maps' => $schedule->location->maps,
+        ];
+
+        $coachAttendance = CoachAttendance::where('schedule_id', $id)
+            ->where('coach_id', $schedule->coach->id)
+            ->first();
+
+        $coach = [
+            'id' => $schedule->coach->id,
+            'name' => $schedule->coach->name,
+            'attendance_status' => $coachAttendance->attendance_status ?? null,
         ];
 
         $students = ScheduleDetail::with('student')
-        ->where('schedule_id', $id)
-        ->get()
-        ->map(function ($item) use ($id) {
-            $attendance = StudentAttendance::where('schedule_id', $id)
-                ->where('student_id', $item->student->id)
-                ->first();
+            ->where('schedule_id', $id)
+            ->get()
+            ->map(function ($item) use ($id) {
+                $attendance = StudentAttendance::where('schedule_id', $id)
+                    ->where('student_id', $item->student->id)
+                    ->first();
 
-            return [
-                'id' => $item->student->id,
-                'name' => $item->student->name,
-                'attendance_status' => $attendance ? $attendance->attendance_status : null,
-            ];
-        });
+                return [
+                    'id' => $item->student->id,
+                    'name' => $item->student->name,
+                    'attendance_status' => $attendance->attendance_status ?? null,
+                ];
+            });
 
-
-        return $this->SuccessResponse(['schedule' => $formattedSchedule, 'students' => $students], 'Schedule retrieved successfully');
+        return $this->SuccessResponse([
+            'schedule' => $formattedSchedule,
+            'location' => $location,
+            'coach' => $coach,
+            'students' => $students,
+        ], 'Schedule retrieved successfully');
     }
+
 
 
 
