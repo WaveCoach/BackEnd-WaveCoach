@@ -17,21 +17,21 @@ class InventoryManagementController extends BaseController
     ->get()
     ->groupBy('mastercoach_id');
 
-$response = $inventoryByCoach->map(function ($inventories, $mastercoachId) {
-    $mastercoach = $inventories->first()->mastercoach;
+    $response = $inventoryByCoach->map(function ($inventories, $mastercoachId) {
+        $mastercoach = $inventories->first()->mastercoach;
 
-    return [
-        'mastercoach_id' => $mastercoachId,
-        'mastercoach_name' => $mastercoach->name ?? 'Unknown',
-        'items' => $inventories->map(function ($item) {
-            return [
-                'inventory_id' => $item->inventory_id,
-                'inventory_name' => $item->inventory->name ?? 'Unknown',
-                'total_qty' => $item->total_qty
-            ];
-        })->values()
-    ];
-})->values();
+        return [
+            'mastercoach_id' => $mastercoachId,
+            'mastercoach_name' => $mastercoach->name ?? 'Unknown',
+            'items' => $inventories->map(function ($item) {
+                return [
+                    'inventory_id' => $item->inventory_id,
+                    'inventory_name' => $item->inventory->name ?? 'Unknown',
+                    'total_qty' => $item->total_qty
+                ];
+            })->values()
+        ];
+    })->values();
 
 return $this->SuccessResponse($response, 'Data inventory berhasil diambil');
 

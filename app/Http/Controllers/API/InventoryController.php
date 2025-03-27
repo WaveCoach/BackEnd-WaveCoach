@@ -366,21 +366,23 @@ class InventoryController extends BaseController
     public function getList()
     {
         $inventory = Inventory::leftJoin('inventory_landings', function ($join) {
-            $join->on('inventories.id', '=', 'inventory_landings.inventory_id')
-                ->where('inventory_landings.status', 'borrowed')
-                ->where('inventory_landings.coach_id', Auth::id());
-        })
-        ->select(
-            'inventories.id as inventory_id',
-            'inventories.name',
-            DB::raw('COALESCE(SUM(inventory_landings.qty_out), 0) as total_qty_borrowed')
-        )
-        ->groupBy('inventories.id', 'inventories.name')
-        ->get();
+                $join->on('inventories.id', '=', 'inventory_landings.inventory_id')
+                    ->where('inventory_landings.status', 'borrowed')
+                    ->where('inventory_landings.coach_id', Auth::id());
+            })
+            ->select(
+                'inventories.id as inventory_id',
+                'inventories.name',
+                DB::raw('COALESCE(SUM(inventory_landings.qty_out), 0) as total_qty_borrowed')
+            )
+            ->groupBy('inventories.id', 'inventories.name')
+            ->get()
+            ->filter(fn($item) => $item->total_qty_borrowed > 0) // Hapus yang total_qty_borrowed = 0
+            ->values(); // Reset indeks array
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
-
     }
+
 
     public function getListDetail($inventoryId)
     {
