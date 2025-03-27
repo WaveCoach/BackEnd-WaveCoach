@@ -36,10 +36,10 @@
                 <tr>
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->student->name}}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('H:i') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('d F Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('H:i') }}</td>
                     <td>
-                        @if($item->status == 'Hadir')
+                        @if($item->attendance_status == 'Hadir')
                             <span class="badge bg-success">Hadir</span>
                         @else
                             <span class="badge bg-danger">Tidak Hadir</span>
