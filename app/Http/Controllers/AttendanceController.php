@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         ->groupBy('users.id', 'users.name')
         ->orderBy('users.name', 'asc')
         ->get();
-        // dd($students);
+        dd($students);
         return view('pages.studentAttendance.index', compact('students'));
     }
 
