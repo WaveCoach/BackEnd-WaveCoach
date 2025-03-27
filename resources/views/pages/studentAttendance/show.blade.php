@@ -37,7 +37,7 @@
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->student->name}}</td>
                     <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('d F Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('H:i') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->schedule->created_at)->translatedFormat('H:i') }}</td>
                     <td>
                         @if($item->attendance_status == 'Hadir')
                             <span class="badge bg-success">Hadir</span>
