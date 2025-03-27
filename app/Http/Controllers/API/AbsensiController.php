@@ -16,7 +16,7 @@ class AbsensiController extends BaseController
         $validated = $request->validate([
             'attendance_status' => 'required|string',
             'remarks' => 'nullable|string',
-            'proof' => 'nullable|max:2048',
+            'proof' => 'nullable',
             'schedule_id' => 'required'
         ]);
 
