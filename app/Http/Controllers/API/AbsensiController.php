@@ -16,7 +16,7 @@ class AbsensiController extends BaseController
         $validated = $request->validate([
             'attendance_status' => 'required|string',
             'remarks' => 'nullable|string',
-            'proof' => 'nullable|image|max:2048',
+            'proof' => 'nullable|max:2048',
             'schedule_id' => 'required'
         ]);
 
@@ -29,9 +29,12 @@ class AbsensiController extends BaseController
             return $this->ErrorResponse('Anda sudah melakukan absensi untuk jadwal ini!', 400);
         }
 
-        if ($request->hasFile('proof')) {
-            $path = $request->file('proof')->store('public/proofs');
-            $validated['proof'] = Storage::url($path);
+        if ($request->has('proof')) {
+            $proofData = $request->input('proof');
+            $proofBase64 = base64_decode($proofData);
+            $fileName = 'proofs/' . uniqid() . '.png';
+            Storage::put($fileName, $proofBase64);
+            $validated['proof'] = Storage::url($fileName);
         }
 
         $attendance = CoachAttendance::create([
