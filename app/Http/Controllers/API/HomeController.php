@@ -33,7 +33,7 @@ class HomeController extends BaseController
             }
         }
         elseif($request->has('recent_schedule')){
-            $schedule = Schedule::with(['coach', 'location'])->where('coach_id', Auth::user()->id)->whereBetween('date', [now()->subDays(7), now()]);
+            $schedule->whereBetween('date', [now()->subDays(7), now()]);
         }
         else {
             $schedule->where('date', '>=', Carbon::today()->toDateString());

@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('post-assessment', [AssessmentController::class, 'postAssessment']);
     Route::get('history-assessment', [AssessmentController::class, 'getHistory']);
     Route::get('history-assessment/{id}', [AssessmentController::class, 'getDetailHistory']);
+    Route::get('student-list/{scheduleId}', [AssessmentController::class, 'getStudent']);
 
     Route::get('notification', [NotificationController::class, 'getNotif']);
     Route::get('notification/{NotifId}', [NotificationController::class, 'getDetailNotif']);
