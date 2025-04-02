@@ -17,8 +17,17 @@ class AssessmentController extends BaseController
 {
 
     public function getStudent($id){
-        $student = ScheduleDetail::with('student')->where('schedule_id', $id)->get();
-        return $this->SuccessResponse($student, 'Data siswa berhasil diambil');
+        $students = ScheduleDetail::with('student')
+        ->where('schedule_id', $id)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->student->id,
+                'name' => $item->student->name,
+            ];
+        });
+
+        return $this->SuccessResponse($students, 'Data siswa berhasil diambil');
     }
 
     public function getCategory()
