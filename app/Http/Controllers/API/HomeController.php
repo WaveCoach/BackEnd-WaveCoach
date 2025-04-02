@@ -32,8 +32,11 @@ class HomeController extends BaseController
                 $schedule->whereRaw('MONTH(date) = ?', [$monthNumber]);
             }
         }
+        elseif($request->has('recent_schedule')){
+            $schedule = Schedule::with(['coach', 'location'])->where('coach_id', Auth::user()->id)->whereBetween('date', [now()->subDays(7), now()]);
+        }
         else {
-            $schedule->where('date', '>=', Carbon::today()->toDateString()); // Pakai Carbon juga untuk konsistensi
+            $schedule->where('date', '>=', Carbon::today()->toDateString());
         }
 
         $schedule = $schedule->get()->map(function ($item) {

@@ -377,8 +377,8 @@ class InventoryController extends BaseController
             )
             ->groupBy('inventories.id', 'inventories.name')
             ->get()
-            ->filter(fn($item) => $item->total_qty_borrowed > 0) // Hapus yang total_qty_borrowed = 0
-            ->values(); // Reset indeks array
+            ->filter(fn($item) => $item->total_qty_borrowed > 0)
+            ->values();
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
     }
@@ -397,7 +397,7 @@ class InventoryController extends BaseController
             ->where('inventory_id', $inventoryId)
             ->get();
 
-        // Validasi jika data tidak ditemukan
+
         if ($inventory_landing->isEmpty()) {
             return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
         }

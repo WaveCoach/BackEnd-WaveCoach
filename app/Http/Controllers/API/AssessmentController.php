@@ -7,12 +7,20 @@ use App\Models\Assessment;
 use App\Models\AssessmentAspect;
 use App\Models\AssessmentCategory;
 use App\Models\AssessmentDetail;
+use App\Models\Schedule;
+use App\Models\ScheduleDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends BaseController
 {
+
+    public function getStudent($id){
+        $student = ScheduleDetail::with('student')->where('schedule_id', $id)->get();
+        return $this->SuccessResponse($student, 'Data siswa berhasil diambil');
+    }
+
     public function getCategory()
     {
         $category = AssessmentCategory::select('id', 'name')->get();
@@ -82,66 +90,66 @@ class AssessmentController extends BaseController
             return $this->SuccessResponse('Assessment berhasil ditambahkan');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->ErrorResponse('Terjadi kesalahan: ' . $e->getMessage(), 500);
+            return $this->ErrorResponse('Terjadi kesalahan: ' . $e->getMessage(), 404);
         }
     }
 
     public function getHistory(Request $request)
-{
-    $query = Assessment::with(['student', 'assessor', 'package', 'category'])
-        ->where('assessor_id', Auth::user()->id);
+    {
+        $query = Assessment::with(['student', 'assessor', 'package', 'category'])
+            ->where('assessor_id', Auth::user()->id);
 
-    $search = $request->input('search');
+        $search = $request->input('search');
 
-    if ($search) {
-        $query->whereHas('package', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })->orWhereHas('student', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })->orWhereHas('category', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
+        if ($search) {
+            $query->whereHas('package', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('student', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('category', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $assessments = $query->get()->map(function ($assessment) {
+            return [
+                'id' => $assessment->id,
+                'student' => [
+                    'id' => $assessment->student->id ?? null,
+                    'name' => $assessment->student->name ?? null,
+                ],
+                'assessor' => [
+                    'id' => $assessment->assessor->id ?? null,
+                    'name' => $assessment->assessor->name ?? null,
+                ],
+                'package' => [
+                    'id' => $assessment->package->id ?? null,
+                    'name' => $assessment->package->name ?? null,
+                ],
+                'category' => [
+                    'id' => $assessment->category->id ?? null,
+                    'name' => $assessment->category->name ?? null,
+                ],
+            ];
         });
+
+        return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
     }
 
-    $assessments = $query->get()->map(function ($assessment) {
-        return [
-            'id' => $assessment->id,
-            'student' => [
-                'id' => $assessment->student->id ?? null,
-                'name' => $assessment->student->name ?? null,
-            ],
-            'assessor' => [
-                'id' => $assessment->assessor->id ?? null,
-                'name' => $assessment->assessor->name ?? null,
-            ],
-            'package' => [
-                'id' => $assessment->package->id ?? null,
-                'name' => $assessment->package->name ?? null,
-            ],
-            'category' => [
-                'id' => $assessment->category->id ?? null,
-                'name' => $assessment->category->name ?? null,
-            ],
-        ];
-    });
 
-    return $this->SuccessResponse($assessments, 'Data kategori berhasil diambil');
-}
+    public function getDetailHistory($id)
+    {
+        $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
 
+        if (!$assessment) {
+            return $this->ErrorResponse('Data tidak ditemukan', 404);
+        }
 
-        public function getDetailHistory($id)
-        {
-            $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
+        $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
 
-            if (!$assessment) {
-                return $this->ErrorResponse('Data tidak ditemukan', 404);
-            }
-
-            $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
-
-            return $this->SuccessResponse([
-                'assessment' => $assessment,
-                'details' => $assessmentDetails
-            ], 'Data detail history berhasil diambil');
+        return $this->SuccessResponse([
+            'assessment' => $assessment,
+            'details' => $assessmentDetails
+        ], 'Data detail history berhasil diambil');
     }
 }
