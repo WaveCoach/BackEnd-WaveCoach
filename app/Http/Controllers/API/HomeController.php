@@ -54,6 +54,7 @@ class HomeController extends BaseController
                 'location_name' => $item->location->name,
                 'location_address' => $item->location->address,
                 'location_maps' => $item->location->maps,
+                'package' => $item->package->name,
             ];
         });
 
@@ -77,6 +78,7 @@ class HomeController extends BaseController
             'end_time' => $schedule->end_time,
             'status' => $schedule->status,
             'formatted_date' => $date->translatedFormat('l, d F Y'),
+            'package' => $schedule->package->name,
         ];
 
         $location = [
