@@ -34,8 +34,7 @@
                     <select class="select2 form-control"  name="package_id[]" id="student-select" multiple>
                         {{-- <option value="">Pilih Student</option> --}}
                         @foreach ($packages as $p)
-                            <option value="{{ $p->id }}"
->
+                            <option value="{{ $p->id }}">
                                 {{ $p->name }}
                             </option>
                         @endforeach

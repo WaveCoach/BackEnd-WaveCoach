@@ -20,13 +20,11 @@ class StudentController extends Controller
         return view('pages.student.index', compact('students'));
     }
 
-
     public function create()
     {
         $packages = Package::all();
         return view('pages.student.create', compact('packages'));
     }
-
 
     public function store(Request $request)
     {
@@ -70,16 +68,12 @@ class StudentController extends Controller
         return redirect()->route('student.index')->with('success', 'Student berhasil ditambahkan dengan password: 12345678');
     }
 
-
-
-
     public function show(string $id)
     {
         $student = User::with('student')->findOrFail($id);
         $package = PackageStudent::where('student_id', $id)->with('package')->get();
         return view('pages.student.show', compact('student', 'package'));
     }
-
 
     public function edit(string $id)
     {
@@ -89,9 +83,6 @@ class StudentController extends Controller
 
         return view('pages.student.edit', compact('student', 'packageSelected', 'allPackages'));
     }
-
-
-
 
     public function update(Request $request, string $id)
     {
@@ -135,8 +126,6 @@ class StudentController extends Controller
 
         return redirect()->route('student.index')->with('success', 'User updated successfully');
     }
-
-
 
     public function destroy(string $id)
     {

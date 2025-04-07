@@ -15,6 +15,7 @@ class Schedule extends Model
         'date',
         'start_time',
         'end_time',
+        'package_id'
     ];
 
 
@@ -26,6 +27,11 @@ class Schedule extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class, 'package_id');
     }
 
     public function students()

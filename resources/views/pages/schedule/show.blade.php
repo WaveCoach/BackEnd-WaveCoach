@@ -6,6 +6,10 @@
         <form>
             <div class="row mb-4">
                 <div class="col-6 mb-3">
+                    <label class="form-label">package</label>
+                    <input type="text" class="form-control" disabled value="{{ $schedule->package->name ?? '-' }}">
+                </div>
+                <div class="col-6 mb-3">
                     <label class="form-label">Tanggal</label>
                     <input type="text" class="form-control" disabled value="{{ $schedule->date }}">
                 </div>

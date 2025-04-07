@@ -17,6 +17,15 @@
             <form method="POST" action="{{ route('schedule.store') }}" id="jobPositionForm">
                 @csrf
                 <div class="row mb-4">
+                    <div class="col-6 mb-3">
+                        <label for="package_id" class="form-label">Package</label>
+                        <select class="select2 form-control" name="package_id" id="package-select">
+                            <option value="" disabled selected>Pilih Package</option>
+                            @foreach ($packages as $package)
+                                <option value="{{ $package->id }}">{{ $package->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <!-- Pilihan Coach -->
                     <div class="col-6 mb-3">
                         <label for="mastercoach_id" class="form-label">coach</label>

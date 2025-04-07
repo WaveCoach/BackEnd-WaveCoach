@@ -20,6 +20,17 @@
 
                 <div class="row mb-4">
                     <div class="col-6 mb-3">
+                        <label for="package_id" class="form-label">Package</label>
+                        <select class="select2 form-control" name="package_id" id="package-select">
+                            <option value="" disabled>Pilih Package</option>
+                            @foreach ($packages as $package)
+                                <option value="{{ $package->id }}" {{ $schedule->package_id == $package->id ? 'selected' : '' }}>
+                                    {{ $package->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6 mb-3">
                         <label for="coach_id" class="form-label">Coach</label>
                         <select class="select2" required name="coach_id" id="coach-select">
                             @foreach ($coaches as $c)

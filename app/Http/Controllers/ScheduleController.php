@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\coaches;
 use App\Models\location;
+use App\Models\Package;
 use App\Models\schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
@@ -28,13 +29,12 @@ class ScheduleController extends Controller
         return view('pages.schedule.index', compact('schedules'));
     }
 
-
     public function store(Request $request) {
-        // dd($request->all());
         $request->validate([
             'date' => 'required|date',
             'start_time' => 'required',
             'end_time' => 'required|after:start_time',
+            'package_id' => 'required',
             'coach_id' => 'nullable',
             'location_id' => 'nullable',
             'student_id' => 'required|array',
@@ -65,11 +65,11 @@ class ScheduleController extends Controller
             $locationId = $request->location_id;
         } else {
             $location = Location::firstOrCreate(
-                ['name' => $request->location_id], // Jika nama sudah ada, gunakan data ini
+                ['name' => $request->location_id],
                 [
                     'address' => $request->address,
                     'maps' => $request->maps,
-                    'code_loc' => $this->generateUniqueCode() // Generate code unik saat firstOrCreate
+                    'code_loc' => $this->generateUniqueCode()
                 ]
             );
             $locationId = $location->id;
@@ -79,6 +79,7 @@ class ScheduleController extends Controller
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
+            'package_id' => $request->package_id,
             'coach_id' => $coachId,
             'location_id' => $locationId,
         ]);
@@ -93,19 +94,17 @@ class ScheduleController extends Controller
         return redirect()->route('schedule.index')->with('success', 'Schedule berhasil ditambahkan.');
     }
 
-
     public function create(){
         $coach = User::whereIn('role_id', [2, 3])->get();
         $students = User::where('role_id', 4)->get();
         $location = location::all();
-        return view('pages.schedule.create', compact('coach', 'students', 'location'));
+        $packages = Package::all();
+        return view('pages.schedule.create', compact('coach', 'students', 'location', 'packages'));
     }
-
-
 
     public function show($id)
     {
-        $schedule = Schedule::with(['coach', 'students', 'location'])->findOrFail($id);
+        $schedule = Schedule::with(['coach', 'students', 'location', 'package'])->findOrFail($id);
         return view('pages.schedule.show', compact('schedule'));
     }
 
@@ -114,9 +113,10 @@ class ScheduleController extends Controller
         $coaches = User::whereIn('role_id', [2, 3])->get(); // Ubah dari $coach ke $coaches
         $students = User::where('role_id', 4)->get();
         $locations = Location::all();
-        $schedule = Schedule::with(['coach', 'students', 'location'])->findOrFail($id);
+        $schedule = Schedule::with(['coach', 'students', 'location', 'package'])->findOrFail($id);
+        $packages = Package::all();
 
-        return view('pages.schedule.edit', compact('coaches', 'students', 'locations', 'schedule'));
+        return view('pages.schedule.edit', compact('coaches', 'students', 'locations', 'schedule', 'packages'));
     }
 
     public function getStudent(Request $request) {
@@ -138,6 +138,7 @@ class ScheduleController extends Controller
             'start_time' => 'required',
             'end_time' => 'required|after:start_time',
             'coach_id' => 'nullable',
+            'package_id' => 'required',
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
@@ -179,6 +180,7 @@ class ScheduleController extends Controller
 
         $schedule->update([
             'date' => $request->date ?? $schedule->date,
+            'package_id' => $request->package_id ?? $schedule->package_id,
             'start_time' => $request->start_time ?? $schedule->start_time,
             'end_time' => $request->end_time ?? $schedule->end_time,
             'coach_id' => $coachId ?? $schedule->coach_id,
