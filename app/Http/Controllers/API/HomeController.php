@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends BaseController
 {
     public function getSchedule(Request $request) {
-        $schedule = Schedule::with(['coach', 'location', 'package'])->where('coach_id', Auth::user()->id)->OrderBy('date', 'asc');
+        $schedule = Schedule::with(['coach', 'location', 'package'])->where('coach_id', Auth::user()->id)->OrderBy('date', 'asc')->get();
+        dd($schedule);
 
         if ($request->has('history')) {
             $schedule->where('date', '<', Carbon::today()->toDateString()); // Pakai Carbon langsung
