@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends BaseController
 {
     public function getSchedule(Request $request) {
-        $schedule = Schedule::with(['coach', 'location', 'package'])->where('coach_id', Auth::user()->id)->OrderBy('date', 'asc')->get();
-        dd($schedule);
+        $schedule = Schedule::with(['coach', 'location', 'package'])->where('coach_id', Auth::user()->id)->OrderBy('date', 'asc');
 
         if ($request->has('history')) {
             $schedule->where('date', '<', Carbon::today()->toDateString()); // Pakai Carbon langsung
@@ -55,7 +54,7 @@ class HomeController extends BaseController
                 'location_name' => $item->location->name,
                 'location_address' => $item->location->address,
                 'location_maps' => $item->location->maps,
-                'package_id' => $item->package_id ?? null,
+                'package_id' => $item->package->id ?? null,
                 'package_name' => $item->package->name ?? null,
             ];
         });
@@ -80,7 +79,7 @@ class HomeController extends BaseController
             'end_time' => $schedule->end_time,
             'status' => $schedule->status,
             'formatted_date' => $date->translatedFormat('l, d F Y'),
-            'package_id' => $item->package->id ?? null,
+            'package_id' => $item->package_id ?? null,
             'package_name' => $schedule->package->name ?? null,
         ];
 
