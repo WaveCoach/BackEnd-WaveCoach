@@ -79,7 +79,7 @@ class HomeController extends BaseController
             'end_time' => $schedule->end_time,
             'status' => $schedule->status,
             'formatted_date' => $date->translatedFormat('l, d F Y'),
-            'package_id' => $item->package_id ?? null,
+            'package_id' => $schedule->package_id ?? null,
             'package_name' => $schedule->package->name ?? null,
         ];
 
