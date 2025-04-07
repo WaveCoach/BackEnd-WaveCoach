@@ -30,11 +30,23 @@
                         value="{{ \Carbon\Carbon::parse($student->student->tanggal_lahir)->diff(\Carbon\Carbon::now())->y < 1 ? \Carbon\Carbon::parse($student->student->tanggal_lahir)->diff(\Carbon\Carbon::now())->m . ' bulan' : \Carbon\Carbon::parse($student->student->tanggal_lahir)->age . ' tahun' }}"
                         name="usia" id="usia" disabled>
                 </div>
-                {{-- <div class="col-6 mb-3">
-                    <label for="type" class="form-label">Type</label>
-                    <input type="text" class="form-control" value="{{ $student->student->type }}" name="type" id="type" disabled>
-                </div> --}}
-                <!-- Tambahan Radio Button untuk Jenis Kelamin -->
+                <div class="col-12 mb-3">
+                    <label for="packages" class="form-label">Paket yang Diikuti</label>
+                    @if ($package->isEmpty())
+                        <p class="text-muted">Belum memilih paket</p>
+                    @else
+                        <ul class="list-group">
+                            @foreach ($package as $item)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ $item->package->name }}
+                                    {{-- Kalo mau tambahin aksi kayak view detail atau lain-lain, taruh di sini --}}
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+
+
                 <div class="col-6 mb-3">
                     <label class="form-label">Jenis Kelamin</label>
                     <div>

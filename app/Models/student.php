@@ -21,4 +21,14 @@ class Student extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function packageStudents()
+    {
+        return $this->hasMany(PackageStudent::class);
+    }
+
+    public function packages() {
+        return $this->belongsToMany(Package::class, 'package_student', 'student_id', 'package_id');
+    }
+
 }
