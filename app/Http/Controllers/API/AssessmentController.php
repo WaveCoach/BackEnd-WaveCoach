@@ -120,6 +120,7 @@ class AssessmentController extends BaseController
         $assessments = $query->get()->map(function ($assessment) {
             return [
                 'id' => $assessment->id,
+                'date' => $assessment->assessment_date,
                 'student' => [
                     'id' => $assessment->student->id ?? null,
                     'name' => $assessment->student->name ?? null,
