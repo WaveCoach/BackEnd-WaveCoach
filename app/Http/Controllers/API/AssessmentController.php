@@ -74,7 +74,7 @@ class AssessmentController extends BaseController
         try {
             $assessment = Assessment::create([
                 'student_id' => $validated['student_id'],
-                'assessor_id' => $validated['assessor_id'],
+                'assessor_id' => Auth::user()->id,
                 'assessment_date' => $validated['assessment_date'],
                 'package_id' => $validated['package_id'],
                 'assessment_category_id' => $validated['assessment_category_id'],
