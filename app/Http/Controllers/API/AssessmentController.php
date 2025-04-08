@@ -49,7 +49,6 @@ class AssessmentController extends BaseController
     {
         $validated = $request->validate([
             'student_id' => 'required|exists:users,id',
-            'assessor_id' => 'required|exists:users,id',
             'assessment_date' => 'required|date',
             'package_id' => 'required',
             'assessment_category_id' => 'required',
@@ -63,7 +62,7 @@ class AssessmentController extends BaseController
 
         $existingAssessment = Assessment::where([
             'student_id' => $validated['student_id'],
-            'assessor_id' => $validated['assessor_id'],
+            'assessor_id' => Auth::user()->id,
             'assessment_date' => $validated['assessment_date'],
             'package_id' => $validated['package_id'],
             'assessment_category_id' => $validated['assessment_category_id'],
