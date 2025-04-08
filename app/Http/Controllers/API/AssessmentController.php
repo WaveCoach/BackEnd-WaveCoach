@@ -58,8 +58,6 @@ class AssessmentController extends BaseController
             'details.*.remarks' => 'nullable|string',
         ]);
 
-        // dd($request->all());
-
         $existingAssessment = Assessment::where([
             'student_id' => $validated['student_id'],
             'assessor_id' => Auth::user()->id,
