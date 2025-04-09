@@ -9,7 +9,7 @@ class Assessment extends Model
     protected $table = 'assessments';
 
     protected $fillable = [
-        'student_id',  'assessor_id', 'assessment_date', 'package_id', 'assessment_category_id'
+        'student_id',  'assessor_id', 'assessment_date', 'package_id', 'assessment_category_id', 'schedule_id'
     ];
 
     public function student()
@@ -30,5 +30,10 @@ class Assessment extends Model
     public function category()
     {
         return $this->belongsTo(AssessmentCategory::class, 'assessment_category_id');
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
     }
 }

@@ -51,6 +51,7 @@ class AssessmentController extends BaseController
             'student_id' => 'required|exists:users,id',
             'assessment_date' => 'required|date',
             'package_id' => 'required',
+            'schedule_id' => 'required',
             'assessment_category_id' => 'required',
             'details' => 'required|array',
             'details.*.aspect_id' => 'required|exists:assessment_aspects,id',
@@ -61,6 +62,7 @@ class AssessmentController extends BaseController
         $existingAssessment = Assessment::where([
             'student_id' => $validated['student_id'],
             'assessor_id' => Auth::user()->id,
+            'schedule_id' => $validated['schedule_id'],
             'assessment_date' => $validated['assessment_date'],
             'package_id' => $validated['package_id'],
             'assessment_category_id' => $validated['assessment_category_id'],
@@ -75,6 +77,7 @@ class AssessmentController extends BaseController
             $assessment = Assessment::create([
                 'student_id' => $validated['student_id'],
                 'assessor_id' => Auth::user()->id,
+                'schedule_id' => $validated['schedule_id'],
                 'assessment_date' => $validated['assessment_date'],
                 'package_id' => $validated['package_id'],
                 'assessment_category_id' => $validated['assessment_category_id'],
@@ -163,6 +166,10 @@ class AssessmentController extends BaseController
         return $this->SuccessResponse([
             'id' => $assessment->id,
             'date' => $assessment->assessment_date,
+            'schedule_id' => $assessment->schedule_id ?? null,
+            'schedule_date' => $assessment->schedule->date ?? null,
+            'schedule_start_time' => $assessment->schedule->start_time ?? null,
+            'schedule_end_time' => $assessment->schedule->end_time ?? null,
             'student_id' => $assessment->student->id ?? null,
             'student_name' => $assessment->student->name ?? null,
             'assessor_id' => $assessment->assessor->id ?? null,
