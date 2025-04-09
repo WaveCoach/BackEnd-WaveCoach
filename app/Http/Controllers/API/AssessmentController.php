@@ -158,6 +158,7 @@ class AssessmentController extends BaseController
         $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get()->map(function ($detail) {
             return [
             'aspect_id' => $detail->aspect_id,
+            'aspect_name' => $detail->aspect->name,
             'score' => $detail->score,
             'remarks' => $detail->remarks,
             ];
