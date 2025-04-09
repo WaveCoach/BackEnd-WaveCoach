@@ -149,7 +149,7 @@ class AssessmentController extends BaseController
 
     public function getDetailHistory($id)
     {
-        $assessment = Assessment::with(['student', 'assessor', 'package', 'category'])->find($id);
+        $assessment = Assessment::with(['student', 'assessor', 'package', 'category', 'schedule'])->find($id);
 
         if (!$assessment) {
             return $this->ErrorResponse('Data tidak ditemukan', 404);
