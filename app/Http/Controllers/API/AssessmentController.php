@@ -152,11 +152,26 @@ class AssessmentController extends BaseController
             return $this->ErrorResponse('Data tidak ditemukan', 404);
         }
 
-        $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get();
+        $assessmentDetails = AssessmentDetail::where('assessment_id', $id)->get()->map(function ($detail) {
+            return [
+            'aspect_id' => $detail->aspect_id,
+            'score' => $detail->score,
+            'remarks' => $detail->remarks,
+            ];
+        });
 
         return $this->SuccessResponse([
-            'assessment' => $assessment,
-            'details' => $assessmentDetails
+            'id' => $assessment->id,
+            'date' => $assessment->assessment_date,
+            'student_id' => $assessment->student->id ?? null,
+            'student_name' => $assessment->student->name ?? null,
+            'assessor_id' => $assessment->assessor->id ?? null,
+            'assessor_name' => $assessment->assessor->name ?? null,
+            'package_id' => $assessment->package->id ?? null,
+            'package_name' => $assessment->package->name ?? null,
+            'category_id' => $assessment->category->id ?? null,
+            'category_name' => $assessment->category->name ?? null,
+            'details' => $assessmentDetails,
         ], 'Data detail history berhasil diambil');
     }
 }
