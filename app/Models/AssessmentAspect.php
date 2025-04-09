@@ -11,6 +11,7 @@ class AssessmentAspect extends Model
     protected $fillable = [
         'assessment_categories_id',
         'name',
+        'desc'
     ];
 
     public function category()

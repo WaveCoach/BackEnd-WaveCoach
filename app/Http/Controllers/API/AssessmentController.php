@@ -159,6 +159,7 @@ class AssessmentController extends BaseController
             return [
             'aspect_id' => $detail->aspect_id,
             'aspect_name' => $detail->aspect->name,
+            'aspect_desc' => $detail->aspect->desc,
             'score' => $detail->score,
             'remarks' => $detail->remarks,
             ];
