@@ -441,6 +441,26 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($data, 'Data inventory berhasil diambil.');
     }
 
+    public function getListMasterCoach(){
+        $mastercoaches = InventoryManagement::with('mastercoach')
+            ->select('mastercoach_id')
+            ->distinct()
+            ->get();
+
+        if ($mastercoaches->isEmpty()) {
+            return $this->ErrorResponse('Data mastercoach tidak ditemukan.', 404);
+        }
+
+        $data = $mastercoaches->map(function ($item) {
+            return [
+                'id' => $item->mastercoach->id,
+                'name' => $item->mastercoach->name,
+            ];
+        });
+
+        return $this->SuccessResponse($data, 'Data mastercoach berhasil diambil.');
+    }
+
 
 
 
