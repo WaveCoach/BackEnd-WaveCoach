@@ -418,6 +418,29 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($data, 'Data peminjaman berhasil diambil.');
     }
 
+    public function getListStuffInventory($mastercoachId){
+        $inventory = InventoryManagement::with(['mastercoach', 'inventory'])
+            ->where('mastercoach_id', $mastercoachId)
+            ->get();
+
+        if ($inventory->isEmpty()) {
+            return $this->ErrorResponse('Data inventory tidak ditemukan.', 404);
+        }
+
+        $data = $inventory->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'mastercoach_id' => $item->mastercoach_id,
+                'inventory_id' => $item->inventory_id,
+                'qty' => $item->qty,
+                'mastercoach_name' => $item->mastercoach->name ?? null,
+                'inventory_name' => $item->inventory->name ?? null,
+            ];
+        });
+
+        return $this->SuccessResponse($data, 'Data inventory berhasil diambil.');
+    }
+
 
 
 
