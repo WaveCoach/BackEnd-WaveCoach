@@ -245,7 +245,7 @@ class InventoryController extends BaseController
 
         try {
             $returnRequest = InventoryReturns::findOrFail($returnId);
-            // dd($returnRequest);
+            dd($returnRequest);
 
             if ($returnRequest->status !== 'pending') {
                 return $this->ErrorResponse('Pengembalian sudah diproses sebelumnya!', 400);
