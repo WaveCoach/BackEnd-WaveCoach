@@ -245,7 +245,6 @@ class InventoryController extends BaseController
 
         try {
             $returnRequest = InventoryReturns::findOrFail($returnId);
-            // dd($returnRequest);
 
             if ($returnRequest->status !== 'pending') {
                 return $this->ErrorResponse('Pengembalian sudah diproses sebelumnya!', 400);
@@ -260,7 +259,6 @@ class InventoryController extends BaseController
 
                 $landing->decrement('qty_out', $returnRequest->qty_returned);
 
-                // Jika semua barang telah dikembalikan, ubah statusnya
                 if ($landing->qty_out == 0) {
                     $landing->update(['status' => 'returned']);
                 }
@@ -269,7 +267,6 @@ class InventoryController extends BaseController
                     ->where('inventory_id', $returnRequest->inventory_id)
                     ->first();
 
-                // dd($inventory);
 
                 $inventory->increment('qty', $returnRequest->qty_returned);
 
