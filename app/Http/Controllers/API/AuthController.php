@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -124,4 +125,48 @@ class AuthController extends BaseController
 
         return $this->SuccessResponse($admin, 'Daftar admin berhasil diambil.');
     }
+
+    public function updateProfileImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|string',
+        ]);
+
+        try {
+            $path = $this->uploadBase64Image($request->image, 'images/profiles');
+            $user = Auth::user();
+            $user->profile_image = $path;
+            $user->save();
+
+            return response()->json([
+                'message' => 'Foto profil berhasil diperbarui.',
+                'image_url' => asset($path),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    private function uploadBase64Image(string $base64Image, string $folder = 'images'): string
+    {
+        if (!preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+            throw new \Exception('Format gambar tidak valid.');
+        }
+
+        $imageType = strtolower($type[1]);
+        $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+        $base64Image = base64_decode($base64Image);
+
+        if ($base64Image === false) {
+            throw new \Exception('Base64 decode gagal.');
+        }
+
+        $filename = uniqid('profile_', true) . '.' . $imageType;
+        $filePath = "{$folder}/{$filename}";
+
+        Storage::disk('public')->put($filePath, $base64Image);
+
+        return "storage/{$filePath}";
+    }
+
 }
