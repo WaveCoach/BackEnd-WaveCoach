@@ -267,7 +267,7 @@ class InventoryController extends BaseController
 
                 $inventory = InventoryManagement::where('mastercoach_id', $returnRequest->mastercoach_id)
                     ->where('inventory_id', $returnRequest->inventory_id)
-                    ->firstOrFail();
+                    ->first();
 
                 $inventory->increment('qty', $returnRequest->qty_returned);
 
