@@ -166,7 +166,7 @@ class AuthController extends BaseController
 
         Storage::disk('public')->put($filePath, $base64Image);
 
-        return "storage/{$filePath}";
+        return $filePath; // Return the raw path without "storage/"
     }
 
 }
