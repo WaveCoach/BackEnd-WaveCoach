@@ -257,7 +257,9 @@ class InventoryController extends BaseController
                     throw new \Exception("Jumlah qty_out tidak mencukupi untuk dikembalikan.");
                 }
 
+                $landing->increment('qty_remaining', $returnRequest->qty_returned);
                 $landing->decrement('qty_out', $returnRequest->qty_returned);
+
 
                 if ($landing->qty_out == 0) {
                     $landing->update(['status' => 'returned']);
@@ -266,15 +268,11 @@ class InventoryController extends BaseController
                 $inventory = InventoryManagement::where('mastercoach_id', $returnRequest->mastercoach_id)
                     ->where('inventory_id', $returnRequest->inventory_id)
                     ->first();
-
-
                 $inventory->increment('qty', $returnRequest->qty_returned);
-
                 $returnRequest->updateOrFail(['status' => 'approved']);
-
                 $returnRequest->notifications()->create([
                     'pengirim_id' => $returnRequest->mastercoach_id,
-                    'user_id'  => $returnRequest->coach_id, // Coach yang mengajukan
+                    'user_id'  => $returnRequest->coach_id,
                     'title'    => 'Pengembalian Barang Disetujui',
                     'message'  => "Pengembalian barang telah disetujui oleh Mastercoach.",
                     'type'     => 'return_approved',
@@ -298,7 +296,6 @@ class InventoryController extends BaseController
             }
 
             DB::commit();
-
             return $this->SuccessResponse($returnRequest, "Pengembalian telah {$request->status}!", 200);
 
         } catch (\Exception $e) {
@@ -409,6 +406,7 @@ class InventoryController extends BaseController
                 'tanggal_kembali' => $item->tanggal_kembali,
                 'status' => $item->status,
                 'qty_out' => $item->qty_out,
+                'qty_remaining' => $item->qty_remaining,
                 'coach_name' => $item->coach->name ?? null,
                 'mastercoach_name' => $item->mastercoach->name ?? null,
                 'inventory_name' => $item->inventory->name ?? null,
@@ -460,10 +458,5 @@ class InventoryController extends BaseController
 
         return $this->SuccessResponse($data, 'Data mastercoach berhasil diambil.');
     }
-
-
-
-
-
 
 }

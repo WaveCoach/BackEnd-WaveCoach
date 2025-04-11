@@ -106,7 +106,8 @@ class AssessmentController extends BaseController
     public function getHistory(Request $request)
     {
         $query = Assessment::with(['student', 'assessor', 'package', 'category'])
-            ->where('assessor_id', Auth::user()->id);
+            ->where('assessor_id', Auth::user()->id)
+            ->orderBy('created_at', 'desc');
 
         $search = $request->input('search');
 

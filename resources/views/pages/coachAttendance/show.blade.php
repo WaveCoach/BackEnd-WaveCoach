@@ -28,6 +28,7 @@
                     <th>Tanggal</th>
                     <th>Jam</th>
                     <th>Status</th>
+                    <th>Alasan</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -45,6 +46,7 @@
                             <span class="badge bg-danger">Tidak Hadir</span>
                         @endif
                     </td>
+                    <td>{{$item->remarks}}</td>
                     <td>
                         <a href="{{route('schedule.show', $item->schedule_id)}}" class="btn btn-info btn-sm mx-2">
                             <i class="fas fa-eye"></i>
@@ -60,6 +62,7 @@
                     <th>Tanggal</th>
                     <th>Jam</th>
                     <th>Status</th>
+                    <th>Alasan</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
