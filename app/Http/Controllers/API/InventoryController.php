@@ -336,7 +336,6 @@ class InventoryController extends BaseController
             )
             ->leftJoin('users', 'users.id', '=', 'inventory_returns.coach_id');
 
-        // Filter berdasarkan tipe history
         if ($filter === 'masuk') {
             $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
             $returnsQuery->where('inventory_returns.mastercoach_id', $userId);
@@ -360,19 +359,70 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
 
-    public function getDetailHistory($id){
-        $request = InventoryRequests::with([
-            'mastercoach',
-            'coach',
-            'items.inventory'
-        ])->find($id);
+    public function getRequestHistory($id)
+    {
+        $data = InventoryRequests::with(['mastercoach', 'coach', 'items.inventory'])->find($id);
 
-        if (!$request) {
+        if (!$data) {
             return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
         }
 
-        return $this->SuccessResponse($request, 'Data peminjaman berhasil diambil.');
+        // Flatten data menjadi satu dimensi kecuali untuk 'items'
+        $flattened = [
+            'id' => $data->id,
+            'status' => $data->status,
+            'tanggal_pinjam' => $data->tanggal_pinjam,
+            'tanggal_kembali' => $data->tanggal_kembali,
+            'alasan_pinjam' => $data->alasan_pinjam,
+            'mastercoach_id' => $data->mastercoach_id,
+            'mastercoach_name' => optional($data->mastercoach)->name,
+            'coach_id' => $data->coach_id,
+            'coach_name' => optional($data->coach)->name,
+        ];
+
+        $flattened['items'] = $data->items->map(function ($item) {
+            return [
+                'inventory_id' => $item->inventory_id,
+                'inventory_name' => optional($item->inventory)->name,
+                'qty_requested' => $item->qty_requested
+            ];
+        })->toArray();
+
+        return $this->SuccessResponse($flattened, 'Detail peminjaman berhasil diambil.');
     }
+
+
+    public function getReturnHistory($id)
+    {
+        $data = InventoryReturns::with(['mastercoach', 'coach', 'inventory', 'landing', 'request'])->find($id);
+
+        if (!$data) {
+            return $this->ErrorResponse('Data pengembalian tidak ditemukan.', 404);
+        }
+
+        $flattened = [
+            'id' => $data->id,
+            'status' => $data->status,
+            'qty_returned' => $data->qty_returned,
+            'returned_at' => $data->returned_at,
+            'inventory_id' => $data->inventory_id,
+            'inventory_name' => optional($data->inventory)->name,
+            'mastercoach_id' => $data->mastercoach_id,
+            'mastercoach_name' => optional($data->mastercoach)->name,
+            'coach_id' => $data->coach_id,
+            'coach_name' => optional($data->coach)->name,
+            'landing_id' => $data->inventory_landing_id,
+            'landing_tanggal_pinjam' => optional($data->landing)->tanggal_pinjam,
+            'landing_tanggal_kembali' => optional($data->landing)->tanggal_kembali,
+            'landing_alasan_pinjam' => optional($data->landing)->alasan_pinjam,
+            'request_id' => optional($data->landing)->request_id,
+            'request_tanggal_pinjam' => optional($data->landing->request)->tanggal_pinjam,
+            'request_tanggal_kembali' => optional($data->landing->request)->tanggal_kembali,
+        ];
+
+        return $this->SuccessResponse($flattened, 'Detail pengembalian berhasil diambil.');
+    }
+
 
     public function getList()
     {

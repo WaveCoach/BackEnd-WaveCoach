@@ -44,5 +44,18 @@ class InventoryReturns extends Model
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
+    public function request()
+    {
+        return $this->hasOneThrough(
+            \App\Models\InventoryRequests::class,
+            \App\Models\InventoryLandings::class,
+            'id', // id di InventoryLandings
+            'id', // id di InventoryRequests
+            'inventory_landing_id', // foreign key di InventoryReturns
+            'request_id' // foreign key di InventoryLandings
+        );
+    }
+
+
 
 }
