@@ -360,6 +360,20 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
 
+    public function getDetailHistory($id){
+        $request = InventoryRequests::with([
+            'mastercoach',
+            'coach',
+            'items.inventory'
+        ])->find($id);
+
+        if (!$request) {
+            return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
+        }
+
+        return $this->SuccessResponse($request, 'Data peminjaman berhasil diambil.');
+    }
+
     public function getList()
     {
         $inventory = Inventory::leftJoin('inventory_landings', function ($join) {

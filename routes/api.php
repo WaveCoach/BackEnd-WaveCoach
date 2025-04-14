@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('return/{landingId}', [InventoryController::class, 'returnInventory']);
     Route::patch('update-return-status/{returnId}', [InventoryController::class, 'updateReturnStatus']);
     Route::get('request-history-inventory', [InventoryController::class, 'getHistory']);
+    Route::get('request-history-inventory/{id}', [InventoryController::class, 'getDetailHistory']);
     Route::get('inventory-landing', [InventoryController::class, 'getList']);
     Route::get('inventory-landing/{inventoryId}', [InventoryController::class, 'getListDetail']);
     Route::get('inventory-list/{mastercoachId}', [InventoryController::class, 'getListStuffInventory']);
