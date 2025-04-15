@@ -527,4 +527,33 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($data, 'Data mastercoach berhasil diambil.');
     }
 
+    public function getDetailInventoryReturn($landingId){
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return $this->ErrorResponse('Unauthorized', 401);
+        }
+
+        $inventory_landing = InventoryLandings::with(['inventory', 'coach', 'mastercoach'])
+            ->where('id', $landingId)
+            ->first();
+
+        if (!$inventory_landing) {
+            return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
+        }
+
+        $data = [
+            'id' => $inventory_landing->id,
+            'coach_id' => $inventory_landing->coach_id,
+            'coach_name' => $inventory_landing->coach->name ?? null,
+            'mastercoach_id' => $inventory_landing->mastercoach_id,
+            'mastercoach_name' => $inventory_landing->mastercoach->name ?? null,
+            'tanggal_pinjam' => $inventory_landing->tanggal_pinjam,
+            'inventory_id' => $inventory_landing->inventory_id,
+            'inventory_name' => $inventory_landing->inventory->name ?? null,
+        ];
+
+        return $this->SuccessResponse($data, 'Detail peminjaman berhasil diambil.');
+    }
+
 }

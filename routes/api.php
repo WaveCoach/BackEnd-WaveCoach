@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('inventory-return-history/{id}', [InventoryController::class, 'getReturnHistory']);
     Route::get('inventory-landing', [InventoryController::class, 'getList']);
     Route::get('inventory-landing/{inventoryId}', [InventoryController::class, 'getListDetail']);
+    Route::get('inventory-landing/{landingId}/detail', [InventoryController::class, 'getDetailInventoryReturn']);
     Route::get('inventory-list/{mastercoachId}', [InventoryController::class, 'getListStuffInventory']);
     Route::get('list-mastercoach-inventory', [InventoryController::class, 'getListMasterCoach']);
 
