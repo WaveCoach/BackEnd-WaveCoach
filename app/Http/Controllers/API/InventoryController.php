@@ -181,6 +181,8 @@ class InventoryController extends BaseController
 
     public function returnInventory(Request $request, $landingId)
     {
+
+        dd($request->all());
         $request->validate([
             'qty_returned'   => 'required|integer|min:1',
             'img'             => 'nullable|string', // Validasi Base64 (string)
@@ -270,7 +272,7 @@ class InventoryController extends BaseController
 
         Storage::disk('public')->put($filePath, $base64Image);
 
-        return $filePath; // Return the raw path without "storage/"
+        return $filePath;
     }
 
     public function updateReturnStatus(Request $request, $returnId)
