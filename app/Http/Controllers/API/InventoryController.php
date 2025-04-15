@@ -182,6 +182,10 @@ class InventoryController extends BaseController
     public function returnInventory(Request $request, $landingId)
     {
 
+        if ($request->isJson()) {
+            $request->merge(json_decode($request->getContent(), true));
+        }
+
         dd($request->all());
         $request->validate([
             'qty_returned'   => 'required|integer|min:1',
