@@ -554,6 +554,7 @@ class InventoryController extends BaseController
             'tanggal_pinjam' => $inventory_landing->tanggal_pinjam,
             'inventory_id' => $inventory_landing->inventory_id,
             'inventory_name' => $inventory_landing->inventory->name ?? null,
+            'qty_borrowed' => $inventory_landing->qty_borrowed
         ];
 
         return $this->SuccessResponse($data, 'Detail peminjaman berhasil diambil.');
