@@ -378,6 +378,8 @@ class InventoryController extends BaseController
             'mastercoach_name' => optional($data->mastercoach)->name,
             'coach_id' => $data->coach_id,
             'coach_name' => optional($data->coach)->name,
+            'rejection_reason' => $data->rejection_reason,
+            'created_at' => $data->created_at,
         ];
 
         $flattened['items'] = $data->items->map(function ($item) {
@@ -418,6 +420,8 @@ class InventoryController extends BaseController
             'request_id' => optional($data->landing)->request_id,
             'request_tanggal_pinjam' => optional($data->landing->request)->tanggal_pinjam,
             'request_tanggal_kembali' => optional($data->landing->request)->tanggal_kembali,
+            'rejection_reason' => $data->rejection_reason,
+            'created_at' => $data->created_at,
         ];
 
         return $this->SuccessResponse($flattened, 'Detail pengembalian berhasil diambil.');
