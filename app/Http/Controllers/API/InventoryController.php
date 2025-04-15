@@ -11,6 +11,7 @@ use App\Models\InventoryReturns;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends BaseController
 {
@@ -181,7 +182,11 @@ class InventoryController extends BaseController
     public function returnInventory(Request $request, $landingId)
     {
         $request->validate([
-            'qty_returned' => 'required|integer|min:1',
+            'qty_returned'   => 'required|integer|min:1',
+            'img'             => 'nullable|string', // Validasi Base64 (string)
+            'damaged_count'   => 'nullable|integer|min:0',
+            'missing_count'   => 'nullable|integer|min:0',
+            'returned_at'     => 'nullable|date',
         ]);
 
         DB::beginTransaction();
@@ -197,7 +202,6 @@ class InventoryController extends BaseController
                 return $this->ErrorResponse('Jumlah yang dikembalikan lebih dari yang dipinjam!', 400);
             }
 
-            // Cek apakah sudah ada pengajuan pengembalian yang masih pending untuk barang ini
             $existingReturn = InventoryReturns::where('inventory_landing_id', $landing->id)
                 ->where('status', 'pending')
                 ->exists();
@@ -206,34 +210,67 @@ class InventoryController extends BaseController
                 return $this->ErrorResponse('Pengajuan pengembalian untuk barang ini sudah dibuat dan masih menunggu persetujuan!', 400);
             }
 
-            // Buat pengajuan pengembalian dengan status 'pending'
+            // Proses gambar jika ada (menangani Base64 atau file upload)
+            $imagePath = null;
+            if ($request->has('img') && !empty($request->img)) {
+                $imagePath = $this->uploadBase64Image($request->img, 'public/return_inventaris');
+            }
+
+            // Buat pengajuan pengembalian
             $return = InventoryReturns::create([
                 'inventory_landing_id' => $landing->id,
                 'inventory_id'         => $landing->inventory_id,
                 'mastercoach_id'       => $landing->mastercoach_id,
                 'coach_id'             => $landing->coach_id,
                 'qty_returned'         => $request->qty_returned,
-                'returned_at'          => now(),
-                'status'               => 'pending', // Pengembalian menunggu persetujuan
+                'returned_at'          => $request->returned_at ?? now(),
+                'img_inventory_return' => $imagePath,
+                'damaged_count'        => $request->damaged_count ?? 0,
+                'missing_count'        => $request->missing_count ?? 0,
+                'status'               => 'pending', // Status pengembalian
             ]);
 
+            // Buat notifikasi untuk mastercoach
             $return->notifications()->create([
                 'pengirim_id' => $landing->coach_id,
-                'user_id'  => $landing->mastercoach_id, // Mastercoach sebagai penerima notifikasi
-                'title'    => 'Pengajuan Pengembalian Barang',
-                'message'  => "Coach {$landing->coach_id} telah mengajukan pengembalian barang ID {$landing->inventory_id}.",
-                'type'     => 'return_request',
-                'is_read'  => 0,
+                'user_id'     => $landing->mastercoach_id, // Mastercoach sebagai penerima notifikasi
+                'title'       => 'Pengajuan Pengembalian Barang',
+                'message'     => "Coach {$landing->coach_id} telah mengajukan pengembalian barang ID {$landing->inventory_id}.",
+                'type'        => 'return_request',
+                'is_read'     => 0,
             ]);
 
             DB::commit();
 
+            // Kembalikan respon sukses
             return $this->SuccessResponse($return, 'Pengajuan pengembalian berhasil dibuat, menunggu persetujuan mastercoach.', 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->ErrorResponse('Gagal mengajukan pengembalian!', 400, ['error' => $e->getMessage()]);
         }
+    }
+
+    private function uploadBase64Image(string $base64Image, string $folder = 'images_inventaris_return'): string
+    {
+        if (!preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+            throw new \Exception('Format gambar tidak valid.');
+        }
+
+        $imageType = strtolower($type[1]);
+        $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+        $base64Image = base64_decode($base64Image);
+
+        if ($base64Image === false) {
+            throw new \Exception('Base64 decode gagal.');
+        }
+
+        $filename = uniqid('return_', true) . '.' . $imageType;
+        $filePath = "{$folder}/{$filename}";
+
+        Storage::disk('public')->put($filePath, $base64Image);
+
+        return $filePath; // Return the raw path without "storage/"
     }
 
     public function updateReturnStatus(Request $request, $returnId)
