@@ -253,7 +253,7 @@ class InventoryController extends BaseController
         }
     }
 
-    private function uploadBase64Image(string $base64Image, string $folder = 'images_inventaris_return'): string
+    private function uploadBase64Image(string $base64Image, string $folder = 'images'): string
     {
         if (!preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
             throw new \Exception('Format gambar tidak valid.');
