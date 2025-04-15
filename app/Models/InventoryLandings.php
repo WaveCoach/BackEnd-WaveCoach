@@ -16,9 +16,10 @@ class InventoryLandings extends Model
         'request_id',
         'tanggal_pinjam',
         'tanggal_kembali',
-        'qty_out',
-        'qty_remaining',
         'status',
+        'qty_borrowed',
+        'qty_returned',
+        'qty_pending_return',
     ];
 
     public function inventory()

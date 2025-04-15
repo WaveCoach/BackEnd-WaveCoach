@@ -133,7 +133,9 @@ class InventoryController extends BaseController
                         'mastercoach_id' => $loanRequest->mastercoach_id,
                         'tanggal_pinjam' => $loanRequest->tanggal_pinjam,
                         'tanggal_kembali' => $loanRequest->tanggal_kembali,
-                        'qty_out' => $item->qty_requested,
+                        'qty_borrowed' => $item->qty_requested,
+                        'qty_returned' => 0,
+                        'qty_pending_return' => 0,
                         'status'  => 'borrowed',
                     ]);
                 }
@@ -191,7 +193,7 @@ class InventoryController extends BaseController
                 return $this->ErrorResponse('Barang belum dipinjam atau sudah dikembalikan!', 400);
             }
 
-            if ($request->qty_returned > $landing->qty_out) {
+            if ($request->qty_returned > $landing->qty_borrowed) {
                 return $this->ErrorResponse('Jumlah yang dikembalikan lebih dari yang dipinjam!', 400);
             }
 
@@ -253,15 +255,15 @@ class InventoryController extends BaseController
             if ($request->status === 'approved') {
                 $landing = InventoryLandings::findOrFail($returnRequest->inventory_landing_id);
 
-                if ($landing->qty_out < $returnRequest->qty_returned) {
-                    throw new \Exception("Jumlah qty_out tidak mencukupi untuk dikembalikan.");
+                if ($landing->qty_borrowed < $returnRequest->qty_returned) {
+                    throw new \Exception("Jumlah qty_borrowed tidak mencukupi untuk dikembalikan.");
                 }
 
-                $landing->increment('qty_remaining', $returnRequest->qty_returned);
-                $landing->decrement('qty_out', $returnRequest->qty_returned);
+                $landing->decrement('qty_returned', $returnRequest->qty_returned);
+                $landing->decrement('qty_pending_return', $landing->qty_borrowed - $returnRequest->qty_returned);
 
 
-                if ($landing->qty_out == 0) {
+                if ($landing->qty_borrowed == 0) {
                     $landing->update(['status' => 'returned']);
                 }
 
@@ -438,7 +440,7 @@ class InventoryController extends BaseController
             ->select(
                 'inventories.id as inventory_id',
                 'inventories.name',
-                DB::raw('COALESCE(SUM(inventory_landings.qty_out), 0) as total_qty_borrowed')
+                DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed')
             )
             ->groupBy('inventories.id', 'inventories.name')
             ->get()
@@ -473,8 +475,9 @@ class InventoryController extends BaseController
                 'tanggal_pinjam' => $item->tanggal_pinjam,
                 'tanggal_kembali' => $item->tanggal_kembali,
                 'status' => $item->status,
-                'qty_out' => $item->qty_out,
-                'qty_remaining' => $item->qty_remaining,
+                'qty_borrowed' => $item->qty_borrowed,
+                'qty_returned' => $item->qty_returned,
+                'qty_pending_return' => $item->qty_pending_return,
                 'coach_name' => $item->coach->name ?? null,
                 'mastercoach_name' => $item->mastercoach->name ?? null,
                 'inventory_name' => $item->inventory->name ?? null,
