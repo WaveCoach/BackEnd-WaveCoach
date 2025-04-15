@@ -182,7 +182,7 @@ class InventoryController extends BaseController
     public function returnInventory(Request $request, $landingId)
     {
 
-        dd($request->qty_returned);
+        // dd($request->qty_returned);
         $request->validate([
             'qty_returned'   => 'required|integer|min:1',
             'img'             => 'nullable|string', // Validasi Base64 (string)
