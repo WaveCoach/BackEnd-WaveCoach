@@ -29,15 +29,18 @@ class InventoryController extends BaseController
 
         // Cek apakah sudah ada permintaan di hari yang sama dengan mastercoach dan coach yang sama
         $existingRequest = InventoryRequests::where('mastercoach_id', $request->mastercoach_id)
-        ->where('coach_id', Auth::id())
-        ->whereDate('tanggal_pinjam', $request->tanggal_pinjam)
-        ->where('status', 'pending')
-        ->exists();
+            ->where('coach_id', Auth::id())
+            ->whereDate('tanggal_pinjam', $request->tanggal_pinjam)
+            ->where('status', 'pending')
+            ->whereHas('items', function ($query) use ($request) {
+            $query->whereIn('inventory_id', array_column($request->items, 'inventory_id'));
+            })
+            ->exists();
 
         if ($existingRequest) {
             return $this->ErrorResponse(
-                'Anda sudah mengajukan permintaan untuk tanggal ini. Silakan ajukan lagi besok!',
-                400
+            'Anda sudah mengajukan permintaan untuk barang yang sama pada tanggal ini. Silakan ajukan barang yang berbeda!',
+            400
             );
         }
 
@@ -45,43 +48,41 @@ class InventoryController extends BaseController
 
         try {
             $loanRequest = InventoryRequests::create([
-                'mastercoach_id'  => $request->mastercoach_id,
-                'coach_id'        => Auth::id(),
-                'tanggal_pinjam'  => $request->tanggal_pinjam,
-                'tanggal_kembali' => $request->tanggal_kembali,
-                'alasan_pinjam'   => $request->alasan_pinjam,
-                'status'          => 'pending',
+            'mastercoach_id'  => $request->mastercoach_id,
+            'coach_id'        => Auth::id(),
+            'tanggal_pinjam'  => $request->tanggal_pinjam,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'alasan_pinjam'   => $request->alasan_pinjam,
+            'status'          => 'pending',
             ]);
 
             foreach ($request->items as $item) {
-                $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
-                    ->where('inventory_id', $item['inventory_id'])
-                    ->first();
+            $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
+                ->where('inventory_id', $item['inventory_id'])
+                ->first();
 
-                if (!$inventory) {
-                    throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
-                }
+            if (!$inventory) {
+                throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
+            }
 
-                if ($inventory->qty < $item['qty_requested']) {
-                    throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
-                }
+            if ($inventory->qty < $item['qty_requested']) {
+                throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
+            }
 
-                InventoryRequestItem::create([
-                    'request_id'   => $loanRequest->id,
-                    'inventory_id' => $item['inventory_id'],
-                    'qty_requested' => $item['qty_requested'],
-                ]);
-
-
+            InventoryRequestItem::create([
+                'request_id'   => $loanRequest->id,
+                'inventory_id' => $item['inventory_id'],
+                'qty_requested' => $item['qty_requested'],
+            ]);
             }
 
             $loanRequest->notifications()->create([
-                'user_id'    => $loanRequest->mastercoach_id, // Mastercoach yang akan menerima notifikasi
-                'pengirim_id' => $loanRequest->coach_id,
-                'title'      => 'Permintaan Peminjaman Barang',
-                'message'    => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
-                'type'       => 'request',
-                'is_read'    => false,
+            'user_id'    => $loanRequest->mastercoach_id, // Mastercoach yang akan menerima notifikasi
+            'pengirim_id' => $loanRequest->coach_id,
+            'title'      => 'Permintaan Peminjaman Barang',
+            'message'    => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
+            'type'       => 'request',
+            'is_read'    => false,
             ]);
 
             DB::commit();
