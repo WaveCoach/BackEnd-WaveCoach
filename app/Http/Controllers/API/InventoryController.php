@@ -366,7 +366,7 @@ class InventoryController extends BaseController
                 DB::raw("'request' AS type"),
                 'users.name AS coach_name'
             )
-            ->leftJoin('users', 'users.id', '=', 'inventory_requests.coach_id');
+            ->leftJoin('users', 'users.id', '=', 'inventory_requests.mastercoach_id');
 
         $returnsQuery = DB::table('inventory_returns')
             ->select(
@@ -379,7 +379,7 @@ class InventoryController extends BaseController
                 DB::raw("'return' AS type"),
                 'users.name AS coach_name'
             )
-            ->leftJoin('users', 'users.id', '=', 'inventory_returns.coach_id');
+            ->leftJoin('users', 'users.id', '=', 'inventory_returns.mastercoach_id');
 
         if ($filter === 'masuk') {
             $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
