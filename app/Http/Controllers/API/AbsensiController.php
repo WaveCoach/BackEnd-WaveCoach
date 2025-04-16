@@ -15,9 +15,9 @@ class AbsensiController extends BaseController
     {
         $validated = $request->validate([
             'attendance_status' => 'required|string',
-            'remarks' => 'nullable|string',
-            'proof' => 'nullable',
-            'schedule_id' => 'required'
+            'remarks'           => 'nullable|string',
+            'proof'             => 'nullable|string',
+            'schedule_id'       => 'required'
         ]);
 
         // Cek apakah absensi sudah ada
@@ -29,24 +29,50 @@ class AbsensiController extends BaseController
             return $this->ErrorResponse('Anda sudah melakukan absensi untuk jadwal ini!', 400);
         }
 
-        if ($request->has('proof')) {
-            $proofData = $request->input('proof');
-            $proofBase64 = base64_decode($proofData);
-            $fileName = 'proofs/' . uniqid() . '.png';
-            Storage::put($fileName, $proofBase64);
-            $validated['proof'] = Storage::url($fileName);
+        try {
+            // Proses gambar jika ada
+            $proofPath = null;
+            if ($request->has('proof') && !empty($request->proof)) {
+                $proofPath = $this->uploadBase64Image($request->proof, 'public/attendance_proof');
+            }
+
+            $attendance = CoachAttendance::create([
+                'coach_id'          => Auth::user()->id,
+                'attendance_status' => $validated['attendance_status'],
+                'remarks'           => $validated['remarks'] ?? null,
+                'proof'             => $proofPath,
+                'schedule_id'       => $validated['schedule_id']
+            ]);
+
+            return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
+
+        } catch (\Exception $e) {
+            return $this->ErrorResponse('Gagal menyimpan absensi!', 400, ['error' => $e->getMessage()]);
+        }
+    }
+
+    private function uploadBase64Image(string $base64Image, string $folder = 'images'): string
+    {
+        if (!preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+            throw new \Exception('Format gambar tidak valid.');
         }
 
-        $attendance = CoachAttendance::create([
-            'coach_id' => Auth::user()->id,
-            'attendance_status' => $validated['attendance_status'],
-            'remarks' => $validated['remarks'] ?? null,
-            'proof' => $validated['proof'] ?? null,
-            'schedule_id' => $request->schedule_id
-        ]);
+        $imageType = strtolower($type[1]);
+        $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+        $base64Image = base64_decode($base64Image);
 
-        return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
+        if ($base64Image === false) {
+            throw new \Exception('Base64 decode gagal.');
+        }
+
+        $filename = uniqid('proof_', true) . '.' . $imageType;
+        $filePath = "{$folder}/{$filename}";
+
+        Storage::disk('public')->put($filePath, $base64Image);
+
+        return $filePath;
     }
+
 
     public function studentAbsent(Request $request)
     {
