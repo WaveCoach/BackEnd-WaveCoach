@@ -89,7 +89,7 @@ class InventoryController extends BaseController
 
             return $this->SuccessResponse(
                 $loanRequest->load('items'),
-                'Permintaan peminjaman berhasil diajukan!',
+                'Permintaan peminjaman  berhasil diajukan!',
                 201
             );
 
@@ -142,7 +142,10 @@ class InventoryController extends BaseController
                     ]);
                 }
 
-                $loanRequest->update(['status' => 'approved']);
+                $loanRequest->update([
+                    'status' => 'approved',
+                    'rejection_reason' => $request->rejection_reason,
+                ]);
 
                 $loanRequest->notifications()->create([
                     'pengirim_id' => $loanRequest->mastercoach_id,
