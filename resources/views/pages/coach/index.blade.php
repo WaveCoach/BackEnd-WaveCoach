@@ -6,9 +6,19 @@
         <h5 class="card-title">Daftar Coach</h5>
         <p>Menu "Coach" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Coach secara efisien</p>
 
-        <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4">
-            <i class="fas fa-plus"></i> Tambah
-        </a>
+        <div class="d-flex">
+            <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4">
+                <i class="fas fa-plus"></i> Tambah
+            </a>
+            <a href="{{route('coach.export')}}" class="btn btn-primary btn-sm mb-4">
+                <i class="fas fa-file-export"></i> Export
+            </a>
+            {{-- <a href="{{route('coach.import')}}" class="btn btn-primary btn-sm mb-4">
+                <i class="fas fa-file-import"></i> Import
+            </a> --}}
+        </div>
+
+
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>

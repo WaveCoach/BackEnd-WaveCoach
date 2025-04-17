@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CoachExport;
 use App\Models\Coaches;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CoachController extends Controller
 {
@@ -120,5 +122,10 @@ class CoachController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Password berhasil direset ke 12345678!');
+    }
+
+    public function coachExport()
+    {
+        return Excel::download(new CoachExport, 'coach.xlsx');
     }
 }
