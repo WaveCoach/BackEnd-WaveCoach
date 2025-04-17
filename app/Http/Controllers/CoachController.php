@@ -130,6 +130,10 @@ class CoachController extends Controller
         return Excel::download(new CoachExport, 'coach.xlsx');
     }
 
+    public function formCoachImport(){
+        return view('pages.coach.import');
+    }
+
     public function coachImport(Request $request)
     {
         $request->validate([

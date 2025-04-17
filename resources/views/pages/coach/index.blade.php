@@ -7,13 +7,13 @@
         <p>Menu "Coach" memungkinkan admin untuk mengelola, memantau, dan memperbarui informasi Coach secara efisien</p>
 
         <div class="d-flex">
-            <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4">
+            <a href="{{route('coach.create')}}" class="btn btn-success btn-sm mb-4 mx-1">
                 <i class="fas fa-plus"></i> Tambah
             </a>
-            <a href="{{route('coach.export')}}" class="btn btn-primary btn-sm mb-4">
+            <a href="{{route('coach.export')}}" class="btn btn-primary btn-sm mb-4 mx-1">
                 <i class="fas fa-file-export"></i> Export
             </a>
-            <a href="{{route('coach.import')}}" class="btn btn-primary btn-sm mb-4">
+            <a href="{{route('coach.formimport')}}" class="btn btn-primary btn-sm mb-4 mx-1">
                 <i class="fas fa-file-import"></i> Import
             </a>
         </div>
