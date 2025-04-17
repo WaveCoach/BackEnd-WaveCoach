@@ -26,6 +26,10 @@
                     <input type="email" class="form-control" required name="email" id="email">
                 </div>
                 <div class="col-6 mb-3">
+                    <label for="tanggal_bergabung" class="form-label">Tanggal Bergabung</label>
+                    <input type="date" class="form-control" required name="tanggal_bergabung" id="tanggal_bergabung">
+                </div>
+                <div class="col-6 mb-3">
                     <label for="specialization" class="form-label">Role</label>
                     <select class="form-select" required name="role_id" id="specialization">
                         <option value="" selected disabled>Pilih Role</option>

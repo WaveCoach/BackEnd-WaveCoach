@@ -28,7 +28,8 @@ class CoachController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role_id' => 'required|integer'
+            'role_id' => 'required|integer',
+            'tanggal_bergabung' => 'required|date'
         ]);
 
         $user = User::create([
@@ -39,7 +40,8 @@ class CoachController extends Controller
         ]);
 
         Coaches::create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'tanggal_bergabung' => $request->tanggal_bergabung,
         ]);
 
         return redirect()->route('coach.index')->with('success', 'Coach berhasil ditambahkan dengan password: ');
@@ -82,6 +84,7 @@ class CoachController extends Controller
 
         $coach = Coaches::where('user_id', $id)->first();
         $coach-> status = $request->status;
+        $coach->tanggal_bergabung = $request->tanggal_bergabung;
         $coach->save();
 
         return redirect()->route('coach.index')->with('success', 'User updated successfully');

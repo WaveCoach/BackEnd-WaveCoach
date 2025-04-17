@@ -26,19 +26,25 @@
 
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{ $item->created_at->setTimezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }}</td>
+                        <td>{{ $item->coach->tanggal_bergabung }}</td>
                         <td>{{$item -> name}}</td>
                         <td>{{$item-> email}}</td>
                         <td>
-                            <span class="badge @if ($item->coach->status == 'active')
+                            <span class="badge @if ($item->coach && $item->coach->status == 'active')
                             bg-success
-                            @else
+                            @elseif ($item->coach && $item->coach->status == 'inactive')
                                 bg-danger
-                            @endif "> @if ($item->coach->status == 'active')
-                                active
                             @else
-                                inactive
-                            @endif</span>
+                                bg-secondary
+                            @endif">
+                                @if ($item->coach && $item->coach->status == 'active')
+                                    active
+                                @elseif ($item->coach && $item->coach->status == 'inactive')
+                                    inactive
+                                @else
+                                    unknown
+                                @endif
+                            </span>
                         </td>
 
                         <td><span class="badge @if ($item->role_id == 2)

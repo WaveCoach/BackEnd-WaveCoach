@@ -14,6 +14,10 @@
                     <input type="text" class="form-control" disabled value="{{$coach->email}}" name="email" id="email">
                 </div>
                 <div class="col-6 mb-3">
+                    <label for="tanggal_bergabung" class="form-label">Tanggal Bergabung</label>
+                    <input type="text" class="form-control" disabled value="{{$coach->coach->tanggal_bergabung}}" name="tanggal_bergabung" id="tanggal_bergabung">
+                </div>
+                <div class="col-6 mb-3">
                     <label for="specialization" class="form-label">Role</label>
                     <select class="form-select" disabled required name="role_id" id="specialization">
                         <option value="" disabled>Pilih Role</option>
