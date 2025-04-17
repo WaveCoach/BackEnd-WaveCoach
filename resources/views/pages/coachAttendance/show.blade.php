@@ -20,6 +20,13 @@
         </script>
         @endif
 
+        <form method="GET" action="{{ route('attendance.coach.show', request()->route('id')) }}" class="d-flex mb-3 mt-3">
+            <input type="date" name="date_start" value="{{ request('date_start') }}" class="form-control" placeholder="Start Date" style="width: 200px; margin-right: 10px;">
+            <input type="date" name="date_end" value="{{ request('date_end') }}" class="form-control" placeholder="End Date" style="width: 200px; margin-right: 10px;">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+
+
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>

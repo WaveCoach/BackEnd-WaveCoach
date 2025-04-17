@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CoachAttendance;
 use App\Models\StudentAttendance;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
@@ -45,9 +47,19 @@ class AttendanceController extends Controller
         return view('pages.coachAttendance.index', compact('coach'));
     }
 
-    public function coachAttendanceShow($id)
+    public function coachAttendanceShow(Request $request, $id)
     {
-        $schedule = CoachAttendance::with(['coach', 'schedule'])->where('coach_id', $id)->get();
+        $query = CoachAttendance::with(['coach', 'schedule'])
+        ->where('coach_id', $id);
+
+        if ($request->filled('date_start') && $request->filled('date_end')) {
+        $start = Carbon::parse($request->date_start)->startOfDay();
+        $end = Carbon::parse($request->date_end)->endOfDay();
+        $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        $schedule = $query->get();
+
         return view('pages.coachAttendance.show', compact('schedule'));
     }
 }
