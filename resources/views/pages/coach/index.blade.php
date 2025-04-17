@@ -26,7 +26,7 @@
 
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{ $item->coach->tanggal_bergabung }}</td>
+                        <td>{{ $item->coach->tanggal_bergabung ?? $item->created_at->format('Y-m-d') }}</td>
                         <td>{{$item -> name}}</td>
                         <td>{{$item-> email}}</td>
                         <td>

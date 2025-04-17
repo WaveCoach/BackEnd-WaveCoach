@@ -36,12 +36,10 @@
                             @endif
                         </td>
                         <td>
-                                 {{ $inventory->qty_borrowed }}
-
+                            {{ $inventory->qty_borrowed }}
                         </td>
                         <td>
                             {{ $inventory->qty_returned }}
-
                         </td>
                         <td>
                             {{$inventory->qty_pending_return}}
