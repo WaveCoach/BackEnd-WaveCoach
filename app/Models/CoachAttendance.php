@@ -27,4 +27,10 @@ class CoachAttendance extends Model
     {
         return $this->belongsTo(Schedule::class, 'schedule_id');
     }
+
+    // Accessor untuk proof
+    public function getProofAttribute($value)
+    {
+        return $value ? url('storage/' . $value) : null;
+    }
 }

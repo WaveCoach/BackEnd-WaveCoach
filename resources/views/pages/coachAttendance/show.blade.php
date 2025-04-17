@@ -3,8 +3,8 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Student Attendances</h5>
-        <p>Menu "student attendances" memungkinkan admin untuk  memantau presensi student secara efisien</p>
+        <h5 class="card-title">Coach Attendances</h5>
+        <p>Menu "coach attendances" memungkinkan admin untuk  memantau presensi coach secara efisien</p>
 
         @if(session('success'))
         <script>
@@ -36,6 +36,7 @@
                     <th>Jam</th>
                     <th>Status</th>
                     <th>Alasan</th>
+                    <th>Bukti Kehadiran</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -55,6 +56,15 @@
                     </td>
                     <td>{{$item->remarks}}</td>
                     <td>
+                        @if($item->proof)
+                            <a href="{{ $item->proof }}" target="_blank" class="btn btn-primary btn-sm">
+                                Lihat Bukti
+                            </a>
+                        @else
+                            <span class="text-muted">Tidak Ada Bukti</span>
+                        @endif
+                    </td>
+                    <td>
                         <a href="{{route('schedule.show', $item->schedule_id)}}" class="btn btn-info btn-sm mx-2">
                             <i class="fas fa-eye"></i>
                         </a>
@@ -70,6 +80,7 @@
                     <th>Jam</th>
                     <th>Status</th>
                     <th>Alasan</th>
+                    <th>Bukti Kehadira</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
