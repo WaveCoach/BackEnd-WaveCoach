@@ -109,7 +109,7 @@ class CoachController extends Controller
 
     public function resetPassword($id)
     {
-        $user = User::where('user_id', $id)->first();
+        $user = User::where('id', $id)->first();
 
         if (!$user) {
             return redirect()->back()->with('error', 'User tidak ditemukan!');
