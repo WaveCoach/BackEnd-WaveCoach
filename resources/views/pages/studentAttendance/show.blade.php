@@ -20,12 +20,19 @@
         </script>
         @endif
 
+        <form method="GET" action="{{ route('attendance.student.show', request()->route('id')) }}" class="d-flex mb-3 mt-3">
+            <input type="date" name="date_start" value="{{ request('date_start') }}" class="form-control" placeholder="Start Date" style="width: 200px; margin-right: 10px;">
+            <input type="date" name="date_end" value="{{ request('date_end') }}" class="form-control" placeholder="End Date" style="width: 200px; margin-right: 10px;">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Tanggal</th>
+                    <th>Tanggal Jadwal</th>
+                    <th>Tanggal Presensi</th>
                     <th>Jam</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -37,6 +44,7 @@
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->student->name}}</td>
                     <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('d F Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('H:i') }}</td>
                     <td>
                         @if($item->attendance_status == 'Hadir')
@@ -57,7 +65,8 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Tanggal</th>
+                    <th>Tanggal Jadwal</th>
+                    <th>Tanggal Presensi</th>
                     <th>Jam</th>
                     <th>Status</th>
                     <th>Aksi</th>

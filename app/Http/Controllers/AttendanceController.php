@@ -27,10 +27,25 @@ class AttendanceController extends Controller
         return view('pages.studentAttendance.index', compact('students'));
     }
 
-    public function studentAttendanceShow($id){
-        $schedule = StudentAttendance::with(['student', 'schedule'])->where('student_id', $id)->get();
+    public function studentAttendanceShow(Request $request, $id)
+    {
+        $query = StudentAttendance::with(['student', 'schedule'])
+                    ->where('student_id', $id);
+
+        if ($request->filled('date_start') && $request->filled('date_end')) {
+            $start = Carbon::parse($request->date_start)->startOfDay();
+            $end = Carbon::parse($request->date_end)->endOfDay();
+
+            $query->whereHas('schedule', function($q) use ($start, $end) {
+                $q->whereBetween('date', [$start, $end]);
+            });
+        }
+
+        $schedule = $query->get();
+
         return view('pages.studentAttendance.show', compact('schedule'));
     }
+
 
     public function coachAttendance(){
         $coach = User::leftJoin('coach_attendances', 'users.id', '=', 'coach_attendances.coach_id')
