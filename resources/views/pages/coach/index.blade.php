@@ -13,9 +13,9 @@
             <a href="{{route('coach.export')}}" class="btn btn-primary btn-sm mb-4">
                 <i class="fas fa-file-export"></i> Export
             </a>
-            {{-- <a href="{{route('coach.import')}}" class="btn btn-primary btn-sm mb-4">
+            <a href="{{route('coach.import')}}" class="btn btn-primary btn-sm mb-4">
                 <i class="fas fa-file-import"></i> Import
-            </a> --}}
+            </a>
         </div>
 
 

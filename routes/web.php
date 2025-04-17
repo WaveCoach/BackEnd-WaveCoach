@@ -44,6 +44,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/get-student', [ScheduleController::class, 'getStudent']);
     Route::resource('coach', CoachController::class);
     Route::get('coach-export', [CoachController::class, 'coachExport'])->name('coach.export');
+    Route::post('coach-import', [CoachController::class, 'coachImport'])->name('coach.import');
     Route::put('reset-password/{id}', [CoachController::class, 'resetPassword'])->name('coach.updatePassword');
     Route::resource('mastercoach', MasterCoachController::class);
     Route::resource('announcement', AnnouncementController::class);

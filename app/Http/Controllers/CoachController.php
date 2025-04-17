@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CoachExport;
+use App\Imports\CoachImport;
 use App\Models\Coaches;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -127,5 +128,16 @@ class CoachController extends Controller
     public function coachExport()
     {
         return Excel::download(new CoachExport, 'coach.xlsx');
+    }
+
+    public function coachImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new CoachImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Import berhasil!');
     }
 }
