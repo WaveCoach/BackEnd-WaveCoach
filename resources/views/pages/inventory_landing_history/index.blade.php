@@ -15,7 +15,9 @@
                     <th>Mastercoach</th>
                     <th>Coach Peminjam</th>
                     <th>Status</th>
-                    <th>Qty</th>
+                    <th>Qty dipinjam</th>
+                    <th>Qty dikembalikan</th>
+                    <th>Qty tersisa</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,11 +36,15 @@
                             @endif
                         </td>
                         <td>
-                            @if ($inventory->status == 'borrowed')
-                                 {{ $inventory->qty_out }}
-                            @elseif ($inventory->status == 'returned')
-                                {{ $inventory->qty_out - $inventory->qty_remaining }}
-                            @endif
+                                 {{ $inventory->qty_borrowed }}
+
+                        </td>
+                        <td>
+                            {{ $inventory->qty_returned }}
+
+                        </td>
+                        <td>
+                            {{$inventory->qty_pending_return}}
                         </td>
                     </tr>
                     @endforeach
@@ -51,7 +57,9 @@
                     <th>Mastercoach</th>
                     <th>Coach Peminjam</th>
                     <th>Status</th>
-                    <th>Qty</th>
+                    <th>Qty dipinjam</th>
+                    <th>Qty dikembalikan</th>
+                    <th>Qty tersisa</th>
                 </tr>
             </tfoot>
         </table>
