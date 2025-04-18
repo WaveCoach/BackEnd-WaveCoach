@@ -88,6 +88,10 @@ class User extends Authenticatable
         return $value ? url(Storage::url($value)) : null;
     }
 
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'student_id');
+    }
 
 
 }

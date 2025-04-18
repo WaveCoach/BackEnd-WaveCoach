@@ -17,7 +17,7 @@ class Assessment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function assessor()
+    public function coach()
     {
         return $this->belongsTo(User::class, 'assessor_id');
     }

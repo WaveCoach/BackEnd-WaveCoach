@@ -3,28 +3,40 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Laporan Penilaian {{$assesment->student->name ?? ''}}</h5>
-
+        <h5 class="card-title">Laporan Penilaian {{$user->name ?? ''}}</h5>
 
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Name Siswa</th>
-                    <th>Email</th>
-                    <th>aksi</th>
+                    <th>nama coach</th>
+                    <th>Tanggal Penilaian</th>
+                    <th>Gaya Renang</th>
+                    <th>Keterangan</th>
+                    <th>Dokumen</th>
                 </tr>
             </thead>
             <tbody>
+                @foreach ($assesment as $item)
+                <tr>
+                    <td>{{$loop->iteration}}</td>
+                    <td>{{$item->coach->name}}</td>
+                    <td>{{date('d-m-Y', strtotime($item->created_at))}}</td>
+                    <td>{{$item->category->name}}</td>
+                    <td></td>
+                    <td><a href="{{route('assesment-report.pdf', $item->id)}}">pdf</a></td>
 
-
+                </tr>
+                @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>aksi</th>
+                    <th>nama coach</th>
+                    <th>Tanggal Penilaian</th>
+                    <th>Gaya Renang</th>
+                    <th>Keterangan</th>
+                    <th>Dokumen</th>
                 </tr>
             </tfoot>
         </table>
