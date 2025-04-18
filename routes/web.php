@@ -50,6 +50,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('mastercoach', MasterCoachController::class);
     Route::resource('announcement', AnnouncementController::class);
     Route::resource('student', StudentController::class);
+    Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
+    Route::get('/students/form-import', [StudentController::class, 'formImport'])->name('students.formimport');
+    Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::resource('assesment-report', AssesmentReportController::class);
     Route::resource('inventory', InventoryController::class);
     Route::resource('inventory-landing-history', InventorylandingController::class);

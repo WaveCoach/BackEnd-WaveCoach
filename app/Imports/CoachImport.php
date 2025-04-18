@@ -17,12 +17,10 @@ class CoachImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        // Cek apakah user sudah ada
         if (User::where('email', $row['email'] ?? null)->exists()) {
             return null;
         }
 
-        // Buat user baru
         $user = User::create([
             'name'     => $row['name'] ?? null,
             'email'    => $row['email'] ?? null,
@@ -30,7 +28,6 @@ class CoachImport implements ToModel, WithHeadingRow
             'role_id'  => 2,
         ]);
 
-        // Konversi tanggal
         $tanggal = null;
         if (!empty($row['tanggal_bergabung'])) {
             try {
@@ -40,7 +37,6 @@ class CoachImport implements ToModel, WithHeadingRow
             }
         }
 
-        // Return langsung instance Coach
         return new Coaches([
             'user_id'          => $user->id,
             'tanggal_bergabung' => $tanggal,

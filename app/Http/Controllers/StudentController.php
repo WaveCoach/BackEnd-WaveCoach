@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StudentsExport;
+use App\Imports\StudentsImport;
 use App\Models\Package;
 use App\Models\PackageStudent;
 use App\Models\ScheduleDetail;
@@ -10,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -151,4 +154,26 @@ class StudentController extends Controller
         $user->delete();
         return redirect()->route('student.index')->with('success', 'User berhasil dihapus');
     }
+
+    public function export()
+    {
+        return Excel::download(new StudentsExport, 'students.xlsx');
+    }
+
+    public function formImport()
+    {
+        return view('pages.student.import');
+    }
+
+    public function Import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new StudentsImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Import berhasil!');
+    }
+
 }
