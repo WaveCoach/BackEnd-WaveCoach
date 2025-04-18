@@ -21,10 +21,12 @@ class AssesmentReportController extends Controller
     }
 
     public function show($id){
-        $assesment = Assessment::with(['student', 'category', 'coach'])->where('student_id', $id)->get();
-        $user = User::find($id);
+        $assesment = Assessment::with(['student', 'category', 'coach', 'details'])
+    ->where('student_id', $id)
+    ->get();
 
-        return view('pages.assesment_report.show', compact('assesment', 'user'));
+
+        return view('pages.assesment_report.show', compact('assesment'));
     }
 
     public function showPdf($id){

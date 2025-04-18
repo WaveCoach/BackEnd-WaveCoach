@@ -88,10 +88,10 @@
                 <td>{{$item->remarks}}</td>
             </tr>
             @endforeach
-
-
         </tbody>
     </table>
+
+    <p><strong>Rata-rata Nilai:</strong> {{ number_format($nilai->avg('score'), 2) }}</p>
 
     <div class="footer">
         <strong>Catatan Pelatih:</strong>

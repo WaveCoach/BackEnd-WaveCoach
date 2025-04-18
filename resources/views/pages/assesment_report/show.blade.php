@@ -19,16 +19,25 @@
             <tbody>
                 @foreach ($assesment as $item)
                 <tr>
-                    <td>{{$loop->iteration}}</td>
-                    <td>{{$item->coach->name}}</td>
-                    <td>{{date('d-m-Y', strtotime($item->created_at))}}</td>
-                    <td>{{$item->category->name}}</td>
-                    <td></td>
-                    <td><a href="{{route('assesment-report.pdf', $item->id)}}">pdf</a></td>
-
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->coach->name }}</td>
+                    <td>{{ date('d-m-Y', strtotime($item->created_at)) }}</td>
+                    <td>{{ $item->category->name }}</td>
+                    <td>
+                        @php
+                            $average = $item->details->avg('score');
+                            $kkm = $item->category->kkm;
+                            $status = $average >= $kkm ? 'Lulus' : 'Tidak Lulus';
+                        @endphp
+                        <span>Rata-rata: {{ number_format($average, 2) }}<br>Status: <strong class="{{ $status == 'Lulus' ? 'text-success' : 'text-danger' }}">{{ $status }}</strong></span>
+                    </td>
+                    <td>
+                        <a href="{{ route('assesment-report.pdf', $item->id) }}">pdf</a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
+
             <tfoot>
                 <tr>
                     <th>No</th>

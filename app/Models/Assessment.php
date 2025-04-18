@@ -36,4 +36,10 @@ class Assessment extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
+
+    public function details()
+    {
+        return $this->hasMany(AssessmentDetail::class, 'assessment_id');
+    }
+
 }
