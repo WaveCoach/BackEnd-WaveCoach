@@ -33,6 +33,7 @@ class StudentController extends Controller
             'email' => 'required|email|unique:users,email',
             'jenis_kelamin' => 'required|in:L,P',
             'tanggal_lahir' => 'required|date',
+            'tanggal_bergabung' => 'required|date',
             'package_id' => 'nullable|array',
             'package_id.*' => 'exists:packages,id',
         ]);
@@ -53,6 +54,7 @@ class StudentController extends Controller
             'user_id' => $user->id,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tanggal_lahir' => $request->tanggal_lahir,
+            'tanggal_bergabung' => $request->tanggal_bergabung,
             'nis' => $nis
         ]);
 
@@ -91,6 +93,7 @@ class StudentController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'jenis_kelamin' => 'required|in:L,P',
             'tanggal_lahir' => 'required|date',
+            'tanggal_bergabung' => 'required|date',
             'type' => 'nullable|string|max:50',
             'package_id' => 'nullable|array',
             'package_id.*' => 'exists:packages,id',
@@ -110,6 +113,7 @@ class StudentController extends Controller
         $student = Student::where('user_id', $id)->first();
         $student->jenis_kelamin = $request->jenis_kelamin;
         $student->tanggal_lahir = $request->tanggal_lahir;
+        $student->tanggal_bergabung = $request->tanggal_bergabung;
         $student->type = $request->type;
         $student->save();
 

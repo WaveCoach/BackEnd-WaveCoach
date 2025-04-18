@@ -30,6 +30,10 @@
                     <input type="date" class="form-control" name="tanggal_lahir" id="usia">
                 </div>
                 <div class="col-6 mb-3">
+                    <label for="tanggal_bergabung" class="form-label">Tanggal bergabung</label>
+                    <input type="date" class="form-control" name="tanggal_bergabung" id="tanggal_bergabung">
+                </div>
+                <div class="col-6 mb-3">
                     <label for="package_id" class="form-label">Packages</label>
                     <select class="select2 form-control"  name="package_id[]" id="student-select" multiple>
                         {{-- <option value="">Pilih Student</option> --}}

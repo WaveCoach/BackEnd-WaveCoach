@@ -32,8 +32,13 @@
                 </div>
 
                 <div class="col-6 mb-3">
-                    <label for="usia" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control" value="{{ $student->student->tanggal_lahir }}" name="tanggal_lahir" id="usia">
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                    <input type="date" class="form-control" value="{{ $student->student->tanggal_lahir }}" name="tanggal_lahir" id="tanggal_lahir">
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="tanggal_bergabung" class="form-label">Tanggal bergabung</label>
+                    <input type="date" class="form-control" value="{{ $student->student->tanggal_bergabung }}" name="tanggal_bergabung" id="tanggal_bergabung">
                 </div>
 
                 <div class="col-6 mb-3">

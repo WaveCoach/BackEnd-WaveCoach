@@ -23,6 +23,10 @@
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
                     <input type="text" class="form-control" value="{{ $student->student->tanggal_lahir }}" name="usia" id="usia" disabled>
                 </div>
+                <div class="col-6 mb-3">
+                    <label for="tanggal_lahir" class="form-label">Tanggal Bergabung</label>
+                    <input type="text" class="form-control" value="{{ $student->student->tanggal_bergabung }}" name="tanggal_bergabung" id="tanggal_bergabung" disabled>
+                </div>
 
                 <div class="col-6 mb-3">
                     <label for="usia" class="form-label">Usia</label>
