@@ -59,7 +59,7 @@ class StudentController extends Controller
             'nis' => $nis
         ]);
 
-        dd($student);
+        // dd($student);
 
         if ($request->filled('package_id')) {
             foreach ($request->package_id as $packageId) {
