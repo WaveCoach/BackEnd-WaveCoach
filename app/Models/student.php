@@ -14,7 +14,8 @@ class Student extends Model
         'tanggal_lahir',
         'nis',
         'jenis_kelamin',
-        'type'
+        'type',
+        'tanggal_bergabung'
     ];
 
     public function user(): BelongsTo
