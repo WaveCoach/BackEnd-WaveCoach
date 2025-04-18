@@ -51,13 +51,15 @@ class StudentController extends Controller
             'role_id' => 4
         ]);
 
-        Student::create([
+        $student = Student::create([
             'user_id' => $user->id,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tanggal_lahir' => $request->tanggal_lahir,
             'tanggal_bergabung' => $request->tanggal_bergabung,
             'nis' => $nis
         ]);
+
+        dd($student);
 
         if ($request->filled('package_id')) {
             foreach ($request->package_id as $packageId) {
