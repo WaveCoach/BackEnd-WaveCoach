@@ -36,15 +36,26 @@
                     <label for="kkm" class="form-label">Nilai KKM</label>
                     <input type="number" name="kkm" id="kkm" class="form-control" placeholder="Masukkan Nilai KKM">
                 </div>
+            </div>
 
-                <!-- Input Aspek Penilaian -->
-                <div class="col-6 mb-3">
-                    <label for="name" class="form-label">Aspek Penilaian</label>
-                    <input type="text" class="form-control" name="name[]" id="name">
+            <!-- Kontainer Dinamis untuk Aspek + Deskripsi -->
+            <div id="aspek-container">
+                <div class="row aspek-group mb-3">
+                    <div class="col-md-5">
+                        <label>Aspek Penilaian</label>
+                        <input type="text" class="form-control" name="name[]" required>
+                    </div>
+                    <div class="col-md-5">
+                        <label>Deskripsi</label>
+                        <input type="text" class="form-control" name="description[]" required>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-success add-aspek w-100"><strong>+</strong></button>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
         </form>
     </div>
 </div>
@@ -97,6 +108,29 @@
                     $kkmContainer.addClass('d-none');
                     $('#kkm').removeAttr('required');
                 }
+            });
+
+            // Tambah Aspek Penilaian
+            $('#aspek-container').on('click', '.add-aspek', function () {
+                let newRow = `
+                    <div class="row aspek-group mb-3">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" name="name[]" placeholder="Aspek Penilaian" required>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" name="description[]" placeholder="Deskripsi" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-aspek w-100"><strong>-</strong></button>
+                        </div>
+                    </div>
+                `;
+                $('#aspek-container').append(newRow);
+            });
+
+            // Hapus Aspek Penilaian
+            $('#aspek-container').on('click', '.remove-aspek', function () {
+                $(this).closest('.aspek-group').remove();
             });
         });
     </script>

@@ -29,30 +29,33 @@ class AssesmentAspectController extends Controller
         $request->validate([
             'assessment_categories_id' => 'required',
             'name' => 'required|array|min:1',
-            'name.*' => 'string|max:255'
+            'name.*' => 'string|max:255',
+            'kkm' => 'nullable|numeric',
+            'description' => 'required|array|min:1',
+            'description.*' => 'string|max:255',
         ]);
 
-        // Cek apakah ID kategori valid atau harus dibuat baru
         if (is_numeric($request->assessment_categories_id)) {
             $categoryId = $request->assessment_categories_id;
         } else {
-            $category = AssessmentCategory::firstOrCreate(['name' => $request->assessment_categories_id]);
+            $category = AssessmentCategory::firstOrCreate([
+                'name' => $request->assessment_categories_id,
+                'kkm' => $request->kkm,
+            ]);
             $categoryId = $category->id;
         }
 
-        $names = json_decode($request->name[0], true);
 
-        if (!is_array($names)) {
-            return back()->withErrors(['name' => 'Format data tidak valid.']);
-        }
+        $names = $request->input('name');
+        $descriptions = $request->input('description');
 
         $existingAspects = AssessmentAspect::where('assessment_categories_id', $categoryId)
-            ->pluck('name')
-            ->toArray();
+        ->pluck('name')
+        ->toArray();
 
         $newAspects = [];
-        foreach ($names as $item) {
-            $name = is_array($item) && isset($item['value']) ? $item['value'] : $item;
+        foreach ($names as $index => $name) {
+            $description = $descriptions[$index] ?? '';
 
             if (in_array($name, $existingAspects)) {
                 return back()->withErrors(['name' => "Aspek '{$name}' sudah ada dalam kategori ini."]);
@@ -60,11 +63,13 @@ class AssesmentAspectController extends Controller
 
             $newAspects[] = [
                 'assessment_categories_id' => $categoryId,
-                'name' => $name
+                'name' => $name,
+                'desc' => $description,
             ];
         }
 
         AssessmentAspect::insert($newAspects);
+
 
         return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil ditambahkan');
     }
