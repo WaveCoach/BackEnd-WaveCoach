@@ -3,45 +3,44 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form id="jobPositionForm">
-            <div class="row mb-4">
-                <div class="col-6 mb-3">
-                    <label for="name" class="form-label">Nama Kategori</label>
-                    <input type="text" class="form-control" disabled value="{{ $category->name }}" name="name" id="name">
-                </div>
-                <div class="col-6 mb-3">
-                    <label for="aspects" class="form-label">Aspek</label>
-                    @if ($category->aspects->isEmpty())
-                        <p class="text-muted">Tidak ada aspek</p>
-                    @else
-                        <ul class="list-group">
-                            @foreach ($category->aspects as $aspect)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ $aspect->name }}
-                                    <div>
-                                        <a href="{{ route('assesment-aspect.edit', $aspect->id) }}" class="btn btn-warning btn-sm me-2">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        {{-- <form action="{{ route('assesment-aspect.destroy', $aspect->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form> --}}
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+        <h5 class="card-title">Detail Aspek Penilaian</h5>
+        <p class="card-description">Halaman ini hanya menampilkan data Aspek Penilaian</p>
+
+        <div class="row mb-4">
+            <!-- Kategori -->
+            <div class="col-6 mb-3">
+                <label class="form-label">Kategori</label>
+                <select class="form-select" disabled>
+                    <option>{{ $categories->name }}</option>
+                </select>
             </div>
-            <a href="{{ route('assesment-aspect.index') }}" class="btn btn-warning">Kembali</a>
-        </form>
+
+            <!-- KKM -->
+            <div class="col-6 mb-3">
+                <label for="kkm" class="form-label">Nilai KKM</label>
+                <input type="number" class="form-control" value="{{ $categories->kkm }}" readonly>
+            </div>
+        </div>
+
+        <!-- Kontainer Aspek dan Deskripsi -->
+        <div id="aspek-container">
+            @forelse ($categories->aspects as $item)
+                <div class="row aspek-group mb-3">
+                    <div class="col-md-6">
+                        <label>Aspek Penilaian</label>
+                        <input type="text" class="form-control" value="{{ $item->name }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Deskripsi</label>
+                        <input type="text" class="form-control" value="{{ $item->desc }}" readonly>
+                    </div>
+                </div>
+            @empty
+                <p class="text-muted">Belum ada aspek.</p>
+            @endforelse
+        </div>
+
+        <a href="{{ route('assesment-aspect.index') }}" class="btn btn-warning mt-3">Kembali</a>
     </div>
 </div>
 @endsection
-
-@push('custom-style')
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
-@endpush

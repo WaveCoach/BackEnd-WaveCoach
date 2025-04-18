@@ -77,9 +77,10 @@ class AssesmentAspectController extends Controller
 
     public function show(string $id)
     {
-        // $aspect = AssessmentAspect::findOrFail($id);
-        $category = AssessmentCategory::with('aspects')->findOrFail($id);
-        return view('pages.assesment_aspect.show', compact('category'));
+        $aspect = AssessmentAspect::where('assessment_categories_id', $id)->get(); //didalam sini ada kolom aspek dan desc
+        $categories = AssessmentCategory::with('aspects')->findOrFail($id); // didalam sini ada kolom name dan kkm
+        $allCategories = AssessmentCategory::all();
+        return view('pages.assesment_aspect.show', compact('categories'));
     }
 
     public function edit(string $id)
@@ -128,55 +129,53 @@ class AssesmentAspectController extends Controller
     }
 
     public function asessmentedit($id){
-        $categories = AssessmentCategory::all(); // Ambil semua kategori untuk dropdown
-        $selectedCategory = AssessmentCategory::find($id); // Kategori yang sedang diedit
-        $aspects = AssessmentAspect::where('assessment_categories_id', $id)->get(); // Aspek yang terkait
-
-        return view('pages.assesment_aspect.aspectedit', compact('categories', 'selectedCategory', 'aspects'));
+        $aspect = AssessmentAspect::where('assessment_categories_id', $id)->get(); //didalam sini ada kolom aspek dan desc
+        $categories = AssessmentCategory::with('aspects')->findOrFail($id); // didalam sini ada kolom name dan kkm
+        $allCategories = AssessmentCategory::all();
+        return view('pages.assesment_aspect.aspectedit', compact('categories', 'aspect', 'allCategories'));
     }
 
-    public function asessmentupdate(Request $request, $id){
+    public function asessmentupdate(Request $request, $id)
+    {
         $request->validate([
-            'assessment_categories_id' => 'required',
+            'assessment_categories_id' => 'required|integer',
+            'kkm' => 'required|numeric|min:0|max:100',
             'name' => 'required|array|min:1',
-            'name.*' => 'required|string|max:255'
+            'name.*' => 'required',
+            'description' => 'required|array|min:1',
+            'description.*' => 'required|string|max:1000',
         ]);
 
-        $assesmentAspects = AssessmentAspect::where('assessment_categories_id', $id)->get();
+        $categoryId = $request->assessment_categories_id;
 
-        if (is_numeric($request->assessment_categories_id)) {
-            $categoryId = $request->assessment_categories_id;
-        } else {
-            $category = AssessmentCategory::firstOrCreate(['name' => $request->assessment_categories_id]);
-            $categoryId = $category->id;
+        AssessmentCategory::where('id', $categoryId)->update([
+            'kkm' => $request->kkm,
+        ]);
+
+        $existingAspects = AssessmentAspect::where('assessment_categories_id', $categoryId)->get();
+
+        $inputNames = $request->input('name', []);
+        $inputDescs = $request->input('description', []);
+
+        $keptNames = [];
+
+        foreach ($inputNames as $index => $name) {
+            $desc = $inputDescs[$index] ?? '';
+
+            $aspect = AssessmentAspect::updateOrCreate(
+                ['assessment_categories_id' => $categoryId, 'name' => $name],
+                ['desc' => $desc]
+            );
+
+            $keptNames[] = $aspect->name;
         }
 
-        $decodedNames = json_decode($request->name[0], true);
-
-        if (!is_array($decodedNames)) {
-            return back()->withErrors(['name' => 'Format data tidak valid.']);
-        }
-
-        $names = array_map(fn($item) => $item['value'] ?? '', $decodedNames);
-        $names = array_filter($names);
-
-        if (empty($names)) {
-            return back()->withErrors(['name' => 'Harus ada setidaknya satu aspek penilaian.']);
-        }
-
-        $existingNames = $assesmentAspects->pluck('name')->toArray();
-        $namesToDelete = array_diff($existingNames, $names);
-        AssessmentAspect::where('assessment_categories_id', $id)
+        $namesToDelete = $existingAspects->pluck('name')->diff($keptNames);
+        AssessmentAspect::where('assessment_categories_id', $categoryId)
             ->whereIn('name', $namesToDelete)
             ->delete();
 
-        foreach ($names as $name) {
-            AssessmentAspect::updateOrCreate(
-                ['assessment_categories_id' => $categoryId, 'name' => $name],
-                ['assessment_categories_id' => $categoryId, 'name' => $name]
-            );
-        }
-
-        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil diperbarui');
+        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil diperbarui.');
     }
+
 }
