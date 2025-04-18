@@ -3,7 +3,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Laporan Penilaian {{$user->name ?? ''}}</h5>
+        <h5 class="card-title">Laporan Penilaian {{$student->name ?? ''}}</h5>
 
         <table id="zero-conf" class="display" style="width:100%">
             <thead>
@@ -33,6 +33,13 @@
                     </td>
                     <td>
                         <a href="{{ route('assesment-report.pdf', $item->id) }}">pdf</a>
+                        <form action="{{ route('assesment-report.send', $item->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </form>
+
                     </td>
                 </tr>
                 @endforeach

@@ -57,6 +57,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('assesment-report', AssesmentReportController::class);
     Route::get('/assesment-report/{id}', [AssesmentReportController::class, 'show'])->name('assesment-report.show');
     Route::get('/assesment-report/{id}/pdf', [AssesmentReportController::class, 'showPdf'])->name('assesment-report.pdf');
+    Route::post('/assesment-report/send/{id}', [AssesmentReportController::class, 'sendReportToEmail'])->name('assesment-report.send');
     Route::resource('inventory', InventoryController::class);
     Route::resource('inventory-landing-history', InventorylandingController::class);
     Route::resource('deleted-inventory', DeletedInventoryController::class);
