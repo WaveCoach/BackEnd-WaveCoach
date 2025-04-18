@@ -19,9 +19,17 @@ class AssesmentReportController extends Controller
     }
 
     public function show($id){
-        $assesment = Assessment::where('user_id', $id)->get();
-        // dd($assesment);
-        $nilai = AssessmentDetail::where('assessment_id', $assesment->id)->get();
+        $assesment = Assessment::with('student')->where('student_id', $id)->first();
+        // dd($users);
+
+        if (!$assesment) {
+            $nilai = collect(); // Empty collection if no assessment found
+        } else {
+            $nilai = AssessmentDetail::where('assessment_id', $assesment->id)->get();
+        }
+
+        return view('pages.assesment_report.show', compact('assesment', 'nilai'));
     }
+
 
 }

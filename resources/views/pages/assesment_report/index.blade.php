@@ -23,7 +23,7 @@
                     <td>{{$item->name}}</td>
                     <td>{{$item->email}}</td>
                     <td class="d-flex">
-                        <a href="" class="btn btn-info btn-sm mx-2">
+                        <a href="{{route('assesment-report.show', $item->id)}}" class="btn btn-info btn-sm mx-2">
                             <i class="fas fa-eye"></i>
                         </a>
 

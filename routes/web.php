@@ -55,6 +55,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/students/form-import', [StudentController::class, 'formImport'])->name('students.formimport');
     Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::resource('assesment-report', AssesmentReportController::class);
+    Route::get('/assesment-report/{id}', [AssesmentReportController::class, 'show'])->name('assesment-report.show');
     Route::resource('inventory', InventoryController::class);
     Route::resource('inventory-landing-history', InventorylandingController::class);
     Route::resource('deleted-inventory', DeletedInventoryController::class);
