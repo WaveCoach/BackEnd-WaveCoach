@@ -40,6 +40,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/import-location', [LocationController::class, 'importCreate'])->name('import.location.create');
     Route::get('/export-location', [LocationController::class, 'exportLocations'])->name('export.location');
     Route::resource('schedule', ScheduleController::class);
+    Route::get('/get-students-by-package/{packageId}', [ScheduleController::class, 'getStudentsByPackage']);
     Route::resource('reschedule', RescheduleRequestController::class);
     Route::get('/get-student', [ScheduleController::class, 'getStudent']);
     Route::resource('coach', CoachController::class);

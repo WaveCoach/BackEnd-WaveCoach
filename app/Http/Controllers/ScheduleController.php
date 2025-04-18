@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\coaches;
 use App\Models\location;
 use App\Models\Package;
+use App\Models\PackageStudent;
 use App\Models\schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
@@ -222,6 +223,15 @@ class ScheduleController extends Controller
         return view('pages.schedule.import_schedule');
     }
 
+    public function getStudentsByPackage($packageId)
+    {
+        $students = PackageStudent::where('package_id', $packageId)
+        ->join('users', 'users.id', '=', 'package_student.student_id')  // Gabungkan langsung dengan users
+        ->select('users.id as user_id', 'users.name as student_name')  // Pilih id user dan nama student
+        ->get();
+
+        return response()->json($students);
+    }
 
 
 

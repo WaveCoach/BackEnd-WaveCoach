@@ -8,4 +8,9 @@ class Package extends Model
 {
     protected $table = "packages";
     protected $fillable = ["name"];
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'package_student', 'package_id', 'student_id');
+    }
 }

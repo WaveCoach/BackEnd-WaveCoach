@@ -15,9 +15,10 @@ class PackageStudent extends Model
 
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(User::class);
     }
 
+    // Relasi ke model Package
     public function package()
     {
         return $this->belongsTo(Package::class);
