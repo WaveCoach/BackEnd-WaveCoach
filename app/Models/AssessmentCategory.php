@@ -9,7 +9,7 @@ class AssessmentCategory extends Model
     protected $table = 'assessment_categories';
 
     protected $fillable = [
-        'name',
+        'name', 'kkm'
     ];
 
     public function aspects()
