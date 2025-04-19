@@ -55,6 +55,7 @@ class HomeController extends BaseController
                 'location_address' => $item->location->address,
                 'location_maps' => $item->location->maps,
                 'package_id' => $item->package->id ?? null,
+                'status' => $item->status,
                 'package_name' => $item->package->name ?? null,
             ];
         });
