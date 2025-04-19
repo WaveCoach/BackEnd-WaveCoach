@@ -26,6 +26,6 @@ class RescheduleRequestController extends Controller
         $reschedules->save();
 
         return redirect()->route('reschedule.index')
-            ->with('success', 'Jadwal berhasil diperbarui!');
+            ->with('success', 'permintaan reschedule berhasil diperbarui!');
     }
 }

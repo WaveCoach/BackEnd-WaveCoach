@@ -23,8 +23,8 @@ class AssesmentReportController extends Controller
 
     public function show($id){
         $assesment = Assessment::with(['student', 'category', 'coach', 'details'])
-    ->where('student_id', $id)
-    ->get();
+        ->where('student_id', $id)
+        ->get();
         $student = User::where('id', $id)->first();
 
         return view('pages.assesment_report.show', compact('assesment', 'student'));

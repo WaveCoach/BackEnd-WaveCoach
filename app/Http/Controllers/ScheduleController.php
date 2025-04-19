@@ -186,6 +186,7 @@ class ScheduleController extends Controller
             'end_time' => $request->end_time ?? $schedule->end_time,
             'coach_id' => $coachId ?? $schedule->coach_id,
             'location_id' => $locationId ?? $schedule->location_id,
+            'status' => 'rescheduled'
         ]);
 
         $existingStudentIds = $schedule->students->pluck('id')->toArray();
