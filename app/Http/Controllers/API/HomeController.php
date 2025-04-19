@@ -86,6 +86,8 @@ class HomeController extends BaseController
             'package_name' => $schedule->package->name ?? null,
             'status' => $schedule->status,
             'has_reschedule_request' => $schedule->rescheduleRequests && $schedule->rescheduleRequests->isNotEmpty(),
+            'is_assessed' => $schedule->is_assessed,
+
 
         ];
 
@@ -117,7 +119,6 @@ class HomeController extends BaseController
                     'id' => $item->student->id,
                     'name' => $item->student->name,
                     'attendance_status' => $attendance->attendance_status ?? null,
-                    'is_assessed' => $attendance->is_assessed,
                 ];
             });
 
