@@ -21,10 +21,12 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleImportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Mail\AssessmentReportMail;
 use App\Models\Announcement;
 use App\Models\RescheduleRequest;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/login-user', [AuthController::class, 'login'])->name('login');
 Route::post('/login-check', [AuthController::class, 'loginCheck'])->name('login.loginCheck');
@@ -76,6 +78,26 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.get');
     Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
+    Route::get('/test-email', function () {
+        // Dummy data untuk file PDF
+        $pdfContent = 'Ini adalah PDF dummy';
+        $filename = 'test.pdf';
+
+        // Simpan file sementara di storage
+        Storage::put('public/reports/' . $filename, $pdfContent);
+
+        // Cek path file yang disimpan
+        $filePath = storage_path('app/public/reports/' . $filename);
+
+        // Periksa apakah file ada
+        if (file_exists($filePath)) {
+            return 'File berhasil disimpan di: ' . $filePath;
+        } else {
+            return 'File gagal disimpan di: ' . $filePath;
+        }
+    });
+
+
 });
 
 
