@@ -84,7 +84,8 @@ class HomeController extends BaseController
             'package_id' => $schedule->package_id ?? null,
             'package_name' => $schedule->package->name ?? null,
             'status' => $schedule->status,
-            'has_reschedule_request' => $schedule->rescheduleRequests->isNotEmpty(),
+            'has_reschedule_request' => $schedule->rescheduleRequests && $schedule->rescheduleRequests->isNotEmpty(),
+
         ];
 
         $location = [

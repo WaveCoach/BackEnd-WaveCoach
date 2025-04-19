@@ -53,9 +53,9 @@ class Schedule extends Model
         return $this->hasMany(ScheduleDetail::class, 'schedule_id');
     }
 
-    public function rescheduleRequests(): HasOne
+    public function rescheduleRequests(): HasMany
     {
-        return $this->hasOne(RescheduleRequest::class);
+        return $this->hasMany(RescheduleRequest::class, 'schedule_id');
     }
 
 
