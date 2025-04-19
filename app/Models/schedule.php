@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Schedule extends Model
 {
@@ -52,9 +53,9 @@ class Schedule extends Model
         return $this->hasMany(ScheduleDetail::class, 'schedule_id');
     }
 
-    public function rescheduleRequests(): HasMany
+    public function rescheduleRequests(): HasOne
     {
-        return $this->hasMany(RescheduleRequest::class);
+        return $this->hasOne(RescheduleRequest::class);
     }
 
 
