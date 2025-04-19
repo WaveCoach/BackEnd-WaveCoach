@@ -18,7 +18,8 @@ class Schedule extends Model
         'start_time',
         'end_time',
         'package_id',
-        'status'
+        'status',
+        'is_assessed',
     ];
 
 

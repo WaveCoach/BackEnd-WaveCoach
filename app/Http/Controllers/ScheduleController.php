@@ -40,6 +40,7 @@ class ScheduleController extends Controller
             'location_id' => 'nullable',
             'student_id' => 'required|array',
             'student_id.*' => 'required',
+            'is_assessed' => 'nullable',
             'maps' => 'nullable',
             'email' => 'nullable'
         ]);
@@ -83,6 +84,8 @@ class ScheduleController extends Controller
             'package_id' => $request->package_id,
             'coach_id' => $coachId,
             'location_id' => $locationId,
+            'status' => 'scheduled',
+            'is_assessed' => $request->is_assessed,
         ]);
 
         foreach ($request->student_id as $studentId) {
@@ -144,7 +147,8 @@ class ScheduleController extends Controller
             'student_id' => 'required|array',
             'student_id.*' => 'required',
             'maps' => 'nullable',
-            'email' => 'nullable'
+            'email' => 'nullable',
+            'is_assessed' => 'nullable'
         ]);
 
         $schedule = Schedule::findOrFail($id);
@@ -186,7 +190,8 @@ class ScheduleController extends Controller
             'end_time' => $request->end_time ?? $schedule->end_time,
             'coach_id' => $coachId ?? $schedule->coach_id,
             'location_id' => $locationId ?? $schedule->location_id,
-            'status' => 'rescheduled'
+            'status' => 'rescheduled',
+            'is_assessed' => $request->is_assessed,
         ]);
 
         $existingStudentIds = $schedule->students->pluck('id')->toArray();

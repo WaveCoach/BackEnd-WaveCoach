@@ -27,6 +27,16 @@
                            value="{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} -
                                   {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}">
                 </div>
+                <div class="col-6 mb-3">
+                    <label for="is_assessed" class="form-label">Penilaian</label>
+                    <div class="form-check">
+                        <input class="form-check-input" disabled type="checkbox" name="is_assessed" id="is_assessed" value="1"
+                            {{ old('is_assessed', $schedule->is_assessed ?? false) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="is_assessed">
+                            Apakah ada penilaian?
+                        </label>
+                    </div>
+                </div>
                 <div class="col-12 mb-3">
                     <label class="form-label">Peserta</label>
                     @if ($schedule->students->isEmpty())
@@ -39,6 +49,8 @@
                         </ul>
                     @endif
                 </div>
+
+
             </div>
             <a href="{{ route('schedule.index') }}" class="btn btn-warning">Kembali</a>
         </form>
