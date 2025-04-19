@@ -65,7 +65,8 @@ class HomeController extends BaseController
 
     public function getDetailSchedule($id)
     {
-        $schedule = Schedule::with(['coach', 'location', 'package'])->find($id);
+        $schedule = Schedule::with(['coach', 'location', 'package', 'rescheduleRequests'])->find($id);
+
 
         if (!$schedule) {
             return $this->ErrorResponse('Schedule not found', 404);
@@ -82,6 +83,8 @@ class HomeController extends BaseController
             'formatted_date' => $date->translatedFormat('l, d F Y'),
             'package_id' => $schedule->package_id ?? null,
             'package_name' => $schedule->package->name ?? null,
+            'status' => $schedule->status,
+            'has_reschedule_request' => $schedule->rescheduleRequests->isNotEmpty(),
         ];
 
         $location = [
