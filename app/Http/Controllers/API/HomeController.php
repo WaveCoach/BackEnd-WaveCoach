@@ -117,7 +117,7 @@ class HomeController extends BaseController
                     'id' => $item->student->id,
                     'name' => $item->student->name,
                     'attendance_status' => $attendance->attendance_status ?? null,
-                    'is_assessed' => $attendance->is_assessed ?? null,
+                    'is_assessed' => $attendance->is_assessed,
                 ];
             });
 
