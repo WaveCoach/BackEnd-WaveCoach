@@ -35,7 +35,7 @@ class AssesmentReportController extends Controller
         $assessment = Assessment::with(['student', 'category', 'coach', 'schedule.location'])->where('id', $id)->first();
         $student = Student::where('user_id', $assessment->student_id)->first();
         $user = User::where('id', $assessment->student_id)->first();
-        return view('pages.assesment_report.raport', compact('assessment', 'student', 'user'));
+        return view('pages.assesment_report.raport', compact('assessment', 'student', 'user', 'nilai'));
     }
 
     public function sendReportToEmail($assessmentId)
