@@ -57,6 +57,7 @@ class HomeController extends BaseController
                 'package_id' => $item->package->id ?? null,
                 'status' => $item->status,
                 'package_name' => $item->package->name ?? null,
+                'is_assessed' => $item->is_assessed,
             ];
         });
 
@@ -116,6 +117,7 @@ class HomeController extends BaseController
                     'id' => $item->student->id,
                     'name' => $item->student->name,
                     'attendance_status' => $attendance->attendance_status ?? null,
+                    'is_assessed' => $attendance->is_assessed ?? null,
                 ];
             });
 
