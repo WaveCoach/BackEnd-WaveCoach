@@ -81,6 +81,7 @@
 
                                 </button>
                             </form>
+                            <a href="{{$item->profile_image}}">lihat foto</a>
                         </td>
                     </tr>
                     @endforeach

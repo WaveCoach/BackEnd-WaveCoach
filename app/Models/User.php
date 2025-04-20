@@ -29,7 +29,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'profile_images',
+        'profile_image',
         'no_telf'
     ];
 
@@ -92,6 +92,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Assessment::class, 'student_id');
     }
+
 
 
 }
