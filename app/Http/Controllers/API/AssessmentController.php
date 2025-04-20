@@ -125,6 +125,7 @@ class AssessmentController extends BaseController
             return [
                 'id' => $assessment->id,
                 'date' => $assessment->assessment_date,
+                'created_at' => $assessment->created_at,
                 'student' => [
                     'id' => $assessment->student->id ?? null,
                     'name' => $assessment->student->name ?? null,
