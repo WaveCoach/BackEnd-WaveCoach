@@ -81,7 +81,7 @@
 
                                 </button>
                             </form>
-                            <a href="{{$item->profile_image}}">lihat foto</a>
+                            <a href="{{$item->profile_image}}" class="btn btn-primary"> <i class="fas fa-image"></i></a>
                         </td>
                     </tr>
                     @endforeach
