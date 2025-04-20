@@ -488,11 +488,16 @@ class InventoryController extends BaseController
             )
             ->groupBy('inventories.id', 'inventories.name', 'inventories.inventory_image')
             ->get()
+            ->map(function ($item) {
+                $item->inventory_image_url = url('storage/' . $item->inventory_image); // ✅ generate URL manual
+                return $item;
+            })
             ->filter(fn($item) => $item->total_qty_borrowed > 0)
             ->values();
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
     }
+
 
 
     public function getListDetail($inventoryId)
