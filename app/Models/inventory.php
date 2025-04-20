@@ -22,4 +22,10 @@ class Inventory extends Model
     {
         return $this->hasMany(InventoryManagement::class, 'inventory_id');
     }
+
+    // Accessor for inventory_image URL
+    public function getInventoryImageUrlAttribute(): string
+    {
+        return url('storage/' . $this->inventory_image);
+    }
 }
