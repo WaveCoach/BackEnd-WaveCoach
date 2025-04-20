@@ -11,29 +11,32 @@ class InventoryManagementController extends BaseController
     public function index()
     {
         $inventoryByCoach = InventoryManagement::with(['mastercoach', 'inventory'])
-    ->select('mastercoach_id', 'inventory_id')
-    ->selectRaw('SUM(qty) as total_qty')
-    ->groupBy('mastercoach_id', 'inventory_id')
-    ->get()
-    ->groupBy('mastercoach_id');
+            ->select('mastercoach_id', 'inventory_id')
+            ->selectRaw('SUM(qty) as total_qty')
+            ->groupBy('mastercoach_id', 'inventory_id')
+            ->get()
+            ->groupBy('mastercoach_id');
 
-    $response = $inventoryByCoach->map(function ($inventories, $mastercoachId) {
-        $mastercoach = $inventories->first()->mastercoach;
+        $response = $inventoryByCoach->map(function ($inventories, $mastercoachId) {
+            $mastercoach = $inventories->first()->mastercoach;
 
-        return [
-            'mastercoach_id' => $mastercoachId,
-            'mastercoach_name' => $mastercoach->name ?? 'Unknown',
-            'items' => $inventories->map(function ($item) {
-                return [
-                    'inventory_id' => $item->inventory_id,
-                    'inventory_name' => $item->inventory->name ?? 'Unknown',
-                    'total_qty' => $item->total_qty
-                ];
-            })->values()
-        ];
-    })->values();
+            return [
+                'mastercoach_id' => $mastercoachId,
+                'mastercoach_name' => $mastercoach->name ?? 'Unknown',
+                'mastercoach_profile' => isset($mastercoach->profile_image)
+                    ? url('storage/' . $mastercoach->profile_image)
+                    : null,
+                'items' => $inventories->map(function ($item) {
+                    return [
+                        'inventory_id' => $item->inventory_id,
+                        'inventory_name' => $item->inventory->name ?? 'Unknown',
+                        'total_qty' => $item->total_qty
+                    ];
+                })->values()
+            ];
+        })->values();
 
-return $this->SuccessResponse($response, 'Data inventory berhasil diambil');
-
+        return $this->SuccessResponse($response, 'Data inventory berhasil diambil');
     }
+
 }
