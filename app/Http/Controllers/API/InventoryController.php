@@ -353,8 +353,10 @@ class InventoryController extends BaseController
     public function getHistory(Request $request)
     {
         $userId = Auth::id();
+        $roleId = Auth::user()->role_id;
         $filter = $request->input('filter');
 
+        // Gunakan alias yang berbeda untuk join ke users
         $requestsQuery = DB::table('inventory_requests')
             ->select(
                 'inventory_requests.id',
@@ -364,9 +366,11 @@ class InventoryController extends BaseController
                 'inventory_requests.created_at',
                 'inventory_requests.updated_at',
                 DB::raw("'request' AS type"),
-                'users.name AS coach_name'
+                // Tampilkan nama sesuai role: jika coach, tampilkan mastercoach_name, jika mastercoach, tampilkan coach_name
+                DB::raw(($roleId == 3 ? 'master.name' : 'coach.name') . ' AS coach_name')
             )
-            ->leftJoin('users', 'users.id', '=', 'inventory_requests.mastercoach_id');
+            ->leftJoin('users as coach', 'coach.id', '=', 'inventory_requests.coach_id')
+            ->leftJoin('users as master', 'master.id', '=', 'inventory_requests.mastercoach_id');
 
         $returnsQuery = DB::table('inventory_returns')
             ->select(
@@ -377,10 +381,12 @@ class InventoryController extends BaseController
                 'inventory_returns.created_at',
                 'inventory_returns.updated_at',
                 DB::raw("'return' AS type"),
-                'users.name AS coach_name'
+                DB::raw(($roleId == 3 ? 'master.name' : 'coach.name') . ' AS coach_name')
             )
-            ->leftJoin('users', 'users.id', '=', 'inventory_returns.mastercoach_id');
+            ->leftJoin('users as coach', 'coach.id', '=', 'inventory_returns.coach_id')
+            ->leftJoin('users as master', 'master.id', '=', 'inventory_returns.mastercoach_id');
 
+        // Terapkan filter berdasarkan arah data
         if ($filter === 'masuk') {
             $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
             $returnsQuery->where('inventory_returns.mastercoach_id', $userId);
@@ -390,19 +396,21 @@ class InventoryController extends BaseController
         } else {
             $requestsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_requests.mastercoach_id', $userId)
-                    ->orWhere('inventory_requests.coach_id', $userId);
+                      ->orWhere('inventory_requests.coach_id', $userId);
             });
 
             $returnsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_returns.mastercoach_id', $userId)
-                    ->orWhere('inventory_returns.coach_id', $userId);
+                      ->orWhere('inventory_returns.coach_id', $userId);
             });
         }
 
+        // Gabungkan hasil dari dua query
         $inventory = $requestsQuery->union($returnsQuery)->get();
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
+
 
     public function getRequestHistory($id)
     {
