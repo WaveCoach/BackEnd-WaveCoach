@@ -356,7 +356,6 @@ class InventoryController extends BaseController
         $roleId = Auth::user()->role_id;
         $filter = $request->input('filter');
 
-        // Gunakan alias yang berbeda untuk join ke users
         $requestsQuery = DB::table('inventory_requests')
             ->select(
                 'inventory_requests.id',
@@ -366,7 +365,6 @@ class InventoryController extends BaseController
                 'inventory_requests.created_at',
                 'inventory_requests.updated_at',
                 DB::raw("'request' AS type"),
-                // Tampilkan nama sesuai role: jika coach, tampilkan mastercoach_name, jika mastercoach, tampilkan coach_name
                 DB::raw(($roleId == 2 ? 'master.name' : 'coach.name') . ' AS coach_name'),
                 DB::raw("CONCAT('" . url('storage') . "/', " . ($roleId == 2 ? 'master.profile_image' : 'coach.profile_image') . ") AS profile_image")
             )
@@ -388,7 +386,7 @@ class InventoryController extends BaseController
             ->leftJoin('users as coach', 'coach.id', '=', 'inventory_returns.coach_id')
             ->leftJoin('users as master', 'master.id', '=', 'inventory_returns.mastercoach_id');
 
-        // Terapkan filter berdasarkan arah data
+        // Apply filters
         if ($filter === 'masuk') {
             $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
             $returnsQuery->where('inventory_returns.mastercoach_id', $userId);
@@ -398,17 +396,22 @@ class InventoryController extends BaseController
         } else {
             $requestsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_requests.mastercoach_id', $userId)
-                      ->orWhere('inventory_requests.coach_id', $userId);
+                    ->orWhere('inventory_requests.coach_id', $userId);
             });
 
             $returnsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_returns.mastercoach_id', $userId)
-                      ->orWhere('inventory_returns.coach_id', $userId);
+                    ->orWhere('inventory_returns.coach_id', $userId);
             });
         }
 
-        // Gabungkan hasil dari dua query
-        $inventory = $requestsQuery->union($returnsQuery)->get();
+        // Gabungkan dengan unionAll lalu bungkus dalam subquery untuk bisa diurutkan
+        $union = $requestsQuery->unionAll($returnsQuery);
+
+        $inventory = DB::table(DB::raw("({$union->toSql()}) as combined"))
+            ->mergeBindings($union) // penting: untuk binding parameter ke query union
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
