@@ -409,7 +409,7 @@ class InventoryController extends BaseController
         $union = $requestsQuery->unionAll($returnsQuery);
 
         $inventory = DB::table(DB::raw("({$union->toSql()}) as combined"))
-            ->mergeBindings($union) // penting: untuk binding parameter ke query union
+            ->mergeBindings($union)
             ->orderBy('created_at', 'desc')
             ->get();
 

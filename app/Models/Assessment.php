@@ -22,6 +22,11 @@ class Assessment extends Model
         return $this->belongsTo(User::class, 'assessor_id');
     }
 
+    public function assessor()
+    {
+        return $this->belongsTo(User::class, 'assessor_id');
+    }
+
     public function package()
     {
         return $this->belongsTo(Package::class);
@@ -41,5 +46,6 @@ class Assessment extends Model
     {
         return $this->hasMany(AssessmentDetail::class, 'assessment_id');
     }
+
 
 }
