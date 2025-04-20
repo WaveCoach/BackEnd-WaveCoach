@@ -483,6 +483,7 @@ class InventoryController extends BaseController
             ->select(
                 'inventories.id as inventory_id',
                 'inventories.name',
+                'inventories.inventory_image',
                 DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed')
             )
             ->groupBy('inventories.id', 'inventories.name')
