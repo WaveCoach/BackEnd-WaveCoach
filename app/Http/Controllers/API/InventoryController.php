@@ -368,7 +368,7 @@ class InventoryController extends BaseController
                 DB::raw("'request' AS type"),
                 // Tampilkan nama sesuai role: jika coach, tampilkan mastercoach_name, jika mastercoach, tampilkan coach_name
                 DB::raw(($roleId == 2 ? 'master.name' : 'coach.name') . ' AS coach_name'),
-                DB::raw(($roleId == 2 ? 'master.profile_image' : 'coach.profile_image') . ' AS profile_image')
+                DB::raw("CONCAT('" . url('storage') . "/', " . ($roleId == 2 ? 'master.profile_image' : 'coach.profile_image') . ") AS profile_image")
             )
             ->leftJoin('users as coach', 'coach.id', '=', 'inventory_requests.coach_id')
             ->leftJoin('users as master', 'master.id', '=', 'inventory_requests.mastercoach_id');
@@ -383,7 +383,7 @@ class InventoryController extends BaseController
                 'inventory_returns.updated_at',
                 DB::raw("'return' AS type"),
                 DB::raw(($roleId == 3 ? 'coach.name' : 'master.name') . ' AS coach_name'),
-                DB::raw(($roleId == 3 ? 'coach.profile_image' : 'master.profile_image') . ' AS profile_image')
+                DB::raw("CONCAT('" . url('storage') . "/', " . ($roleId == 3 ? 'coach.profile_image' : 'master.profile_image') . ") AS profile_image")
             )
             ->leftJoin('users as coach', 'coach.id', '=', 'inventory_returns.coach_id')
             ->leftJoin('users as master', 'master.id', '=', 'inventory_returns.mastercoach_id');
