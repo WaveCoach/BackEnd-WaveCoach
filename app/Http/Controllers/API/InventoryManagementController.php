@@ -23,7 +23,9 @@ class InventoryManagementController extends BaseController
             return [
                 'mastercoach_id' => $mastercoachId,
                 'mastercoach_name' => $mastercoach->name ?? 'Unknown',
-                'mastercoach_profile' => $mastercoach->profile_image_url ?? null,
+                'mastercoach_profile' => isset($mastercoach->profile_image)
+                    ? url('storage/' . $mastercoach->profile_image)
+                    : null,
                 'items' => $inventories->map(function ($item) {
                     return [
                         'inventory_id' => $item->inventory_id,
