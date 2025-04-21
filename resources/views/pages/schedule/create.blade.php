@@ -91,7 +91,7 @@
                     <div class="col-6 mb-3">
                         <label for="is_assessed" class="form-label">Penilaian</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_assessed" id="is_assessed" value="1">
+                            <input class="form-check-input" type="checkbox" name="is_assessed" id="is_assessed" value="0">
                             <label class="form-check-label" for="is_assessed">
                                 Apakah ada penilaian?
                             </label>
