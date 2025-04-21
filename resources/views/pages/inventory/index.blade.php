@@ -41,13 +41,7 @@
                             <a href="{{route('inventory.show', $inventory->id)}}" class="btn btn-info btn-sm mx-2">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <form action="{{ route('inventory.destroy', $inventory->id) }}" method="POST" class="delete-form" data-id="{{ $inventory->id }}" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-btn">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+
 
                         </td>
                     </tr>
