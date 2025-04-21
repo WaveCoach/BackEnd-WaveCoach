@@ -413,7 +413,12 @@ class InventoryController extends BaseController
         $inventory = DB::table(DB::raw("({$union->toSql()}) as combined"))
             ->mergeBindings($union)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+            $item->created_at = \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->toDateTimeString();
+            $item->updated_at = \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Jakarta')->toDateTimeString();
+            return $item;
+            });
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
