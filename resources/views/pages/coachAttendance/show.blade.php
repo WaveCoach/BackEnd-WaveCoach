@@ -65,9 +65,9 @@
                     @endphp
 
                     @if ($waktuMasuk->lte($waktuMulai))
-                        <span class="text-green-600 font-semibold">Tepat Waktu</span>
+                        <span class="text-green-600 badge bg-success font-semibold">Tepat Waktu</span>
                     @else
-                        <span class="text-red-600 font-semibold">Terlambat</span>
+                        <span class="text-red-600 badge bg-danger font-semibold">Terlambat</span>
                     @endif
 
                     </td>
