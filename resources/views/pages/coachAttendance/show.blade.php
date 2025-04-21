@@ -35,6 +35,7 @@
                     <th>Tanggal</th>
                     <th>Jam</th>
                     <th>Status</th>
+                    <th>Presensi waktu</th>
                     <th>Alasan</th>
                     <th>Bukti Kehadiran</th>
                     <th>Aksi</th>
@@ -53,6 +54,22 @@
                         @else
                             <span class="badge bg-danger">Tidak Hadir</span>
                         @endif
+                    </td>
+                    <td>
+                        @php
+                        $tanggal = $item->schedule->date;           // contoh: 2025-04-21
+                        $jamMulai = $item->schedule->start_time;    // contoh: 07:30:00
+                        $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
+
+                        $waktuMasuk = \Carbon\Carbon::parse($item->created_at);
+                    @endphp
+
+                    @if ($waktuMasuk->lte($waktuMulai))
+                        <span class="text-green-600 font-semibold">Tepat Waktu</span>
+                    @else
+                        <span class="text-red-600 font-semibold">Terlambat</span>
+                    @endif
+
                     </td>
                     <td>{{$item->remarks}}</td>
                     <td>
@@ -79,6 +96,7 @@
                     <th>Tanggal</th>
                     <th>Jam</th>
                     <th>Status</th>
+                    <th>Presensi waktu</th>
                     <th>Alasan</th>
                     <th>Bukti Kehadira</th>
                     <th>Aksi</th>
