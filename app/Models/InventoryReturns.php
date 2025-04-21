@@ -20,6 +20,7 @@ class InventoryReturns extends Model
         'damaged_count',
         'missing_count',
         'rejection_reason',
+        'desc',
 
     ];
 

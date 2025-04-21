@@ -193,6 +193,7 @@ class InventoryController extends BaseController
             'damaged_count'   => 'nullable|integer|min:0',
             'missing_count'   => 'nullable|integer|min:0',
             'returned_at'     => 'nullable|date',
+            'desc'           => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -233,6 +234,7 @@ class InventoryController extends BaseController
                 'img_inventory_return' => $imagePath,
                 'damaged_count'        => $request->damaged_count ?? 0,
                 'missing_count'        => $request->missing_count ?? 0,
+                'desc'                 => $request->desc,
                 'status'               => 'pending', // Status pengembalian
             ]);
 
