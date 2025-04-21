@@ -31,7 +31,6 @@ class ScheduleController extends Controller
     }
 
     public function store(Request $request) {
-        dd($request->all());
         $request->validate([
             'date' => 'required|date',
             'start_time' => 'required',
@@ -86,7 +85,7 @@ class ScheduleController extends Controller
             'coach_id' => $coachId,
             'location_id' => $locationId,
             'status' => 'scheduled',
-            'is_assessed' => $request->is_assessed,
+            'is_assessed' => $request->is_assessed ?? 0,
         ]);
 
         foreach ($request->student_id as $studentId) {
