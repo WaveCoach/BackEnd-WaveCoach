@@ -59,19 +59,27 @@ class InventoryController extends Controller
         if (is_numeric($request->inventory_id)) {
             $inventoryId = $request->inventory_id;
         } else {
-            if ($request->hasFile('inventory_image')) {
-                $imagePath = $request->file('inventory_image')->store('inventory_images', 'public');
+            // Cek dulu apakah ada inventory dengan nama yang sama (tanpa peduli huruf besar/kecil)
+            $existingInventory = Inventory::whereRaw('LOWER(name) = ?', [strtolower($request->inventory_id)])->first();
+
+            if ($existingInventory) {
+                $inventoryId = $existingInventory->id;
             } else {
-                $imagePath = null;
+                if ($request->hasFile('inventory_image')) {
+                    $imagePath = $request->file('inventory_image')->store('inventory_images', 'public');
+                } else {
+                    $imagePath = null;
+                }
+
+                $newInventory = Inventory::create([
+                    'name' => $request->inventory_id,
+                    'inventory_image' => $imagePath,
+                ]);
+
+                $inventoryId = $newInventory->id;
             }
-
-            $newInventory = Inventory::create([
-                'name' => $request->inventory_id,
-                'inventory_image' => $imagePath,
-            ]);
-
-            $inventoryId = $newInventory->id;
         }
+
 
         $inventoryManagement = InventoryManagement::where('inventory_id', $inventoryId)
         ->where('mastercoach_id', $mastercoachId)
