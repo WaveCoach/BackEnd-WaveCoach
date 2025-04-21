@@ -358,7 +358,6 @@ class InventoryController extends BaseController
         $roleId = Auth::user()->role_id;
         $filter = $request->input('filter');
 
-        // Requests
         $requestsQuery = DB::table('inventory_requests')
             ->select(
                 'inventory_requests.id',
@@ -368,17 +367,12 @@ class InventoryController extends BaseController
                 'inventory_requests.created_at',
                 'inventory_requests.updated_at',
                 DB::raw("'request' AS type"),
-                DB::raw("CASE
-                    WHEN inventory_requests.coach_id = $userId THEN 'keluar'
-                    WHEN inventory_requests.mastercoach_id = $userId THEN 'masuk'
-                    ELSE 'unknown' END AS condition"),
                 DB::raw(($roleId == 2 ? 'master.name' : 'coach.name') . ' AS coach_name'),
                 DB::raw("CONCAT('" . url('storage') . "/', " . ($roleId == 2 ? 'master.profile_image' : 'coach.profile_image') . ") AS profile_image")
             )
             ->leftJoin('users as coach', 'coach.id', '=', 'inventory_requests.coach_id')
             ->leftJoin('users as master', 'master.id', '=', 'inventory_requests.mastercoach_id');
 
-        // Returns
         $returnsQuery = DB::table('inventory_returns')
             ->select(
                 'inventory_returns.id',
@@ -388,17 +382,13 @@ class InventoryController extends BaseController
                 'inventory_returns.created_at',
                 'inventory_returns.updated_at',
                 DB::raw("'return' AS type"),
-                DB::raw("CASE
-                    WHEN inventory_returns.coach_id = $userId THEN 'keluar'
-                    WHEN inventory_returns.mastercoach_id = $userId THEN 'masuk'
-                    ELSE 'unknown' END AS condition"),
                 DB::raw(($roleId == 3 ? 'coach.name' : 'master.name') . ' AS coach_name'),
                 DB::raw("CONCAT('" . url('storage') . "/', " . ($roleId == 3 ? 'coach.profile_image' : 'master.profile_image') . ") AS profile_image")
             )
             ->leftJoin('users as coach', 'coach.id', '=', 'inventory_returns.coach_id')
             ->leftJoin('users as master', 'master.id', '=', 'inventory_returns.mastercoach_id');
 
-        // Filter masuk/keluar berdasarkan userId
+        // Apply filters
         if ($filter === 'masuk') {
             $requestsQuery->where('inventory_requests.mastercoach_id', $userId);
             $returnsQuery->where('inventory_returns.mastercoach_id', $userId);
@@ -408,16 +398,16 @@ class InventoryController extends BaseController
         } else {
             $requestsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_requests.mastercoach_id', $userId)
-                      ->orWhere('inventory_requests.coach_id', $userId);
+                    ->orWhere('inventory_requests.coach_id', $userId);
             });
 
             $returnsQuery->where(function ($query) use ($userId) {
                 $query->where('inventory_returns.mastercoach_id', $userId)
-                      ->orWhere('inventory_returns.coach_id', $userId);
+                    ->orWhere('inventory_returns.coach_id', $userId);
             });
         }
 
-        // Gabungkan dan bungkus subquery agar bisa di-order
+        // Gabungkan dengan unionAll lalu bungkus dalam subquery untuk bisa diurutkan
         $union = $requestsQuery->unionAll($returnsQuery);
 
         $inventory = DB::table(DB::raw("({$union->toSql()}) as combined"))
@@ -425,14 +415,13 @@ class InventoryController extends BaseController
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($item) {
-                $item->created_at = \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->toDateTimeString();
-                $item->updated_at = \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Jakarta')->toDateTimeString();
-                return $item;
+            $item->created_at = \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->toDateTimeString();
+            $item->updated_at = \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Jakarta')->toDateTimeString();
+            return $item;
             });
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
-
 
 
     public function getRequestHistory($id)
