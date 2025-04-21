@@ -59,7 +59,6 @@ class InventoryController extends Controller
         if (is_numeric($request->inventory_id)) {
             $inventoryId = $request->inventory_id;
         } else {
-            // Cek dulu apakah ada inventory dengan nama yang sama (tanpa peduli huruf besar/kecil)
             $existingInventory = Inventory::whereRaw('LOWER(name) = ?', [strtolower($request->inventory_id)])->first();
 
             if ($existingInventory) {
