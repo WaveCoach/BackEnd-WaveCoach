@@ -36,7 +36,6 @@
                 <select class="select2 form-control" required name="user_id[]" id="student-select" multiple>
                     <option value="semua">Semua Orang</option>
                     <option value="mastercoach">Semua Mastercoach</option>
-                    <option value="coach">Semua Coach</option>
                     @foreach ($users as $student)
                         <option value="{{ $student->id }}">
                             {{ $student->name }}

@@ -47,9 +47,7 @@ class AnnouncementController extends Controller
         if (in_array('mastercoach', $request->user_id)) {
             $userIds = array_merge($userIds, User::where('role_id', 3)->pluck('id')->toArray());
         }
-        if (in_array('coach', $request->user_id)) {
-            $userIds = array_merge($userIds, User::where('role_id', 2)->pluck('id')->toArray());
-        }
+
 
         $userIds = array_unique($userIds);
 
