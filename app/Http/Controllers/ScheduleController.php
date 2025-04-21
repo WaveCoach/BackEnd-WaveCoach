@@ -77,6 +77,22 @@ class ScheduleController extends Controller
             $locationId = $location->id;
         }
 
+        $existingSchedule = Schedule::where('coach_id', $coachId)
+            ->where('date', $request->date)
+            ->where(function ($query) use ($request) {
+            $query->whereBetween('start_time', [$request->start_time, $request->end_time])
+                  ->orWhereBetween('end_time', [$request->start_time, $request->end_time])
+                  ->orWhere(function ($query) use ($request) {
+                  $query->where('start_time', '<=', $request->start_time)
+                    ->where('end_time', '>=', $request->end_time);
+                  });
+            })
+            ->first();
+
+        if ($existingSchedule) {
+            return redirect()->back()->with('error', 'Coach ini sudah memiliki jadwal di rentang waktu tersebut.');
+        }
+
         $schedule = Schedule::create([
             'date' => $request->date,
             'start_time' => $request->start_time,
