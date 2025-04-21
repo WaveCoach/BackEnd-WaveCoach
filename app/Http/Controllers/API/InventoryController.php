@@ -414,14 +414,25 @@ class InventoryController extends BaseController
             ->mergeBindings($union)
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($item) {
-            $item->created_at = \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->toDateTimeString();
-            $item->updated_at = \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Jakarta')->toDateTimeString();
-            return $item;
+            ->map(function ($item) use ($userId) {
+                $item->created_at = \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->toDateTimeString();
+                $item->updated_at = \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Jakarta')->toDateTimeString();
+
+                // Tambahkan condition berdasarkan userId
+                if ($item->coach_id == $userId) {
+                    $item->condition = 'keluar';
+                } elseif ($item->mastercoach_id == $userId) {
+                    $item->condition = 'masuk';
+                } else {
+                    $item->condition = 'unknown';
+                }
+
+                return $item;
             });
 
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
+
 
 
     public function getRequestHistory($id)
