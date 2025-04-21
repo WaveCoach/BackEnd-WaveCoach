@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -32,13 +33,19 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
     private function parseTanggal($value)
     {
         try {
+            // Log untuk melihat nilai tanggal yang masuk
+            Log::info("Parsing tanggal: " . $value);
+
             if (is_numeric($value)) {
+                // Format Excel date (biasanya angka)
                 return Date::excelToDateTimeObject($value)->format('Y-m-d');
             } elseif (is_string($value)) {
-                return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+                // Coba parsing menggunakan Carbon untuk format umum
+                return Carbon::parse($value)->format('Y-m-d');
             }
         } catch (\Exception $e) {
-            // Optionally log the error here
+            // Log jika parsing gagal
+            Log::warning("Gagal parsing tanggal: " . $value);
         }
 
         return null;
@@ -49,10 +56,12 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
      */
     public function model(array $row)
     {
+        // Cek jika email sudah ada
         if (User::where('email', $row['email'])->exists()) {
             return null;
         }
 
+        // Membuat user baru
         $user = User::create([
             'name'     => $row['name'],
             'email'    => $row['email'],
@@ -60,11 +69,13 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
             'role_id'  => 4,
         ]);
 
+        // Membuat nis berdasarkan tahun masuk dan urutan
         $tahunMasuk   = now()->format('y');
         $lastStudent  = Student::where('nis', 'like', $tahunMasuk . '%')->orderBy('nis', 'desc')->first();
         $nextNumber   = $lastStudent ? ((int)substr($lastStudent->nis, 2) + 1) : 1;
         $nis          = $tahunMasuk . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
+        // Menyimpan data siswa baru
         return new Student([
             'user_id'           => $user->id,
             'tanggal_bergabung' => $row['tanggal_bergabung'],
