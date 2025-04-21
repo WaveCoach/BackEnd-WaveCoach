@@ -32,13 +32,7 @@
                                 <i class="fas fa-edit"></i>
                             </a>
 
-                            <form action="{{ route('assesment-category.destroy', $category->id) }}" method="POST" class="delete-form">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm delete-btn">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+
                         </td>
                     </tr>
                 @endforeach
