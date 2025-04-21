@@ -15,9 +15,9 @@
                     <th>Mastercoach</th>
                     <th>Coach Peminjam</th>
                     <th>Status</th>
-                    <th>Qty pinjam</th>
-                    <th>Qty kembali</th>
-                    <th>sisa Qty</th>
+                    <th>Qty <br>pinjam</th>
+                    <th>Qty <br>kembali</th>
+                    <th>sisa <br>Qty</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,9 +55,9 @@
                     <th>Mastercoach</th>
                     <th>Coach Peminjam</th>
                     <th>Status</th>
-                    <th>Qty dipinjam</th>
-                    <th>Qty dikembalikan</th>
-                    <th>sisa Qty</th>
+                    <th>Qty <br>pinjam</th>
+                    <th>Qty <br>kembali</th>
+                    <th>sisa <br>Qty</th>
                 </tr>
             </tfoot>
         </table>
