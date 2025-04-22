@@ -40,7 +40,7 @@
                         <td>{{$item -> name}}</td>
                         <td>
                             @if($item->profile_image)
-                                <img src="{{$item->profile_image}}" alt="" width="64" height="64" class="rounded-circle object-fit-cover">
+                                <img src="{{$item->profile_image}}" alt="" width="64" height="64" class="object-fit-cover">
                             @else
                                 -
                             @endif
