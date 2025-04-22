@@ -9,9 +9,7 @@ use App\Models\PackageStudent;
 use App\Models\ScheduleDetail;
 use App\Models\Student;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
