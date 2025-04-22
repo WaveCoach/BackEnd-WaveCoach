@@ -13,7 +13,7 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>presensi</th>
+                    <th>presensi (hadir/total)</th>
                     <th>persentase</th>
                     <th>Aksi</th>
                 </tr>
@@ -38,7 +38,7 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>presensi</th>
+                    <th>presensi (hadir/total)</th>
                     <th>persentase</th>
                     <th>Aksi</th>
                 </tr>
