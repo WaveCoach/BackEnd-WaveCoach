@@ -13,8 +13,8 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Hadir</th>
-                    <th>Tidak Hadir</th>
+                    <th>presensi</th>
+                    <th>persentase</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -23,8 +23,13 @@
                 <tr>
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->name}}</td>
-                    <td>{{$item->total_hadir }}</td>
-                    <td>{{$item->total_tidak_hadir }}</td>
+                    <td>{{$item->total_hadir }} / {{$item->total_hadir + $item->total_tidak_hadir}}</td>
+                    <td>
+                        {{ ($item->total_hadir + $item->total_tidak_hadir) > 0
+                            ? round(($item->total_hadir / ($item->total_hadir + $item->total_tidak_hadir)) * 100, 2)
+                            : 0
+                        }}%
+                    </td>
                     <td><a href="{{route('attendance.coach.show', $item->id)}}">Lihat Detail</a></td>
                 </tr>
                 @endforeach
@@ -33,8 +38,8 @@
                 <tr>
                     <th>No</th>
                     <th>Name</th>
-                    <th>Hadir</th>
-                    <th>Tidak Hadir</th>
+                    <th>presensi</th>
+                    <th>persentase</th>
                     <th>Aksi</th>
                 </tr>
             </tfoot>
