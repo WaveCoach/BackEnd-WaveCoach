@@ -25,7 +25,7 @@
                     <th>No</th>
                     <th>Tanggal Terdaftar</th>
                     <th>Name</th>
-                    <th>Email</th>
+                    <th>Foto</th>
                     <th>Status</th>
                     <th>Role</th>
                     <th>aksi</th>
@@ -36,9 +36,15 @@
 
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{ $item->coach->tanggal_bergabung ?? $item->created_at->format('Y-m-d') }}</td>
+                        <td>{{ $item->coach->tanggal_bergabung ?? '-' }}</td>
                         <td>{{$item -> name}}</td>
-                        <td>{{$item-> email}}</td>
+                        <td>
+                            @if($item->profile_image)
+                                <img src="{{$item->profile_image}}" alt="">
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>
                             <span class="badge @if ($item->coach && $item->coach->status == 'active')
                             bg-success
@@ -81,7 +87,6 @@
 
                                 </button>
                             </form>
-                            <a href="{{$item->profile_image}}" class="btn btn-primary"> <i class="fas fa-image"></i></a>
                         </td>
                     </tr>
                     @endforeach
@@ -92,7 +97,7 @@
                     <th>No</th>
                     <th>Tanggal Masuk</th>
                     <th>Name</th>
-                    <th>Email</th>
+                    <th>Foto</th>
                     <th>Status</th>
                     <th>Role</th>
                     <th>aksi</th>

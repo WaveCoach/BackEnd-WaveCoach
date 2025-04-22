@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class CoachImport implements ToModel, WithHeadingRow
 {
@@ -29,17 +30,25 @@ class CoachImport implements ToModel, WithHeadingRow
         ]);
 
         $tanggal = null;
+
         if (!empty($row['tanggal_bergabung'])) {
             try {
-                $tanggal = Carbon::createFromFormat('d/m/Y', $row['tanggal_bergabung'])->format('Y-m-d');
+                if (is_numeric($row['tanggal_bergabung'])) {
+                    $tanggal = Carbon::instance(Date::excelToDateTimeObject($row['tanggal_bergabung']))->format('Y-m-d');
+                } else {
+                    $tanggal = Carbon::createFromFormat('d/m/Y', $row['tanggal_bergabung'])->format('Y-m-d');
+                }
             } catch (\Exception $e) {
-                // Tanggal gagal diformat, bisa di-log atau diabaikan
+                dd('Tanggal gagal:', $row['tanggal_bergabung'], $e->getMessage());
             }
         }
 
-        return new Coaches([
+
+        Coaches::create([
             'user_id'          => $user->id,
             'tanggal_bergabung' => $tanggal,
         ]);
+
+        return null;
     }
 }

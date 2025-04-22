@@ -27,11 +27,9 @@
                         <td>{{ $inventory->inventory_managements_sum_qty ?? 0 }}</td>
                         <td>
                             @if($inventory->inventory_image)
-                            <a href="{{ asset('storage/' . $inventory->inventory_image) }}" target="_blank">
-                                <i class="fas fa-eye"></i> Lihat Gambar
-                            </a>
+                                <img src="{{ asset('storage/' . $inventory->inventory_image) }}" alt="Inventory Image" style="max-width: 100px; max-height: 100px;">
                             @else
-                                <span>Tidak ada gambar</span>
+                                <span>-</span>
                             @endif
                         </td>
                         <td class="d-flex">
@@ -52,6 +50,7 @@
                     <th>No</th>
                     <th>Name</th>
                     <th>qty</th>
+                    <th>image</th>
                     <th>aksi</th>
                 </tr>
             </tfoot>
