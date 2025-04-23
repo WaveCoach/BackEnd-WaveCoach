@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AssessmentAspect;
 use App\Models\AssessmentCategory;
+use App\Models\Package;
+use App\Models\PackageCategory;
 use Illuminate\Http\Request;
 
 class AssesmentAspectController extends Controller
@@ -20,7 +22,8 @@ class AssesmentAspectController extends Controller
     public function create()
     {
         $categories = AssessmentCategory::get();
-        return view('pages.assesment_aspect.create', compact('categories'));
+        $packages = Package::orderBy('created_at', 'desc')->get();
+        return view('pages.assesment_aspect.create', compact('categories', 'packages'));
     }
 
 
@@ -33,6 +36,7 @@ class AssesmentAspectController extends Controller
             'kkm' => 'nullable|numeric',
             'description' => 'required|array|min:1',
             'description.*' => 'string|max:255',
+            'package_id' => 'required|array|min:1',
         ]);
 
         if (is_numeric($request->assessment_categories_id)) {
@@ -45,13 +49,13 @@ class AssesmentAspectController extends Controller
             $categoryId = $category->id;
         }
 
-
         $names = $request->input('name');
         $descriptions = $request->input('description');
+        $packageIds = $request->input('package_id');
 
         $existingAspects = AssessmentAspect::where('assessment_categories_id', $categoryId)
-        ->pluck('name')
-        ->toArray();
+            ->pluck('name')
+            ->toArray();
 
         $newAspects = [];
         foreach ($names as $index => $name) {
@@ -70,16 +74,20 @@ class AssesmentAspectController extends Controller
 
         AssessmentAspect::insert($newAspects);
 
+        foreach ($packageIds as $packageId) {
+            PackageCategory::create([
+                'category_id' => $categoryId,
+                'package_id' => $packageId,
+            ]);
+        }
 
-        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil ditambahkan');
+        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian dan Package berhasil ditambahkan');
     }
 
 
     public function show(string $id)
     {
-        $aspect = AssessmentAspect::where('assessment_categories_id', $id)->get(); //didalam sini ada kolom aspek dan desc
-        $categories = AssessmentCategory::with('aspects')->findOrFail($id); // didalam sini ada kolom name dan kkm
-        $allCategories = AssessmentCategory::all();
+        $categories = AssessmentCategory::with(['aspects', 'packages'])->findOrFail($id);
         return view('pages.assesment_aspect.show', compact('categories'));
     }
 

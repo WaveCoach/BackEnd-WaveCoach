@@ -16,4 +16,9 @@ class AssessmentCategory extends Model
     {
         return $this->hasMany(AssessmentAspect::class, 'assessment_categories_id');
     }
+
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'package_category', 'category_id', 'package_id');
+    }
 }

@@ -55,6 +55,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('announcement', AnnouncementController::class);
     Route::resource('student', StudentController::class);
     Route::resource('package', PackageController::class);
+    Route::get('/package/get-package', [PackageController::class, 'getPackage'])->name('package.get');
     Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
     Route::get('/students/form-import', [StudentController::class, 'formImport'])->name('students.formimport');
     Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');

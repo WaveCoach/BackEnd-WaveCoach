@@ -21,7 +21,7 @@
 
             <div class="row mb-4">
                 <!-- Select2 untuk Kategori -->
-                <div class="col-6 mb-3">
+                <div class="col-4 mb-3">
                     <label for="assesment_categories_id" class="form-label">Kategori</label>
                     <select class="select2" name="assessment_categories_id" id="myselect">
                         <option value="" disabled selected>Pilih Kategori</option>
@@ -32,10 +32,21 @@
                 </div>
 
                 <!-- Input KKM (muncul kalau kategori baru) -->
-                <div id="kkm-input-container" class="col-6 mb-3 d-none">
+                <div id="kkm-input-container" class="col-4 mb-3 d-none">
                     <label for="kkm" class="form-label">Nilai KKM</label>
                     <input type="number" name="kkm" id="kkm" class="form-control" placeholder="Masukkan Nilai KKM">
                 </div>
+
+               <!-- Input Package -->
+                <div class="col-4 mb-3">
+                    <label for="package_id" class="form-label">Package</label>
+                    <select class="select2 form-control" name="package_id[]" id="package-select" multiple required>
+                        @foreach($packages as $package)
+                            <option value="{{ $package->id }}">{{ $package->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
             </div>
 
             <!-- Kontainer Dinamis untuk Aspek + Deskripsi -->
@@ -62,7 +73,6 @@
 @endsection
 
 @push('custom-style')
-    <!-- Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
     <style>
         .select2-container {
@@ -108,6 +118,13 @@
                     $kkmContainer.addClass('d-none');
                     $('#kkm').removeAttr('required');
                 }
+            });
+
+            // ✅ Select2 untuk multi-select Package
+            $('#package-select').select2({
+                width: '100%',
+                placeholder: "Pilih Package",
+                allowClear: true
             });
 
             // Tambah Aspek Penilaian
