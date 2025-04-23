@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Package extends Model
 {
     protected $table = "packages";
-    protected $fillable = ["name"];
+    protected $fillable = ["name", "desc"];
 
     public function students()
     {

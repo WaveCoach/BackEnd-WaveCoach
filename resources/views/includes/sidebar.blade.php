@@ -26,6 +26,7 @@
     <li class="{{ request()->is('deleted-inventory') ? 'active-page' : '' }}">
         <a href="{{route('deleted-inventory.index')}}"><i data-feather="book-open"></i>Deleted Inventory</a>
     </li>
+
     <li class="{{ request()->is('coach') ? 'active-page' : '' }}">
         <a href="{{route('coach.index')}}"><i data-feather="user"></i>Coach</a>
     </li>
@@ -35,8 +36,12 @@
     <li class="{{ request()->is('schedule') ? 'active-page' : '' }}">
         <a href="{{route('schedule.index')}}"><i data-feather="calendar"></i>Schedule</a>
     </li>
+
     <li class="{{ request()->is('reschedule') ? 'active-page' : '' }}">
         <a href="{{route('reschedule.index')}}"><i data-feather="calendar"></i>Request Reschedule</a>
+    </li>
+    <li class="{{request()->is('package') ? 'active-page' : ''}}">
+        <a href="{{route('package.index')}}"><i data-feather="package"></i>Package</a>
     </li>
     <li class="{{ request()->is('assesment-aspect') ? 'active-page' : '' }}">
         <a href="{{route('assesment-aspect.index')}}"><i data-feather="file"></i>Assesment Aspects</a>

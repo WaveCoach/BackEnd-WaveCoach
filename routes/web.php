@@ -15,6 +15,7 @@ use App\Http\Controllers\InventorylandingController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterCoachController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RescheduleRequestController;
 use App\Http\Controllers\ScheduleController;
@@ -53,6 +54,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::resource('mastercoach', MasterCoachController::class);
     Route::resource('announcement', AnnouncementController::class);
     Route::resource('student', StudentController::class);
+    Route::resource('package', PackageController::class);
     Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
     Route::get('/students/form-import', [StudentController::class, 'formImport'])->name('students.formimport');
     Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
