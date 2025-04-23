@@ -4,6 +4,8 @@ namespace App\Imports;
 
 use App\Models\Student;
 use App\Models\User;
+use App\Models\Package;
+use App\Models\PackageStudent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -24,6 +26,7 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
             'jenis_kelamin'     => $row['jenis_kelamin'] ?? null,
             'tanggal_lahir'     => $this->parseTanggal($row['tanggal_lahir'] ?? null),
             'tanggal_bergabung' => $this->parseTanggal($row['tanggal_bergabung'] ?? null),
+            'package'           => $row['package'] ?? null, // tambahkan untuk akses di model()
         ];
     }
 
@@ -33,18 +36,14 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
     private function parseTanggal($value)
     {
         try {
-            // Log untuk melihat nilai tanggal yang masuk
             Log::info("Parsing tanggal: " . $value);
 
             if (is_numeric($value)) {
-                // Format Excel date (biasanya angka)
                 return Date::excelToDateTimeObject($value)->format('Y-m-d');
             } elseif (is_string($value)) {
-                // Coba parsing menggunakan Carbon untuk format umum
                 return Carbon::parse($value)->format('Y-m-d');
             }
         } catch (\Exception $e) {
-            // Log jika parsing gagal
             Log::warning("Gagal parsing tanggal: " . $value);
         }
 
@@ -56,12 +55,10 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
      */
     public function model(array $row)
     {
-        // Cek jika email sudah ada
         if (User::where('email', $row['email'])->exists()) {
             return null;
         }
 
-        // Membuat user baru
         $user = User::create([
             'name'     => $row['name'],
             'email'    => $row['email'],
@@ -69,19 +66,36 @@ class StudentsImport implements ToModel, WithHeadingRow, WithMapping
             'role_id'  => 4,
         ]);
 
-        // Membuat nis berdasarkan tahun masuk dan urutan
         $tahunMasuk   = now()->format('y');
         $lastStudent  = Student::where('nis', 'like', $tahunMasuk . '%')->orderBy('nis', 'desc')->first();
         $nextNumber   = $lastStudent ? ((int)substr($lastStudent->nis, 2) + 1) : 1;
         $nis          = $tahunMasuk . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-        // Menyimpan data siswa baru
-        return new Student([
+        $student = new Student([
             'user_id'           => $user->id,
             'tanggal_bergabung' => $row['tanggal_bergabung'],
             'nis'               => $nis,
             'jenis_kelamin'     => $row['jenis_kelamin'],
             'tanggal_lahir'     => $row['tanggal_lahir'],
         ]);
+
+        $student->save();
+
+        if (!empty($row['package'])) {
+            $packageNames = explode(',', $row['package']);
+            foreach ($packageNames as $packageName) {
+                $packageName = trim($packageName);
+                $package = Package::whereRaw('BINARY name = ?', [$packageName])->first();
+
+                if ($package) {
+                    PackageStudent::create([
+                        'student_id' => $student->id,
+                        'package_id' => $package->id,
+                    ]);
+                }
+            }
+        }
+
+        return null;
     }
 }
