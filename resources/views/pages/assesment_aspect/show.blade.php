@@ -23,22 +23,22 @@
         </div>
 
         <!-- Packages -->
-<div class="row mb-4">
-    <div class="col-12 mb-3">
-        <label for="package" class="form-label">Packages Terkait</label>
-        @if($categories->packages->count())
-            <ul class="list-group">
-                @foreach($categories->packages as $package)
-                    <li class="list-group-item">
-                        <strong>{{ $package->name }}</strong> — {{ $package->desc }}
-                    </li>
-                @endforeach
-            </ul>
-        @else
-            <p class="text-muted">Belum ada paket yang terkait.</p>
-        @endif
-    </div>
-</div>
+        <div class="row mb-4">
+            <div class="col-12 mb-3">
+                <label for="package" class="form-label">Packages Terkait</label>
+                @if($categories->packages->count())
+                    <ul class="list-group">
+                        @foreach($categories->packages as $package)
+                            <li class="list-group-item">
+                                <strong>{{ $package->name }}</strong> — {{ $package->desc }}
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-muted">Belum ada paket yang terkait.</p>
+                @endif
+            </div>
+        </div>
 
 
         <!-- Kontainer Aspek dan Deskripsi -->
