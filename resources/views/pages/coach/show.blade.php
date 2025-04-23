@@ -25,6 +25,21 @@
                         <option value="3" {{ $coach->role_id == 3 ? 'selected' : '' }}>Master Coach</option>
                     </select>
                 </div>
+                <div class="col-12 mb-3">
+                    <label for="packages" class="form-label">Paket yang Diikuti</label>
+                    @if ($package->isEmpty())
+                        <p class="text-muted">Belum memilih paket</p>
+                    @else
+                        <ul class="list-group">
+                            @foreach ($package as $item)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ $item->package->name }}
+                                    {{-- Kalo mau tambahin aksi kayak view detail atau lain-lain, taruh di sini --}}
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
             </div>
             <a href="{{route('coach.index')}}" class="btn btn-warning">Kembali</a>
         </form>

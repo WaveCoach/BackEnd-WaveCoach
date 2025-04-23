@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\CoachExport;
 use App\Imports\CoachImport;
 use App\Models\Coaches;
+use App\Models\Package;
+use App\Models\PackageCoach;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +24,8 @@ class CoachController extends Controller
 
     public function create()
     {
-        return view('pages.coach.create');
+        $packages = Package::all();
+        return view('pages.coach.create', compact('packages'));
     }
 
 
@@ -32,7 +35,9 @@ class CoachController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'role_id' => 'required|integer',
-            'tanggal_bergabung' => 'required|date'
+            'tanggal_bergabung' => 'required|date',
+            'package_id' => 'nullable|array',
+            'package_id.*' => 'exists:packages,id',
         ]);
 
         $user = User::create([
@@ -47,6 +52,15 @@ class CoachController extends Controller
             'tanggal_bergabung' => $request->tanggal_bergabung,
         ]);
 
+        if ($request->filled('package_id')) {
+            foreach ($request->package_id as $packageId) {
+                PackageCoach::create([
+                    'coach_id' => $user->id,
+                    'package_id' => $packageId
+                ]);
+            }
+        }
+
         return redirect()->route('coach.index')->with('success', 'Coach berhasil ditambahkan dengan password: ');
     }
 
@@ -54,7 +68,8 @@ class CoachController extends Controller
     public function show(string $id)
     {
         $coach = User::findOrFail($id);
-        return view('pages.coach.show', compact('coach'));
+        $package = PackageCoach::where('coach_id', $id)->with('package')->get();
+        return view('pages.coach.show', compact('coach', 'package'));
     }
 
 

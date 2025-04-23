@@ -30,6 +30,17 @@
                     <input type="date" class="form-control" required name="tanggal_bergabung" id="tanggal_bergabung">
                 </div>
                 <div class="col-6 mb-3">
+                    <label for="package_id" class="form-label">Packages</label>
+                    <select class="select2 form-control"  name="package_id[]" id="coach-select" multiple>
+                        {{-- <option value="">Pilih Student</option> --}}
+                        @foreach ($packages as $p)
+                            <option value="{{ $p->id }}">
+                                {{ $p->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-6 mb-3">
                     <label for="specialization" class="form-label">Role</label>
                     <select class="form-select" required name="role_id" id="specialization">
                         <option value="" selected disabled>Pilih Role</option>
@@ -45,5 +56,22 @@
 @endsection
 
 @push('custom-style')
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+@endpush
+
+@push('custom-scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#coach-select').select2({
+                placeholder: "Pilih Package",
+                allowClear: true
+            });
+        });
+    </script>
 @endpush
