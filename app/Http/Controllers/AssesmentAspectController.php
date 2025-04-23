@@ -91,99 +91,119 @@ class AssesmentAspectController extends Controller
         return view('pages.assesment_aspect.show', compact('categories'));
     }
 
-    public function edit(string $id)
-    {
-        $aspect = AssessmentAspect::findOrFail($id);
-        return view('pages.assesment_aspect.edit', compact('aspect'));
-    }
+    // public function edit(string $id)
+    // {
+    //     $aspect = AssessmentAspect::findOrFail($id);
+    //     return view('pages.assesment_aspect.edit', compact('aspect'));
+    // }
 
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //     ]);
 
-        $aspect = AssessmentAspect::findOrFail($id);
+    //     $aspect = AssessmentAspect::findOrFail($id);
 
-        $existingAspect = AssessmentAspect::where('assessment_categories_id', $aspect->assessment_categories_id)
-            ->where('name', $request->name)
-            ->where('id', '!=', $id)
-            ->exists();
+    //     $existingAspect = AssessmentAspect::where('assessment_categories_id', $aspect->assessment_categories_id)
+    //         ->where('name', $request->name)
+    //         ->where('id', '!=', $id)
+    //         ->exists();
 
-        if ($existingAspect) {
-            return back()->withErrors(['name' => 'Aspek dengan nama ini sudah ada dalam kategori yang sama.']);
-        }
+    //     if ($existingAspect) {
+    //         return back()->withErrors(['name' => 'Aspek dengan nama ini sudah ada dalam kategori yang sama.']);
+    //     }
 
-        $aspect->update([
-            'name' => $request->name,
-        ]);
+    //     $aspect->update([
+    //         'name' => $request->name,
+    //     ]);
 
-        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek berhasil diperbarui.');
-    }
+    //     return redirect()->route('assesment-aspect.index')->with('success', 'Aspek berhasil diperbarui.');
+    // }
 
 
 
-    public function destroy(string $id)
-    {
-        $aspect = AssessmentAspect::find($id);
+    // public function destroy(string $id)
+    // {
+    //     $aspect = AssessmentAspect::find($id);
 
-        if (!$aspect) {
-            return redirect()->route('assesment-aspect.index')->with('error', 'Aspek tidak ditemukan');
-        }
+    //     if (!$aspect) {
+    //         return redirect()->route('assesment-aspect.index')->with('error', 'Aspek tidak ditemukan');
+    //     }
 
-        $aspect->delete();
-        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek berhasil dihapus');
-    }
+    //     $aspect->delete();
+    //     return redirect()->route('assesment-aspect.index')->with('success', 'Aspek berhasil dihapus');
+    // }
 
     public function asessmentedit($id){
-        $aspect = AssessmentAspect::where('assessment_categories_id', $id)->get(); //didalam sini ada kolom aspek dan desc
-        $categories = AssessmentCategory::with('aspects')->findOrFail($id); // didalam sini ada kolom name dan kkm
-        $allCategories = AssessmentCategory::all();
-        return view('pages.assesment_aspect.aspectedit', compact('categories', 'aspect', 'allCategories'));
+        $category = AssessmentCategory::with('packages')->findOrFail($id);
+        $aspects = AssessmentAspect::where('assessment_categories_id', $id)->get();
+        $packages = Package::all();
+
+        $selectedPackages = $category->packages->pluck('id')->toArray();
+        return view('pages.assesment_aspect.aspectedit', compact('category', 'aspects', 'packages', 'selectedPackages'));
     }
 
     public function asessmentupdate(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
-            'assessment_categories_id' => 'required|integer',
-            'kkm' => 'required|numeric|min:0|max:100',
+            'assessment_categories_id' => 'required',
+            'category_name' => 'required|string|max:255',
+            'kkm' => 'nullable|numeric|min:0|max:100',
             'name' => 'required|array|min:1',
-            'name.*' => 'required',
+            'name.*' => 'required|string|max:255',
             'description' => 'required|array|min:1',
             'description.*' => 'required|string|max:1000',
+            'package_id' => 'required|array|min:1',
+            'package_id.*' => 'integer|exists:packages,id',
         ]);
 
-        $categoryId = $request->assessment_categories_id;
-
-        AssessmentCategory::where('id', $categoryId)->update([
+        AssessmentCategory::where('id', $id)->update([
+            'name' => $request->category_name,
             'kkm' => $request->kkm,
         ]);
 
-        $existingAspects = AssessmentAspect::where('assessment_categories_id', $categoryId)->get();
-
+        $categoryId = $id;
+        // Simpan aspek penilaian
         $inputNames = $request->input('name', []);
         $inputDescs = $request->input('description', []);
-
-        $keptNames = [];
+        $keptIds = [];
 
         foreach ($inputNames as $index => $name) {
             $desc = $inputDescs[$index] ?? '';
 
             $aspect = AssessmentAspect::updateOrCreate(
-                ['assessment_categories_id' => $categoryId, 'name' => $name],
-                ['desc' => $desc]
+                [
+                    'assessment_categories_id' => $categoryId,
+                    'name' => $name,
+                ],
+                [
+                    'desc' => $desc,
+                ]
             );
 
-            $keptNames[] = $aspect->name;
+            $keptIds[] = $aspect->id;
         }
 
-        $namesToDelete = $existingAspects->pluck('name')->diff($keptNames);
+        // Hapus aspek yang tidak ada dalam update
         AssessmentAspect::where('assessment_categories_id', $categoryId)
-            ->whereIn('name', $namesToDelete)
+            ->whereNotIn('id', $keptIds)
             ->delete();
 
-        return redirect()->route('assesment-aspect.index')->with('success', 'Aspek Penilaian berhasil diperbarui.');
+        // Update relasi Package
+        PackageCategory::where('category_id', $categoryId)->delete(); // clear old
+        foreach ($request->package_id as $packageId) {
+            PackageCategory::create([
+                'category_id' => $categoryId,
+                'package_id' => $packageId,
+            ]);
+        }
+
+        return redirect()->route('assesment-aspect.index')
+            ->with('success', 'Aspek Penilaian dan Package berhasil diperbarui.');
     }
+
 
 }
