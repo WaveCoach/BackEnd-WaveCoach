@@ -9,7 +9,7 @@
             <div class="row mb-4">
                 <div class="col-6 mb-3">
                     <label for="name" class="form-label">Nis</label>
-                    <input type="text" class="form-control" required value="{{ $student->student->nis }}" name="name" id="name" disabled>
+                    <input type="text" class="form-control" required value="{{ $student->student->nis ?? '-' }}" name="name" id="name" disabled>
                 </div>
                 <div class="col-6 mb-3">
                     <label for="name" class="form-label">Nama Lengkap</label>

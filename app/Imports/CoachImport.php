@@ -17,6 +17,7 @@ class CoachImport implements ToCollection, WithHeadingRow
 {
     public function collection(Collection $rows)
     {
+        // dd($rows); // ⬅️ Ini akan dump semua baris dari Excel (setelah header)
 
         foreach ($rows as $row) {
             try {
