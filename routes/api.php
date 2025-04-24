@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('inventory-list/{mastercoachId}', [InventoryController::class, 'getListStuffInventory']);
     Route::get('list-mastercoach-inventory', [InventoryController::class, 'getListMasterCoach']);
 
-    Route::get('assesment-category', [AssessmentController::class, 'getCategory']);
+    Route::get('assesment-category/{package_id}', [AssessmentController::class, 'getCategory']);
     Route::get('assessment-aspect/{CategoryId}', [AssessmentController::class, 'getAspect']);
     Route::post('post-assessment', [AssessmentController::class, 'postAssessment']);
     Route::get('history-assessment', [AssessmentController::class, 'getHistory']);

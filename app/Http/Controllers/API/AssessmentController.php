@@ -30,9 +30,14 @@ class AssessmentController extends BaseController
         return $this->SuccessResponse($students, 'Data siswa berhasil diambil');
     }
 
-    public function getCategory()
+    public function getCategory($package_id)
     {
-        $category = AssessmentCategory::select('id', 'name')->get();
+        $category = AssessmentCategory::select('id', 'name')
+            ->whereHas('packages', function ($query) use ($package_id) {
+                $query->where('package_id', $package_id);
+            })
+            ->get();
+
         return $this->SuccessResponse($category, 'Data kategori berhasil diambil');
     }
 
@@ -50,58 +55,65 @@ class AssessmentController extends BaseController
         $validated = $request->validate([
             'student_id' => 'required|exists:users,id',
             'assessment_date' => 'required|date',
-            'package_id' => 'required',
-            'schedule_id' => 'required',
-            'assessment_category_id' => 'required',
-            'details' => 'required|array',
-            'details.*.aspect_id' => 'required|exists:assessment_aspects,id',
-            'details.*.score' => 'required|numeric|min:0|max:100',
-            'details.*.remarks' => 'nullable|string',
+            'package_id' => 'required|integer',
+            'schedule_id' => 'required|integer',
+            'categories' => 'required|array',
+            'categories.*.assessment_category_id' => 'required|integer|exists:assessment_categories,id',
+            'categories.*.details' => 'required|array',
+            'categories.*.details.*.aspect_id' => 'required|exists:assessment_aspects,id',
+            'categories.*.details.*.score' => 'required|numeric|min:0|max:100',
+            'categories.*.details.*.remarks' => 'nullable|string',
         ]);
-
-        $existingAssessment = Assessment::where([
-            'student_id' => $validated['student_id'],
-            'assessor_id' => Auth::user()->id,
-            'schedule_id' => $validated['schedule_id'],
-            'assessment_date' => $validated['assessment_date'],
-            'package_id' => $validated['package_id'],
-            'assessment_category_id' => $validated['assessment_category_id'],
-        ])->exists();
-
-        if ($existingAssessment) {
-            return $this->ErrorResponse('Data assessment dengan kombinasi yang sama sudah ada.', 400);
-        }
 
         DB::beginTransaction();
         try {
-            $assessment = Assessment::create([
-                'student_id' => $validated['student_id'],
-                'assessor_id' => Auth::user()->id,
-                'schedule_id' => $validated['schedule_id'],
-                'assessment_date' => $validated['assessment_date'],
-                'package_id' => $validated['package_id'],
-                'assessment_category_id' => $validated['assessment_category_id'],
-            ]);
+            foreach ($validated['categories'] as $category) {
+                // Cek duplikasi per kategori
+                $exists = Assessment::where([
+                    'student_id' => $validated['student_id'],
+                    'assessor_id' => Auth::id(),
+                    'schedule_id' => $validated['schedule_id'],
+                    'package_id' => $validated['package_id'],
+                    'assessment_date' => $validated['assessment_date'],
+                    'assessment_category_id' => $category['assessment_category_id'],
+                ])->exists();
 
-            $details = array_map(fn($detail) => [
-                'assessment_id' => $assessment->id,
-                'aspect_id' => $detail['aspect_id'],
-                'score' => $detail['score'],
-                'remarks' => $detail['remarks'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ], $validated['details']);
+                if ($exists) {
+                    DB::rollBack();
+                    return $this->ErrorResponse("Data assessment untuk kategori ID {$category['assessment_category_id']} sudah ada.", 400);
+                }
 
-            AssessmentDetail::insert($details);
+                // Simpan assessment utama
+                $assessment = Assessment::create([
+                    'student_id' => $validated['student_id'],
+                    'assessor_id' => Auth::id(),
+                    'schedule_id' => $validated['schedule_id'],
+                    'package_id' => $validated['package_id'],
+                    'assessment_date' => $validated['assessment_date'],
+                    'assessment_category_id' => $category['assessment_category_id'],
+                ]);
+
+                // Simpan detail
+                $details = array_map(fn($detail) => [
+                    'assessment_id' => $assessment->id,
+                    'aspect_id' => $detail['aspect_id'],
+                    'score' => $detail['score'],
+                    'remarks' => $detail['remarks'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ], $category['details']);
+
+                AssessmentDetail::insert($details);
+            }
 
             DB::commit();
-
-            return $this->SuccessResponse('Assessment berhasil ditambahkan');
+            return $this->SuccessResponse('Semua assessment berhasil ditambahkan');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->ErrorResponse('Terjadi kesalahan: ' . $e->getMessage(), 404);
+            return $this->ErrorResponse('Terjadi kesalahan: ' . $e->getMessage(), 500);
         }
     }
+
 
     public function getHistory(Request $request)
     {

@@ -248,15 +248,11 @@ class ScheduleController extends Controller
     public function getStudentsByPackage($packageId)
     {
         $students = PackageStudent::where('package_id', $packageId)
-        ->join('users', 'users.id', '=', 'package_student.student_id')  // Gabungkan langsung dengan users
-        ->select('users.id as user_id', 'users.name as student_name')  // Pilih id user dan nama student
+        ->join('users', 'users.id', '=', 'package_student.student_id')
+        ->select('users.id as user_id', 'users.name as student_name')
         ->get();
 
         return response()->json($students);
     }
-
-
-
-
 
 }
