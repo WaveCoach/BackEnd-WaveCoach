@@ -12,7 +12,7 @@
             <div class="d-flex justify-content-center mb-3">
                 <div class="position-relative">
                     <img id="preview-image"
-                    src="{{ Auth::user()->profile_image ?  Auth::user()->profile_image) : asset('assets/images/profile.jpeg') }}"
+                    src="{{ Auth::user()->profile_image ? Auth::user()->profile_image : asset('assets/images/profile.jpeg') }}"
                     class="rounded-circle border profile-border {{ Auth::user()->profile_image ? 'filled' : '' }}"
                     style="width: 120px; height: 120px; object-fit: cover;">
                 </div>
