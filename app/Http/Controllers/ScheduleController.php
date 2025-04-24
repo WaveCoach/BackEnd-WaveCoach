@@ -161,7 +161,7 @@ class ScheduleController extends Controller
             'package_id' => 'required',
             'location_id' => 'nullable',
             'student_id' => 'required|array',
-            'student_id.*' => 'required',
+            'student_id.*' => 'required|integer|exists:users,id',
             'maps' => 'nullable',
             'email' => 'nullable',
             'is_assessed' => 'nullable'

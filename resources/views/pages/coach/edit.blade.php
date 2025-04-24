@@ -46,6 +46,18 @@
                         <option value="inactive" {{ $coach->coach->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
+                <div class="col-6 mb-3">
+                    <label for="package_id" class="form-label">Packages</label>
+                    <select class="select2 form-control" name="package_id[]" id="student-select" multiple>
+                        @foreach ($allPackages as $p)
+                            <option value="{{ $p->id }}"
+                                {{ in_array($p->id, $packageSelected) ? 'selected' : '' }}>
+                                {{ $p->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
