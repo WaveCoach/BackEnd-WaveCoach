@@ -104,7 +104,7 @@
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link profile-dropdown" href="#" id="profileDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('assets/images/profile.jpeg') }}" alt="Profile Image" class="rounded-circle" width="40" height="40" style="object-fit: cover;">
+                <img src="{{ Auth::check() && Auth::user()->profile_image ? Auth::user()->profile_image : asset('assets/images/profile.jpeg') }}" alt="Profile Image" class="rounded-circle" width="40" height="40" style="object-fit: cover;">
             </a>
 
             <div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="profileDropDown">
