@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Import Coach</h5>
+            <h5 class="card-title">Import Student</h5>
             <p class="card-description">Silakan unggah file coach yang ingin diimport. <a href="{{ asset('assets/templates/students_format.xlsx') }}" class="">Download Format</a></p>
 
             @if (session('success'))
