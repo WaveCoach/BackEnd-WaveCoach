@@ -46,9 +46,6 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
 
-                                <a href="{{route('schedule.edit', $item->schedule_id)}}" class="btn btn-info btn-sm mx-2">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                             </div>
                         </td>
 
