@@ -24,16 +24,10 @@ class StudentsImport implements ToCollection, WithHeadingRow
 
     foreach ($rows as $row) {
         try {
-            // Cek jika email sudah ada
-            if (User::where('email', $row['email'] ?? null)->exists()) {
-                Log::info("User dengan email {$row['email']} sudah ada.");
-                continue;
-            }
-
             // Buat User baru
             $user = User::create([
                 'name'     => $row['name'] ?? null,
-                'email'    => $row['email'] ?? null,
+                'email_parent'    => $row['email'] ?? null,
                 'password' => bcrypt('12345678'),
                 'role_id'  => 4,
             ]);
