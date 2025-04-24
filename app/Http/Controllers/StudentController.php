@@ -87,11 +87,13 @@ class StudentController extends Controller
         $packageSelected = PackageStudent::where('student_id', $id)->pluck('package_id')->toArray(); // ambil ID aja
         $allPackages = Package::all();
 
-        return view('pages.student.edit', compact('student', 'packageSelected', 'allPackages'));
+        return view('pages.stud
+        ent.edit', compact('student', 'packageSelected', 'allPackages'));
     }
 
     public function update(Request $request, string $id)
     {
+        dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'email_parent' => 'nullable|email|max:255',
