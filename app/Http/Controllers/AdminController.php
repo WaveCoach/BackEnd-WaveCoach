@@ -28,7 +28,12 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'no_telf' => 'required|string|max:15',
+            'no_telf' => [
+            'required',
+            'string',
+            'max:15',
+            'regex:/^62[0-9]{9,14}$/', // Must start with 62 and follow with 9-14 digits
+            ],
         ]);
 
         // dd($request->all());

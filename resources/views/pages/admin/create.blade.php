@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-4 mb-3">
                     <label for="no_telf" class="form-label">No Telf</label>
-                    <input type="text" class="form-control" required name="no_telf" id="no_telf">
+                    <input type="text" class="form-control" required name="no_telf" id="no_telf" placeholder="Format: 62xxxxxxxxxx">
                 </div>
                 <div class="col-4 mb-3">
                     <label for="password" class="form-label">Password</label>
