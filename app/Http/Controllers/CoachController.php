@@ -107,6 +107,17 @@ class CoachController extends Controller
         $coach->tanggal_bergabung = $request->tanggal_bergabung;
         $coach->save();
 
+        PackageCoach::where('coach_id', $user->id)->delete();
+
+        if ($request->filled('package_id')) {
+            foreach ($request->package_id as $packageId) {
+                PackageCoach::create([
+                    'coach_id' => $user->id,
+                    'package_id' => $packageId
+                ]);
+            }
+        }
+
         return redirect()->route('coach.index')->with('success', 'User updated successfully');
     }
 
