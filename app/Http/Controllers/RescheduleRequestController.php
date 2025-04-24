@@ -64,7 +64,7 @@ class RescheduleRequestController extends Controller
                 'is_assessed' => 'nullable'
             ]);
 
-            $schedule = Schedule::findOrFail($id);
+            $schedule = Schedule::findOrFail($reschedules->schedule_id);
 
             if (!is_numeric($request->coach_id)) {
                 $coach = User::firstOrCreate(
