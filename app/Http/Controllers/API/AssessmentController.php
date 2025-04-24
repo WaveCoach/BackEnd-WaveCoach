@@ -117,7 +117,7 @@ class AssessmentController extends BaseController
 
     public function getHistory(Request $request)
     {
-        $query = Assessment::with(['student', 'assessor', 'package', 'category'])
+        $query = Assessment::with(['student', 'assessor', 'package', 'category', 'details'])
             ->where('assessor_id', Auth::user()->id)
             ->orderBy('created_at', 'desc');
 
@@ -134,6 +134,19 @@ class AssessmentController extends BaseController
         }
 
         $assessments = $query->get()->map(function ($assessment) {
+            // Hitung nilai rata-rata dari detail skor
+            $scores = $assessment->details->pluck('score')->filter();
+            $averageScore = $scores->count() > 0 ? round($scores->avg(), 1) : null;
+
+            // Ambil KKM dari kategori
+            $kkm = $assessment->category->kkm ?? null;
+
+            // Tentukan status lulus
+            $status = null;
+            if (!is_null($averageScore) && !is_null($kkm)) {
+                $status = $averageScore >= $kkm ? 'Lulus' : 'Tidak Lulus';
+            }
+
             return [
                 'id' => $assessment->id,
                 'date' => $assessment->assessment_date,
@@ -154,6 +167,8 @@ class AssessmentController extends BaseController
                     'id' => $assessment->category->id ?? null,
                     'name' => $assessment->category->name ?? null,
                 ],
+                'average_score' => $averageScore,
+                'status' => $status,
             ];
         });
 
