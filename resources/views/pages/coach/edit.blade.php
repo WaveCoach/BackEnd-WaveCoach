@@ -66,5 +66,22 @@
 @endsection
 
 @push('custom-style')
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+@endpush
+
+@push('custom-scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#student-select').select2({
+                placeholder: "Pilih Package",
+                allowClear: true
+            });
+        });
+    </script>
 @endpush
