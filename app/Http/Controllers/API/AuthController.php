@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Mail\ResetPasswordMail;
+use App\Models\Coaches;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,6 +29,12 @@ class AuthController extends BaseController
         }
 
         $user = Auth::user();
+        $coach = Coaches::where('user_id', $user->id)->first();
+
+        if ($coach && $coach->status !== 'active') {
+            return $this->ErrorResponse('Your account is inactive. Please contact support.', 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->SuccessResponse(['token' => $token, 'user' => $user], 'Login successful');
