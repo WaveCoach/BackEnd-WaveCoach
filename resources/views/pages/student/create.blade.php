@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-6 mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" id="email">
+                    <input type="email" class="form-control" name="email_parent" id="email">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="usia" class="form-label">Tanggal Lahir</label>
