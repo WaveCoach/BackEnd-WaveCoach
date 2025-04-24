@@ -92,7 +92,7 @@ class StudentController extends Controller
 
     public function update(Request $request, string $id)
     {
-        dd($request->all());
+        // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'email_parent' => 'nullable|email|max:255',
@@ -113,6 +113,7 @@ class StudentController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'email_parent' => $request->email_parent,
         ]);
 
         $student = Student::where('user_id', $id)->first();
