@@ -34,7 +34,7 @@
                     <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{$item -> name}}</td>
-                        <td>{{$item-> email}}</td>
+                        <td>{{$item-> email_parent}}</td>
                         <td>{{$item->student->nis ?? '-'}}</td>
                         <td class="d-flex">
                             <a href="{{route('student.edit', $item->id)}}" class="btn btn-warning btn-sm ">

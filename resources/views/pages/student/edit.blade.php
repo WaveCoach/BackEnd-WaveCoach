@@ -28,7 +28,7 @@
 
                 <div class="col-6 mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="text" class="form-control" required value="{{ $student->email }}" name="email" id="email">
+                    <input type="text" class="form-control" required value="{{ $student->email_parent }}" name="email_parent" id="email">
                 </div>
 
                 <div class="col-6 mb-3">

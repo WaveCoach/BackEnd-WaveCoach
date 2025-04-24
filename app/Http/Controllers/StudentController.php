@@ -32,7 +32,7 @@ class StudentController extends Controller
         // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email_parent' => 'nullable|email|max:255',
             'jenis_kelamin' => 'required|in:L,P',
             'tanggal_lahir' => 'required|date',
             'tanggal_bergabung' => 'required|date',
@@ -47,7 +47,7 @@ class StudentController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email_parent' => $request->email_parent,
             'password' => bcrypt('12345678'),
             'role_id' => 4
         ]);
@@ -94,7 +94,7 @@ class StudentController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'email_parent' => 'nullable|email|max:255',
             'jenis_kelamin' => 'required|in:L,P',
             'tanggal_lahir' => 'required|date',
             'tanggal_bergabung' => 'required|date',
