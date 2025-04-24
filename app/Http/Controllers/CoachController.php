@@ -76,7 +76,8 @@ class CoachController extends Controller
     public function edit(string $id)
     {
         $coach = User::with('coach')->findOrFail($id);
-        return view('pages.coach.edit', compact('coach'));
+        $packages = Package::all();
+        return view('pages.coach.edit', compact('coach', 'packages'));
     }
 
 
