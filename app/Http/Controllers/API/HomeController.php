@@ -36,9 +36,9 @@ class HomeController extends BaseController
             $inputDate = Carbon::parse($request->date)->toDateString();
             $schedule->where('date', $inputDate);
         }
-        else {
-            $schedule->where('date', '>=', Carbon::today()->toDateString());
-        }
+        // else {
+        //     $schedule->where('date', '>=', Carbon::today()->toDateString());
+        // }
 
         $schedule = $schedule->get()->map(function ($item) {
             $date = Carbon::parse($item->date)->locale('id');
