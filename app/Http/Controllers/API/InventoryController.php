@@ -592,8 +592,8 @@ class InventoryController extends BaseController
                 ];
             });
 
-        // Gabung dan urutkan berdasarkan created_at
-        $merged = $peminjaman->concat($pengembalian)->sortBy('created_at')->values();
+        // Gabung dan urutkan berdasarkan created_at dari yang terbaru
+        $merged = $peminjaman->concat($pengembalian)->sortByDesc('created_at')->values();
 
         if ($merged->isEmpty()) {
             return $this->ErrorResponse('Data tidak ditemukan.', 404);
@@ -601,6 +601,7 @@ class InventoryController extends BaseController
 
         return $this->SuccessResponse($merged, 'Riwayat peminjaman dan pengembalian berhasil diambil.');
     }
+
 
     public function getListStuffInventory($mastercoachId){
         $inventory = InventoryManagement::with(['mastercoach', 'inventory'])
