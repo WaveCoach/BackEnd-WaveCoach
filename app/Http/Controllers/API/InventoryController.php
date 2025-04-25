@@ -511,19 +511,25 @@ class InventoryController extends BaseController
                     ->where('inventory_landings.status', 'borrowed')
                     ->where('inventory_landings.coach_id', Auth::id());
             })
+            ->leftJoin('inventory_returns', function ($join) {
+                $join->on('inventory_landings.id', '=', 'inventory_returns.inventory_landing_id')
+                    ->where('inventory_returns.status', 'approved');
+            })
             ->select(
                 'inventories.id as inventory_id',
                 'inventories.name',
                 'inventories.inventory_image',
-                DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed')
+                DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed'),
+                DB::raw('COALESCE(SUM(inventory_returns.qty_returned), 0) as total_qty_returned'),
+                DB::raw('(COALESCE(SUM(inventory_landings.qty_borrowed), 0) - COALESCE(SUM(inventory_returns.qty_returned), 0)) as total_qty_remaining')
             )
             ->groupBy('inventories.id', 'inventories.name', 'inventories.inventory_image')
             ->get()
             ->map(function ($item) {
-                $item->inventory_image_url = url('storage/' . $item->inventory_image); // ✅ generate URL manual
+                $item->inventory_image_url = url('storage/' . $item->inventory_image);
                 return $item;
             })
-            ->filter(fn($item) => $item->total_qty_borrowed > 0)
+            ->filter(fn($item) => $item->total_qty_remaining > 0)
             ->values();
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
