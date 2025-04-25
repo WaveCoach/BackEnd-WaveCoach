@@ -506,24 +506,44 @@ class InventoryController extends BaseController
 
     public function getList()
     {
-        $inventory = Inventory::leftJoin('inventory_landings', function ($join) {
+        $userId = Auth::id();
+
+        // Subquery untuk qty_returned yang disetujui
+        $returnsSub = DB::table('inventory_returns')
+            ->join('inventory_landings', 'inventory_returns.inventory_landing_id', '=', 'inventory_landings.id')
+            ->where('inventory_returns.status', 'approved')
+            ->where('inventory_landings.coach_id', $userId)
+            ->select(
+                'inventory_landings.inventory_id',
+                DB::raw('SUM(inventory_returns.qty_returned) as total_qty_returned')
+            )
+            ->groupBy('inventory_landings.inventory_id');
+
+        // Ambil data inventaris + jumlah peminjaman dikurangi pengembalian
+        $inventory = DB::table('inventories')
+            ->leftJoin('inventory_landings', function ($join) use ($userId) {
                 $join->on('inventories.id', '=', 'inventory_landings.inventory_id')
                     ->where('inventory_landings.status', 'borrowed')
-                    ->where('inventory_landings.coach_id', Auth::id());
+                    ->where('inventory_landings.coach_id', $userId);
+            })
+            ->leftJoinSub($returnsSub, 'returns', function ($join) {
+                $join->on('inventories.id', '=', 'returns.inventory_id');
             })
             ->select(
                 'inventories.id as inventory_id',
                 'inventories.name',
                 'inventories.inventory_image',
-                DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed')
+                DB::raw('COALESCE(SUM(inventory_landings.qty_borrowed), 0) as total_qty_borrowed'),
+                DB::raw('COALESCE(returns.total_qty_returned, 0) as total_qty_returned'),
+                DB::raw('(COALESCE(SUM(inventory_landings.qty_borrowed), 0) - COALESCE(returns.total_qty_returned, 0)) as total_qty_remaining')
             )
-            ->groupBy('inventories.id', 'inventories.name', 'inventories.inventory_image')
+            ->groupBy('inventories.id', 'inventories.name', 'inventories.inventory_image', 'returns.total_qty_returned')
             ->get()
             ->map(function ($item) {
-                $item->inventory_image_url = url('storage/' . $item->inventory_image); // ✅ generate URL manual
+                $item->inventory_image_url = url('storage/' . $item->inventory_image);
                 return $item;
             })
-            ->filter(fn($item) => $item->total_qty_borrowed > 0)
+            ->filter(fn($item) => $item->total_qty_remaining > 0)
             ->values();
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
