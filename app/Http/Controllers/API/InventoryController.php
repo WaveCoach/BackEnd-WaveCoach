@@ -541,66 +541,69 @@ class InventoryController extends BaseController
 
 
     public function getListDetail($inventoryId)
-    {
-        $userId = Auth::id();
+{
+    $userId = Auth::id();
 
-        if (!$userId) {
-            return $this->ErrorResponse('Unauthorized', 401);
-        }
-
-        // Ambil data peminjaman
-        $peminjaman = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
-            ->where('coach_id', $userId)
-            ->where('inventory_id', $inventoryId)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'type' => 'peminjaman',
-                    'id' => $item->id,
-                    'created_at' => $item->created_at,
-                    'tanggal_pinjam' => $item->tanggal_pinjam,
-                    'tanggal_kembali' => $item->tanggal_kembali,
-                    'status' => $item->status,
-                    'qty' => $item->qty_borrowed,
-                    'coach_name' => $item->coach->name ?? null,
-                    'mastercoach_name' => $item->mastercoach->name ?? null,
-                    'inventory_name' => $item->inventory->name ?? null,
-                ];
-            });
-
-        // Ambil data pengembalian
-        $pengembalian = InventoryReturns::with(['coach', 'mastercoach', 'inventory'])
-            ->where('coach_id', $userId)
-            ->where('inventory_id', $inventoryId)
-            ->get()
-            ->map(function ($ret) {
-                return [
-                    'type' => 'pengembalian',
-                    'id' => $ret->id,
-                    'created_at' => $ret->created_at,
-                    'returned_at' => $ret->returned_at,
-                    'status' => $ret->status,
-                    'qty' => $ret->qty_returned,
-                    'damaged_count' => $ret->damaged_count,
-                    'missing_count' => $ret->missing_count,
-                    'img_inventory_return' => $ret->img_inventory_return,
-                    'rejection_reason' => $ret->rejection_reason,
-                    'desc' => $ret->desc,
-                    'coach_name' => $ret->coach->name ?? null,
-                    'mastercoach_name' => $ret->mastercoach->name ?? null,
-                    'inventory_name' => $ret->inventory->name ?? null,
-                ];
-            });
-
-        // Gabung dan urutkan berdasarkan created_at dari yang terbaru
-        $merged = $peminjaman->concat($pengembalian)->sortByDesc('created_at')->values();
-
-        if ($merged->isEmpty()) {
-            return $this->ErrorResponse('Data tidak ditemukan.', 404);
-        }
-
-        return $this->SuccessResponse($merged, 'Riwayat peminjaman dan pengembalian berhasil diambil.');
+    if (!$userId) {
+        return $this->ErrorResponse('Unauthorized', 401);
     }
+
+    // Ambil data peminjaman
+    $peminjaman = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
+        ->where('coach_id', $userId)
+        ->where('inventory_id', $inventoryId)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'type' => 'peminjaman',
+                'id' => $item->id,
+                'created_at' => $item->created_at,
+                'tanggal_pinjam' => $item->tanggal_pinjam,
+                'tanggal_kembali' => $item->tanggal_kembali,
+                'status' => $item->status,
+                'qty' => $item->qty_borrowed,
+                'coach_name' => $item->coach->name ?? null,
+                'mastercoach_name' => $item->mastercoach->name ?? null,
+                'inventory_name' => $item->inventory->name ?? null,
+            ];
+        });
+
+    // Ambil data pengembalian
+    $pengembalian = InventoryReturns::with(['coach', 'mastercoach', 'inventory'])
+        ->where('coach_id', $userId)
+        ->where('inventory_id', $inventoryId)
+        ->get()
+        ->map(function ($ret) {
+            return [
+                'type' => 'pengembalian',
+                'id' => $ret->id,
+                'created_at' => $ret->created_at,
+                'returned_at' => $ret->returned_at,
+                'status' => $ret->status,
+                'qty' => $ret->qty_returned,
+                'damaged_count' => $ret->damaged_count,
+                'missing_count' => $ret->missing_count,
+                'img_inventory_return' => $ret->img_inventory_return
+                    ? url('storage/' . $ret->img_inventory_return)  // Menambahkan URL gambar
+                    : null,  // Jika tidak ada gambar, set null
+                'rejection_reason' => $ret->rejection_reason,
+                'desc' => $ret->desc,
+                'coach_name' => $ret->coach->name ?? null,
+                'mastercoach_name' => $ret->mastercoach->name ?? null,
+                'inventory_name' => $ret->inventory->name ?? null,
+            ];
+        });
+
+    // Gabung dan urutkan berdasarkan created_at dari yang terbaru
+    $merged = $peminjaman->concat($pengembalian)->sortByDesc('created_at')->values();
+
+    if ($merged->isEmpty()) {
+        return $this->ErrorResponse('Data tidak ditemukan.', 404);
+    }
+
+    return $this->SuccessResponse($merged, 'Riwayat peminjaman dan pengembalian berhasil diambil.');
+}
+
 
 
     public function getListStuffInventory($mastercoachId){
