@@ -539,11 +539,17 @@ class InventoryController extends BaseController
             return $this->ErrorResponse('Unauthorized', 401);
         }
 
-        $inventory_landing = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
+        $inventory_landing = InventoryLandings::with([
+                'coach',
+                'mastercoach',
+                'inventory',
+                'returns' => function ($query) use ($userId) {
+                    $query->where('coach_id', $userId)->orderBy('returned_at', 'desc');
+                }
+            ])
             ->where('coach_id', $userId)
             ->where('inventory_id', $inventoryId)
             ->get();
-
 
         if ($inventory_landing->isEmpty()) {
             return $this->ErrorResponse('Data peminjaman tidak ditemukan.', 404);
@@ -551,20 +557,33 @@ class InventoryController extends BaseController
 
         $data = $inventory_landing->map(function ($item) {
             return [
-                'id' => $item->id,
-                'tanggal_pinjam' => $item->tanggal_pinjam,
-                'tanggal_kembali' => $item->tanggal_kembali,
-                'status' => $item->status,
-                'qty_borrowed' => $item->qty_borrowed,
-                'qty_returned' => $item->qty_returned,
-                'qty_pending_return' => $item->qty_pending_return,
-                'coach_name' => $item->coach->name ?? null,
-                'mastercoach_name' => $item->mastercoach->name ?? null,
-                'inventory_name' => $item->inventory->name ?? null,
+                'borrow_id' => $item->id,
+                'borrow_tanggal_pinjam' => $item->tanggal_pinjam,
+                'borrow_tanggal_kembali' => $item->tanggal_kembali,
+                'borrow_status' => $item->status,
+                'borrow_qty_borrowed' => $item->qty_borrowed,
+                'borrow_qty_returned' => $item->qty_returned,
+                'borrow_qty_pending_return' => $item->qty_pending_return,
+                'borrow_coach_name' => $item->coach->name ?? null,
+                'borrow_mastercoach_name' => $item->mastercoach->name ?? null,
+                'borrow_inventory_name' => $item->inventory->name ?? null,
+                'returns_history' => $item->returns->map(function ($ret) {
+                    return [
+                        'return_returned_at' => $ret->returned_at,
+                        'return_qty_returned' => $ret->qty_returned,
+                        'return_damaged_count' => $ret->damaged_count,
+                        'return_missing_count' => $ret->missing_count,
+                        'return_status' => $ret->status,
+                        'return_img_inventory_return' => $ret->img_inventory_return,
+                        'return_rejection_reason' => $ret->rejection_reason,
+                        'return_desc' => $ret->desc,
+                    ];
+                }),
             ];
         });
 
-        return $this->SuccessResponse($data, 'Data peminjaman berhasil diambil.');
+
+        return $this->SuccessResponse($data, 'Data peminjaman dan riwayat pengembalian berhasil diambil.');
     }
 
     public function getListStuffInventory($mastercoachId){
