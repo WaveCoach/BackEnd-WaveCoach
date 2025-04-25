@@ -528,7 +528,6 @@ class InventoryController extends BaseController
             )
             ->groupBy('inventories.id', 'inventories.name', 'inventories.inventory_image')
             ->having('total_qty_remaining', '>', 0)
-            ->orderBy('inventory_landings.created_at', 'desc') // Mengurutkan berdasarkan tanggal terbaru
             ->get()
             ->map(function ($item) {
                 $item->inventory_image_url = url('storage/' . $item->inventory_image);
@@ -537,6 +536,9 @@ class InventoryController extends BaseController
 
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
     }
+
+
+
 
     public function getListDetail($inventoryId)
     {
