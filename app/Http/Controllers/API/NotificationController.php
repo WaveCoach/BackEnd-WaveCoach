@@ -58,6 +58,7 @@ class NotificationController extends BaseController
     public function getCountNotif()
     {
         $userId = Auth::id();
+        dd($userId);
 
         if (!$userId) {
             return $this->ErrorResponse('Unauthorized', 401);
