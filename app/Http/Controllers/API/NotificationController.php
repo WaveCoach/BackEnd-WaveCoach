@@ -105,7 +105,7 @@ class NotificationController extends BaseController
                 return [
                     'id' => $item->inventory->id,
                     'name' => $item->inventory->name,
-                    'quantity' => $item->quantity,
+                    'quantity' => $item->qty_requested,
                 ];
             });
         } elseif ($notif->notifiable_type === InventoryReturns::class) {
