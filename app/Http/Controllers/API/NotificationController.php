@@ -104,7 +104,7 @@ class NotificationController extends BaseController
             $items = $detail->items->map(function ($item) {
                 return [
                     'id' => $item->inventory->id,
-                    'name' => $item->inventory->name,
+                    'item_name' => $item->inventory->name,   // GANTI jadi item_name
                     'quantity' => $item->qty_requested,
                 ];
             });
@@ -113,7 +113,7 @@ class NotificationController extends BaseController
 
             $items = [
                 'id' => $detail->inventory->id ?? null,
-                'name' => $detail->inventory->name ?? null,
+                'item_name' => $detail->inventory->name ?? null,   // GANTI jadi item_name
                 'quantity' => $detail->qty_returned ?? null,
             ];
         } elseif ($notif->notifiable_type === Schedule::class) {
@@ -121,18 +121,20 @@ class NotificationController extends BaseController
 
             $items = [
                 'id' => $detail->id ?? null,
-                'name' => $detail ? \Carbon\Carbon::parse($detail->date)->translatedFormat('l, d F Y') . ', ' . substr($detail->start_time, 0, 5) . ' - ' . substr($detail->end_time, 0, 5) : null,
-                'location' => $detail->location ? $detail->location->name : null,  // Menambahkan lokasi
+                'schedule_summary' => $detail
+                    ? \Carbon\Carbon::parse($detail->date)->translatedFormat('l, d F Y') . ', ' . substr($detail->start_time, 0, 5) . ' - ' . substr($detail->end_time, 0, 5)
+                    : null,   // GANTI jadi schedule_summary
+                'location' => $detail->location->name ?? null,
             ];
-        }
-         elseif ($notif->notifiable_type === RescheduleRequest::class) {
+        } elseif ($notif->notifiable_type === RescheduleRequest::class) {
             $detail = $notif->notifiable()->with('coach')->first();
 
             $items = [
                 'id' => $detail->id ?? null,
-                'name' => $detail->reason ?? null
+                'reschedule_reason' => $detail->reason ?? null,   // GANTI jadi reschedule_reason
             ];
         }
+
 
         return $this->SuccessResponse([
             'id' => $notif->id,
