@@ -79,6 +79,12 @@ class RescheduleRequestController extends Controller
 
             $schedule = Schedule::findOrFail($reschedules->schedule_id);
 
+            // Ambil data lama
+            $oldDate = $schedule->date;
+            $oldStart = $schedule->start_time;
+            $oldEnd = $schedule->end_time;
+            $oldLocationId = $schedule->location_id;
+
             if (!is_numeric($request->coach_id)) {
                 $coach = User::firstOrCreate(
                     ['name' => $request->coach_id],
@@ -109,6 +115,7 @@ class RescheduleRequestController extends Controller
                 $locationId = $request->location_id;
             }
 
+            // Update schedule
             $schedule->update([
                 'date' => $request->date ?? $schedule->date,
                 'package_id' => $request->package_id ?? $schedule->package_id,
@@ -120,6 +127,23 @@ class RescheduleRequestController extends Controller
                 'is_assessed' => $request->is_assessed,
             ]);
 
+            // Cari perubahan
+            $changes = [];
+            if ($oldDate !== $request->date) {
+                $changes[] = "Tanggal diubah dari *$oldDate* ke *{$request->date}*";
+            }
+            if ($oldStart !== $request->start_time || $oldEnd !== $request->end_time) {
+                $changes[] = "Jam diubah dari *$oldStart - $oldEnd* ke *{$request->start_time} - {$request->end_time}*";
+            }
+            if ($oldLocationId != $locationId) {
+                $oldLocationName = optional(Location::find($oldLocationId))->name ?? '-';
+                $newLocationName = optional(Location::find($locationId))->name ?? '-';
+                $changes[] = "Lokasi diubah dari *$oldLocationName* ke *$newLocationName*";
+            }
+
+            $changeMessage = count($changes) > 0 ? implode(", ", $changes) : "Tidak ada perubahan signifikan.";
+
+            // Update student juga tetap
             $existingStudentIds = $schedule->students->pluck('id')->toArray();
             $newStudentIds = $request->student_id;
 
@@ -136,18 +160,19 @@ class RescheduleRequestController extends Controller
                 }
             }
 
+            // Buat notifikasi
             Notification::create([
                 'pengirim_id'     => Auth::id(),
                 'user_id'         => $reschedules->coach->id,
                 'notifiable_id'   => $reschedules->id,
                 'notifiable_type' => get_class($reschedules),
                 'title'           => 'Reschedule Disetujui',
-                'message'         => 'Permintaan reschedule Anda disetujui. Jadwal baru: ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
+                'message'         => "Permintaan reschedule Anda disetujui. Perubahan: $changeMessage",
                 'is_read'         => 0,
                 'type'            => 'reschedule',
             ]);
-
         }
+
 
          // Redirect back with success message
 
