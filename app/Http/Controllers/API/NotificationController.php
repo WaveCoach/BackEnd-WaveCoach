@@ -58,7 +58,6 @@ class NotificationController extends BaseController
     public function getCountNotif()
     {
         $userId = Auth::id();
-        dd($userId);
 
         if (!$userId) {
             return $this->ErrorResponse('Unauthorized', 401);
@@ -67,7 +66,6 @@ class NotificationController extends BaseController
         $unreadCount = Notification::where('user_id', $userId)
             ->where('is_read', 0)
             ->count();
-        dd($unreadCount);
 
         return $this->SuccessResponse(['unread_count' => $unreadCount], 'Jumlah notifikasi belum dibaca');
     }
