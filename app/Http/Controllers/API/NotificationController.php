@@ -66,6 +66,7 @@ class NotificationController extends BaseController
         $unreadCount = Notification::where('user_id', $userId)
             ->where('is_read', 0)
             ->count();
+        dd($unreadCount);
 
         return $this->SuccessResponse(['unread_count' => $unreadCount], 'Jumlah notifikasi belum dibaca');
     }
