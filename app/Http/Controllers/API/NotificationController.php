@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Models\InventoryRequests;
 use App\Models\InventoryReturns;
 use App\Models\Notification;
+use App\Models\RescheduleRequest;
+use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +55,20 @@ class NotificationController extends BaseController
     }
 
 
+    public function getCountNotif()
+    {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return $this->ErrorResponse('Unauthorized', 401);
+        }
+
+        $unreadCount = Notification::where('user_id', $userId)
+            ->where('is_read', 0)
+            ->count();
+
+        return $this->SuccessResponse(['unread_count' => $unreadCount], 'Jumlah notifikasi belum dibaca');
+    }
 
     public function getDetailNotif($NotifId)
     {
@@ -71,13 +87,20 @@ class NotificationController extends BaseController
             return $this->ErrorResponse('Notifikasi tidak ditemukan', 404);
         }
 
+        // Update is_read jadi 1
+        if ($notif->is_read == 0) {
+            $notif->update([
+                'is_read' => 1,
+            ]);
+        }
+
         // Ambil detail model relasi berdasarkan notifiable_type
         $detail = null;
+        $items = [];
 
         if ($notif->notifiable_type === InventoryRequests::class) {
             $detail = $notif->notifiable()->with(['items.inventory', 'mastercoach', 'coach'])->first();
 
-            // Ambil hanya data yang diperlukan dari items
             $items = $detail->items->map(function ($item) {
                 return [
                     'id' => $item->inventory->id,
@@ -86,12 +109,27 @@ class NotificationController extends BaseController
             });
         } elseif ($notif->notifiable_type === InventoryReturns::class) {
             $detail = $notif->notifiable()->with(['inventory', 'landing', 'mastercoach', 'coach'])->first();
+
             $items = [
                 'id' => $detail->inventory->id ?? null,
                 'name' => $detail->inventory->name ?? null
             ];
-        } else {
-            $items = [];
+        } elseif ($notif->notifiable_type === Schedule::class) {
+            $detail = $notif->notifiable()->with(['coach', 'location'])->first();
+
+            $items = [
+                'id' => $detail->id ?? null,
+                'name' => $detail ? \Carbon\Carbon::parse($detail->date)->translatedFormat('l, d F Y') . ', ' . substr($detail->start_time, 0, 5) . ' - ' . substr($detail->end_time, 0, 5) : null,
+                'location' => $detail->location ? $detail->location->name : null,  // Menambahkan lokasi
+            ];
+        }
+         elseif ($notif->notifiable_type === RescheduleRequest::class) {
+            $detail = $notif->notifiable()->with(['mastercoach', 'coach'])->first();
+
+            $items = [
+                'id' => $detail->id ?? null,
+                'name' => $detail->reason ?? null
+            ];
         }
 
         return $this->SuccessResponse([
@@ -111,4 +149,6 @@ class NotificationController extends BaseController
             'items' => $items
         ], 'Detail notifikasi');
     }
+
+
 }
