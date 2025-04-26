@@ -57,6 +57,8 @@ class NotificationController extends BaseController
 
     public function getCountNotif()
     {
+
+        dd('hai');
         $userId = Auth::id();
 
         if (!$userId) {
