@@ -126,7 +126,7 @@ class NotificationController extends BaseController
             ];
         }
          elseif ($notif->notifiable_type === RescheduleRequest::class) {
-            $detail = $notif->notifiable()->with(['mastercoach', 'coach'])->first();
+            $detail = $notif->notifiable()->with('coach')->first();
 
             $items = [
                 'id' => $detail->id ?? null,
