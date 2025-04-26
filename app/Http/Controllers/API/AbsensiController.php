@@ -68,7 +68,9 @@ class AbsensiController extends BaseController
             return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
 
         } catch (\Exception $e) {
+
             return $this->ErrorResponse('Gagal menyimpan absensi!', 400, ['error' => $e->getMessage()]);
+
         }
     }
 

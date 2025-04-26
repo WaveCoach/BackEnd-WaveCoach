@@ -170,7 +170,7 @@ class HomeController extends BaseController
                 'notifiable_type' => get_class($rescheduleRequest),
                 'title'           => 'Permintaan Reschedule Baru',
                 'message'         => Auth::user()->name . ' mengajukan permintaan reschedule.',
-                'is_read'         => false,
+                'is_read'         => 0,
                 'type'            => 'reschedule',
             ]);
         }

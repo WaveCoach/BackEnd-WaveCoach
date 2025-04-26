@@ -27,20 +27,19 @@ class InventoryController extends BaseController
             'items.*.qty_requested' => 'required|integer|min:1',
         ]);
 
-        // Cek apakah sudah ada permintaan di hari yang sama dengan mastercoach dan coach yang sama
         $existingRequest = InventoryRequests::where('mastercoach_id', $request->mastercoach_id)
             ->where('coach_id', Auth::id())
             ->whereDate('tanggal_pinjam', $request->tanggal_pinjam)
             ->where('status', 'pending')
             ->whereHas('items', function ($query) use ($request) {
-            $query->whereIn('inventory_id', array_column($request->items, 'inventory_id'));
+                $query->whereIn('inventory_id', array_column($request->items, 'inventory_id'));
             })
             ->exists();
 
         if ($existingRequest) {
             return $this->ErrorResponse(
-            'Anda sudah mengajukan permintaan untuk barang yang sama pada tanggal ini. Silakan ajukan barang yang berbeda!',
-            400
+                'Anda sudah mengajukan permintaan untuk barang yang sama pada tanggal ini. Silakan ajukan barang yang berbeda!',
+                400
             );
         }
 
@@ -48,48 +47,51 @@ class InventoryController extends BaseController
 
         try {
             $loanRequest = InventoryRequests::create([
-            'mastercoach_id'  => $request->mastercoach_id,
-            'coach_id'        => Auth::id(),
-            'tanggal_pinjam'  => $request->tanggal_pinjam,
-            'tanggal_kembali' => $request->tanggal_kembali,
-            'alasan_pinjam'   => $request->alasan_pinjam,
-            'status'          => 'pending',
+                'mastercoach_id'  => $request->mastercoach_id,
+                'coach_id'        => Auth::id(),
+                'tanggal_pinjam'  => $request->tanggal_pinjam,
+                'tanggal_kembali' => $request->tanggal_kembali,
+                'alasan_pinjam'   => $request->alasan_pinjam,
+                'status'          => 'pending',
             ]);
 
             foreach ($request->items as $item) {
-            $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
-                ->where('inventory_id', $item['inventory_id'])
-                ->first();
+                $inventory = InventoryManagement::where('mastercoach_id', $request->mastercoach_id)
+                    ->where('inventory_id', $item['inventory_id'])
+                    ->first();
 
-            if (!$inventory) {
-                throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
+                if (!$inventory) {
+                    throw new \Exception("Mastercoach ini tidak memiliki barang dengan ID {$item['inventory_id']}");
+                }
+
+                if ($inventory->qty < $item['qty_requested']) {
+                    throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
+                }
+
+                InventoryRequestItem::create([
+                    'request_id'   => $loanRequest->id,
+                    'inventory_id' => $item['inventory_id'],
+                    'qty_requested' => $item['qty_requested'],
+                ]);
             }
 
-            if ($inventory->qty < $item['qty_requested']) {
-                throw new \Exception("Stok tidak cukup untuk barang dengan ID {$item['inventory_id']}");
-            }
-
-            InventoryRequestItem::create([
-                'request_id'   => $loanRequest->id,
-                'inventory_id' => $item['inventory_id'],
-                'qty_requested' => $item['qty_requested'],
-            ]);
-            }
-
-            $loanRequest->notifications()->create([
-                'user_id'    => $loanRequest->mastercoach_id, // Mastercoach yang akan menerima notifikasi
-                'pengirim_id' => $loanRequest->coach_id,
-                'title'      => 'Permintaan Peminjaman Barang',
-                'message'    => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
-                'type'       => 'request',
-                'is_read'    => false,
+            // Gunakan model Notification langsung karena pakai morph
+            \App\Models\Notification::create([
+                'user_id'         => $loanRequest->mastercoach_id,
+                'pengirim_id'     => $loanRequest->coach_id,
+                'notifiable_id'   => $loanRequest->id,
+                'notifiable_type' => \App\Models\InventoryRequests::class,
+                'title'           => 'Permintaan Peminjaman Barang',
+                'message'         => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
+                'type'            => 'request',
+                'is_read'         => false,
             ]);
 
             DB::commit();
 
             return $this->SuccessResponse(
                 $loanRequest->load('items'),
-                'Permintaan peminjaman  berhasil diajukan!',
+                'Permintaan peminjaman berhasil diajukan!',
                 201
             );
 
@@ -148,13 +150,16 @@ class InventoryController extends BaseController
                 ]);
 
                 $loanRequest->notifications()->create([
-                    'pengirim_id' => $loanRequest->mastercoach_id,
-                    'user_id'  => $loanRequest->coach_id, // Coach yang mengajukan peminjaman
-                    'title'    => 'Peminjaman Disetujui',
-                    'message'  => "Peminjaman barang Anda telah disetujui oleh Mastercoach.",
-                    'type'     => 'approval',
-                    'is_read'  => 0,
+                    'pengirim_id'     => $loanRequest->mastercoach_id,
+                    'user_id'         => $loanRequest->coach_id,
+                    'notifiable_id'   => $loanRequest->id,
+                    'notifiable_type' => InventoryRequests::class,
+                    'title'           => 'Peminjaman Disetujui',
+                    'message'         => "Permintaan peminjaman Anda untuk tanggal {$loanRequest->tanggal_pinjam} telah disetujui oleh Mastercoach.",
+                    'type'            => 'approval',
+                    'is_read'         => 0,
                 ]);
+
 
             } elseif ($request->status === 'rejected') {
                 $loanRequest->update([
@@ -163,13 +168,16 @@ class InventoryController extends BaseController
                 ]);
 
                 $loanRequest->notifications()->create([
-                    'pengirim_id' => $loanRequest->mastercoach_id,
-                    'user_id'  => $loanRequest->coach_id, // Coach yang mengajukan peminjaman
-                    'title'    => 'Peminjaman Ditolak',
-                    'message'  => "Permintaan peminjaman Anda ditolak. Alasan: {$request->rejection_reason}",
-                    'type'     => 'rejection',
-                    'is_read'  => 0,
+                    'pengirim_id'     => $loanRequest->mastercoach_id,
+                    'user_id'         => $loanRequest->coach_id, // Coach yang mengajukan peminjaman
+                    'notifiable_id'   => $loanRequest->id,
+                    'notifiable_type' => \App\Models\InventoryRequests::class,
+                    'title'           => 'Peminjaman Ditolak',
+                    'message'         => "Permintaan peminjaman Anda ditolak. Alasan: {$request->rejection_reason}",
+                    'type'            => 'rejection',
+                    'is_read'         => 0,
                 ]);
+
             }
 
             DB::commit();
@@ -239,13 +247,17 @@ class InventoryController extends BaseController
             ]);
 
             // Buat notifikasi untuk mastercoach
+            $coachName     = $landing->coach->name ?? 'Coach';
+            $inventoryName = $landing->inventory->name ?? 'Barang';
             $return->notifications()->create([
-                'pengirim_id' => $landing->coach_id,
-                'user_id'     => $landing->mastercoach_id, // Mastercoach sebagai penerima notifikasi
-                'title'       => 'Pengajuan Pengembalian Barang',
-                'message'     => "Coach {$landing->coach_id} telah mengajukan pengembalian barang ID {$landing->inventory_id}.",
-                'type'        => 'return_request',
-                'is_read'     => 0,
+                'pengirim_id'     => $landing->coach_id,
+                'user_id'         => $landing->mastercoach_id,
+                'notifiable_id'   => $return->id,
+                'notifiable_type' => \App\Models\InventoryReturns::class,
+                'title'           => 'Pengajuan Pengembalian Barang',
+                'message'         => "{$coachName} telah mengajukan pengembalian barang *{$inventoryName}*.",
+                'type'            => 'return_request',
+                'is_read'         => 0,
             ]);
 
             DB::commit();
@@ -297,6 +309,10 @@ class InventoryController extends BaseController
                 return $this->ErrorResponse('Pengembalian sudah diproses sebelumnya!', 400);
             }
 
+            // Ambil data coach dan inventory
+            $coachName     = $returnRequest->coach->name ?? 'Coach';
+            $inventoryName = $returnRequest->inventory->name ?? 'Barang';
+
             if ($request->status === 'approved') {
                 $landing = InventoryLandings::findOrFail($returnRequest->inventory_landing_id);
 
@@ -307,7 +323,6 @@ class InventoryController extends BaseController
                 $landing->decrement('qty_returned', $returnRequest->qty_returned);
                 $landing->decrement('qty_pending_return', $landing->qty_borrowed - $returnRequest->qty_returned);
 
-
                 if ($landing->qty_borrowed == 0) {
                     $landing->update(['status' => 'returned']);
                 }
@@ -316,14 +331,17 @@ class InventoryController extends BaseController
                     ->where('inventory_id', $returnRequest->inventory_id)
                     ->first();
                 $inventory->increment('qty', $returnRequest->qty_returned);
+
                 $returnRequest->updateOrFail(['status' => 'approved']);
+
+                // Buat notifikasi
                 $returnRequest->notifications()->create([
                     'pengirim_id' => $returnRequest->mastercoach_id,
-                    'user_id'  => $returnRequest->coach_id,
-                    'title'    => 'Pengembalian Barang Disetujui',
-                    'message'  => "Pengembalian barang telah disetujui oleh Mastercoach.",
-                    'type'     => 'return_approved',
-                    'is_read'  => 0,
+                    'user_id'     => $returnRequest->coach_id,
+                    'title'       => 'Pengembalian Barang Disetujui',
+                    'message'     => "Pengembalian barang *{$inventoryName}* oleh {$coachName} telah disetujui oleh Mastercoach.",
+                    'type'        => 'return_approved',
+                    'is_read'     => 0,
                 ]);
 
             } elseif ($request->status === 'rejected') {
@@ -332,13 +350,14 @@ class InventoryController extends BaseController
                     'rejection_reason' => $request->rejection_reason,
                 ]);
 
+                // Buat notifikasi
                 $returnRequest->notifications()->create([
                     'pengirim_id' => $returnRequest->mastercoach_id,
-                    'user_id'  => $returnRequest->coach_id, // Coach yang mengajukan
-                    'title'    => 'Pengembalian Barang Ditolak',
-                    'message'  => "Pengembalian barang ditolak. Alasan: {$request->rejection_reason}.",
-                    'type'     => 'return_rejected',
-                    'is_read'  => 0,
+                    'user_id'     => $returnRequest->coach_id,
+                    'title'       => 'Pengembalian Barang Ditolak',
+                    'message'     => "Pengembalian barang *{$inventoryName}* oleh {$coachName} ditolak. Alasan: {$request->rejection_reason}.",
+                    'type'        => 'return_rejected',
+                    'is_read'     => 0,
                 ]);
             }
 
@@ -350,7 +369,6 @@ class InventoryController extends BaseController
             return $this->ErrorResponse('Gagal memperbarui status pengembalian!', 400, ['error' => $e->getMessage()]);
         }
     }
-
 
     public function getHistory(Request $request)
     {
@@ -433,8 +451,6 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($inventory, 'Data history berhasil diambil.');
     }
 
-
-
     public function getRequestHistory($id)
     {
         $data = InventoryRequests::with(['mastercoach', 'coach', 'items.inventory'])->find($id);
@@ -469,7 +485,6 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($flattened, 'Detail peminjaman berhasil diambil.');
     }
 
-
     public function getReturnHistory($id)
     {
         $data = InventoryReturns::with(['mastercoach', 'coach', 'inventory', 'landing', 'request'])->find($id);
@@ -502,7 +517,6 @@ class InventoryController extends BaseController
 
         return $this->SuccessResponse($flattened, 'Detail pengembalian berhasil diambil.');
     }
-
 
     public function getList()
     {
@@ -537,74 +551,69 @@ class InventoryController extends BaseController
         return $this->SuccessResponse($inventory, 'Data peminjaman berhasil diambil.');
     }
 
-
-
-
     public function getListDetail($inventoryId)
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    if (!$userId) {
-        return $this->ErrorResponse('Unauthorized', 401);
+        if (!$userId) {
+            return $this->ErrorResponse('Unauthorized', 401);
+        }
+
+        // Ambil data peminjaman
+        $peminjaman = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
+            ->where('coach_id', $userId)
+            ->where('inventory_id', $inventoryId)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'type' => 'peminjaman',
+                    'id' => $item->id,
+                    'created_at' => $item->created_at,
+                    'tanggal_pinjam' => $item->tanggal_pinjam,
+                    'tanggal_kembali' => $item->tanggal_kembali,
+                    'status' => $item->status,
+                    'qty' => $item->qty_borrowed,
+                    'coach_name' => $item->coach->name ?? null,
+                    'mastercoach_name' => $item->mastercoach->name ?? null,
+                    'inventory_name' => $item->inventory->name ?? null,
+                ];
+            });
+
+        // Ambil data pengembalian
+        $pengembalian = InventoryReturns::with(['coach', 'mastercoach', 'inventory'])
+            ->where('coach_id', $userId)
+            ->where('inventory_id', $inventoryId)
+            ->get()
+            ->map(function ($ret) {
+                return [
+                    'type' => 'pengembalian',
+                    'id' => $ret->id,
+                    'created_at' => $ret->created_at,
+                    'returned_at' => $ret->returned_at,
+                    'status' => $ret->status,
+                    'qty' => $ret->qty_returned,
+                    'damaged_count' => $ret->damaged_count,
+                    'missing_count' => $ret->missing_count,
+                    'img_inventory_return' => $ret->img_inventory_return
+                        ? url('storage/' . $ret->img_inventory_return)  // Menambahkan URL gambar
+                        : null,  // Jika tidak ada gambar, set null
+                    'rejection_reason' => $ret->rejection_reason,
+                    'desc' => $ret->desc,
+                    'coach_name' => $ret->coach->name ?? null,
+                    'mastercoach_name' => $ret->mastercoach->name ?? null,
+                    'inventory_name' => $ret->inventory->name ?? null,
+                ];
+            });
+
+        // Gabung dan urutkan berdasarkan created_at dari yang terbaru
+        $merged = $peminjaman->concat($pengembalian)->sortByDesc('created_at')->values();
+
+        if ($merged->isEmpty()) {
+            return $this->ErrorResponse('Data tidak ditemukan.', 404);
+        }
+
+        return $this->SuccessResponse($merged, 'Riwayat peminjaman dan pengembalian berhasil diambil.');
     }
-
-    // Ambil data peminjaman
-    $peminjaman = InventoryLandings::with(['coach', 'mastercoach', 'inventory'])
-        ->where('coach_id', $userId)
-        ->where('inventory_id', $inventoryId)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'type' => 'peminjaman',
-                'id' => $item->id,
-                'created_at' => $item->created_at,
-                'tanggal_pinjam' => $item->tanggal_pinjam,
-                'tanggal_kembali' => $item->tanggal_kembali,
-                'status' => $item->status,
-                'qty' => $item->qty_borrowed,
-                'coach_name' => $item->coach->name ?? null,
-                'mastercoach_name' => $item->mastercoach->name ?? null,
-                'inventory_name' => $item->inventory->name ?? null,
-            ];
-        });
-
-    // Ambil data pengembalian
-    $pengembalian = InventoryReturns::with(['coach', 'mastercoach', 'inventory'])
-        ->where('coach_id', $userId)
-        ->where('inventory_id', $inventoryId)
-        ->get()
-        ->map(function ($ret) {
-            return [
-                'type' => 'pengembalian',
-                'id' => $ret->id,
-                'created_at' => $ret->created_at,
-                'returned_at' => $ret->returned_at,
-                'status' => $ret->status,
-                'qty' => $ret->qty_returned,
-                'damaged_count' => $ret->damaged_count,
-                'missing_count' => $ret->missing_count,
-                'img_inventory_return' => $ret->img_inventory_return
-                    ? url('storage/' . $ret->img_inventory_return)  // Menambahkan URL gambar
-                    : null,  // Jika tidak ada gambar, set null
-                'rejection_reason' => $ret->rejection_reason,
-                'desc' => $ret->desc,
-                'coach_name' => $ret->coach->name ?? null,
-                'mastercoach_name' => $ret->mastercoach->name ?? null,
-                'inventory_name' => $ret->inventory->name ?? null,
-            ];
-        });
-
-    // Gabung dan urutkan berdasarkan created_at dari yang terbaru
-    $merged = $peminjaman->concat($pengembalian)->sortByDesc('created_at')->values();
-
-    if ($merged->isEmpty()) {
-        return $this->ErrorResponse('Data tidak ditemukan.', 404);
-    }
-
-    return $this->SuccessResponse($merged, 'Riwayat peminjaman dan pengembalian berhasil diambil.');
-}
-
-
 
     public function getListStuffInventory($mastercoachId){
         $inventory = InventoryManagement::with(['mastercoach', 'inventory'])
