@@ -134,10 +134,13 @@ class NotificationController extends BaseController
 
         return $this->SuccessResponse([
             'id' => $notif->id,
+            'notifiable_id' => $notif->notifiable_id,
             'notifiable_type' => $notif->notifiable_type,
             'title' => $notif->title,
             'message' => $notif->message,
             'created_at' => Carbon::parse($notif->created_at)->translatedFormat('d F Y, H:i'),
+            'is_read' => $notif->is_read,
+            'type' => $notif->type,
             'user' => [
                 'id' => $notif->user->id,
                 'name' => $notif->user->name,
