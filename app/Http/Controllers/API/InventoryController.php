@@ -75,7 +75,6 @@ class InventoryController extends BaseController
                 ]);
             }
 
-            // Gunakan model Notification langsung karena pakai morph
             \App\Models\Notification::create([
                 'user_id'         => $loanRequest->mastercoach_id,
                 'pengirim_id'     => $loanRequest->coach_id,
@@ -84,7 +83,7 @@ class InventoryController extends BaseController
                 'title'           => 'Permintaan Peminjaman Barang',
                 'message'         => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
                 'type'            => 'request',
-                'is_read'         => false,
+                'is_read'         => 0,
             ]);
 
             DB::commit();
@@ -156,7 +155,7 @@ class InventoryController extends BaseController
                     'notifiable_type' => InventoryRequests::class,
                     'title'           => 'Peminjaman Disetujui',
                     'message'         => "Permintaan peminjaman Anda untuk tanggal {$loanRequest->tanggal_pinjam} telah disetujui oleh Mastercoach.",
-                    'type'            => 'approval',
+                    'type'            => 'request',
                     'is_read'         => 0,
                 ]);
 
@@ -174,7 +173,7 @@ class InventoryController extends BaseController
                     'notifiable_type' => \App\Models\InventoryRequests::class,
                     'title'           => 'Peminjaman Ditolak',
                     'message'         => "Permintaan peminjaman Anda ditolak. Alasan: {$request->rejection_reason}",
-                    'type'            => 'rejection',
+                    'type'            => 'request',
                     'is_read'         => 0,
                 ]);
 
@@ -256,7 +255,7 @@ class InventoryController extends BaseController
                 'notifiable_type' => \App\Models\InventoryReturns::class,
                 'title'           => 'Pengajuan Pengembalian Barang',
                 'message'         => "{$coachName} telah mengajukan pengembalian barang *{$inventoryName}*.",
-                'type'            => 'return_request',
+                'type'            => 'return',
                 'is_read'         => 0,
             ]);
 
@@ -340,7 +339,7 @@ class InventoryController extends BaseController
                     'user_id'     => $returnRequest->coach_id,
                     'title'       => 'Pengembalian Barang Disetujui',
                     'message'     => "Pengembalian barang *{$inventoryName}* oleh {$coachName} telah disetujui oleh Mastercoach.",
-                    'type'        => 'return_approved',
+                    'type'        => 'return',
                     'is_read'     => 0,
                 ]);
 
@@ -356,7 +355,7 @@ class InventoryController extends BaseController
                     'user_id'     => $returnRequest->coach_id,
                     'title'       => 'Pengembalian Barang Ditolak',
                     'message'     => "Pengembalian barang *{$inventoryName}* oleh {$coachName} ditolak. Alasan: {$request->rejection_reason}.",
-                    'type'        => 'return_rejected',
+                    'type'        => 'return',
                     'is_read'     => 0,
                 ]);
             }

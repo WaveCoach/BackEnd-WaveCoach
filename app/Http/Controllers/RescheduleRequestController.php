@@ -52,7 +52,7 @@ class RescheduleRequestController extends Controller
                 'notifiable_type' => get_class($reschedules),
                 'title'           => 'Reschedule Ditolak',
                 'message'         => 'Permintaan reschedule Anda ditolak. Alasan: ' . $request->response_message,
-                'is_read'         => false,
+                'is_read'         => 0,
                 'type'            => 'reschedule',
             ]);
         }
@@ -143,7 +143,7 @@ class RescheduleRequestController extends Controller
                 'notifiable_type' => get_class($reschedules),
                 'title'           => 'Reschedule Disetujui',
                 'message'         => 'Permintaan reschedule Anda disetujui. Jadwal baru: ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
-                'is_read'         => false,
+                'is_read'         => 0,
                 'type'            => 'reschedule',
             ]);
 
