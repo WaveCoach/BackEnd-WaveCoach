@@ -4,10 +4,15 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
 use App\Models\CoachAttendance;
+use App\Models\Notification;
 use App\Models\StudentAttendance;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class AbsensiController extends BaseController
 {
@@ -43,6 +48,22 @@ class AbsensiController extends BaseController
                 'proof'             => $proofPath,
                 'schedule_id'       => $validated['schedule_id']
             ]);
+
+            // Kirim notifikasi jika coach tidak hadir
+            if (Str::lower($validated['attendance_status']) === 'tidak hadir') {
+                $schedule = Schedule::find($validated['schedule_id']);
+                $adminUsers = User::where('role_id', 1)->get(); // Asumsi role_id 1 = Admin
+
+                foreach ($adminUsers as $admin) {
+                    Notification::create([
+                        'user_id' => $admin->id,
+                        'title' => 'Coach Tidak Hadir',
+                        'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
+                        'type' => 'absen',
+                        'status' => 0 // 0 = belum dibaca
+                    ]);
+                }
+            }
 
             return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
 
