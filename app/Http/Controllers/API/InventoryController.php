@@ -519,6 +519,7 @@ class InventoryController extends BaseController
 
     public function getList()
     {
+
         $userId = Auth::id();
 
         $inventory = DB::table('inventories')
