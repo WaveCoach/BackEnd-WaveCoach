@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\coaches;
 use App\Models\location;
+use App\Models\Notification;
 use App\Models\Package;
 use App\Models\PackageStudent;
 use App\Models\schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ScheduleController extends Controller
@@ -111,6 +113,19 @@ class ScheduleController extends Controller
             ]);
         }
 
+        $coach = User::find($coachId);
+
+        Notification::create([
+            'pengirim_id'     => Auth   ::id(),
+            'user_id'         => $coach->id,
+            'notifiable_id'   => $schedule->id,
+            'notifiable_type' => get_class($schedule),
+            'title'           => 'Jadwal Baru',
+            'message'         => 'Hai ' . $coach->name . ', jadwal baru Anda telah ditambahkan pada tanggal ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
+            'is_read'         => false,
+            'type'            => 'schedule',
+        ]);
+
         return redirect()->route('schedule.index')->with('success', 'Schedule berhasil ditambahkan.');
     }
 
@@ -152,7 +167,8 @@ class ScheduleController extends Controller
     }
 
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'date' => 'required|date',
             'start_time' => 'required',
@@ -169,6 +185,7 @@ class ScheduleController extends Controller
 
         $schedule = Schedule::findOrFail($id);
 
+        // Proses untuk mengubah atau membuat coach
         if (!is_numeric($request->coach_id)) {
             $coach = User::firstOrCreate(
                 ['name' => $request->coach_id],
@@ -183,11 +200,11 @@ class ScheduleController extends Controller
             coaches::create([
                 'user_id' => $coach->id
             ]);
-
         } else {
             $coachId = $request->coach_id;
         }
 
+        // Proses untuk mengubah atau membuat lokasi
         if (!is_numeric($request->location_id)) {
             $location = Location::firstOrCreate(
                 ['name' => $request->location_id],
@@ -199,6 +216,8 @@ class ScheduleController extends Controller
             $locationId = $request->location_id;
         }
 
+        // Simpan perubahan pada schedule
+        $oldSchedule = $schedule->replicate(); // Menyimpan data jadwal sebelum diubah
         $schedule->update([
             'date' => $request->date ?? $schedule->date,
             'package_id' => $request->package_id ?? $schedule->package_id,
@@ -210,6 +229,41 @@ class ScheduleController extends Controller
             'is_assessed' => $request->is_assessed,
         ]);
 
+        // Membuat pesan perubahan
+        $changes = [];
+
+        if ($schedule->date !== $oldSchedule->date) {
+            $changes[] = "Tanggal berubah dari " . $oldSchedule->date . " menjadi " . $schedule->date;
+        }
+        if ($schedule->start_time !== $oldSchedule->start_time) {
+            $changes[] = "Waktu mulai berubah dari " . $oldSchedule->start_time . " menjadi " . $schedule->start_time;
+        }
+        if ($schedule->end_time !== $oldSchedule->end_time) {
+            $changes[] = "Waktu selesai berubah dari " . $oldSchedule->end_time . " menjadi " . $schedule->end_time;
+        }
+        if ($schedule->location_id !== $oldSchedule->location_id) {
+            $oldLocation = Location::find($oldSchedule->location_id);
+            $newLocation = Location::find($schedule->location_id);
+            $changes[] = "Lokasi berubah dari " . $oldLocation->name . " menjadi " . $newLocation->name;
+        }
+
+        // Kirim notifikasi jika ada perubahan
+        if (!empty($changes)) {
+            $coach = User::find($coachId);
+
+            Notification::create([
+                'pengirim_id'     => Auth::id(),
+                'user_id'         => $coach->id,
+                'notifiable_id'   => $schedule->id,
+                'notifiable_type' => get_class($schedule),
+                'title'           => 'Jadwal Diperbarui',
+                'message'         => 'Perubahan pada jadwal Anda: ' . implode(', ', $changes),
+                'is_read'         => false,
+                'type'            => 'schedule',
+            ]);
+        }
+
+        // Update student
         $existingStudentIds = $schedule->students->pluck('id')->toArray();
         $newStudentIds = $request->student_id;
 
@@ -228,6 +282,7 @@ class ScheduleController extends Controller
 
         return redirect()->route('schedule.index')->with('success', 'Schedule berhasil diperbarui.');
     }
+
 
 
     public function destroy($id) {

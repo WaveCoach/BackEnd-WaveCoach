@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Coaches;
 use App\Models\Location;
+use App\Models\Notification;
 use App\Models\Package;
 use App\Models\RescheduleRequest;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RescheduleRequestController extends Controller
@@ -42,6 +44,17 @@ class RescheduleRequestController extends Controller
             $reschedules->status = $request->status;
             $reschedules->response_message = $request->response_message;
             $reschedules->save();
+
+            Notification::create([
+                'pengirim_id'     => Auth::id(),
+                'user_id'         => $reschedules->coach->id,
+                'notifiable_id'   => $reschedules->id,
+                'notifiable_type' => get_class($reschedules),
+                'title'           => 'Reschedule Ditolak',
+                'message'         => 'Permintaan reschedule Anda ditolak. Alasan: ' . $request->response_message,
+                'is_read'         => false,
+                'type'            => 'reschedule',
+            ]);
         }
 
         if($request->status == 'approved'){
@@ -122,6 +135,17 @@ class RescheduleRequestController extends Controller
                     ]);
                 }
             }
+
+            Notification::create([
+                'pengirim_id'     => Auth::id(),
+                'user_id'         => $reschedules->coach->id,
+                'notifiable_id'   => $reschedules->id,
+                'notifiable_type' => get_class($reschedules),
+                'title'           => 'Reschedule Disetujui',
+                'message'         => 'Permintaan reschedule Anda disetujui. Jadwal baru: ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
+                'is_read'         => false,
+                'type'            => 'reschedule',
+            ]);
 
         }
 

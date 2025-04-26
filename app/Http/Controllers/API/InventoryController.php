@@ -77,12 +77,12 @@ class InventoryController extends BaseController
             }
 
             $loanRequest->notifications()->create([
-            'user_id'    => $loanRequest->mastercoach_id, // Mastercoach yang akan menerima notifikasi
-            'pengirim_id' => $loanRequest->coach_id,
-            'title'      => 'Permintaan Peminjaman Barang',
-            'message'    => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
-            'type'       => 'request',
-            'is_read'    => false,
+                'user_id'    => $loanRequest->mastercoach_id, // Mastercoach yang akan menerima notifikasi
+                'pengirim_id' => $loanRequest->coach_id,
+                'title'      => 'Permintaan Peminjaman Barang',
+                'message'    => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
+                'type'       => 'request',
+                'is_read'    => false,
             ]);
 
             DB::commit();

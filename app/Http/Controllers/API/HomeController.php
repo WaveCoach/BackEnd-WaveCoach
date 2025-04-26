@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\CoachAttendance;
+use App\Models\Notification;
 use App\Models\RescheduleRequest;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Models\StudentAttendance;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -157,6 +159,21 @@ class HomeController extends BaseController
             'admin_id' => null,
             'response_message' => null,
         ]);
+
+        $admins = User::where('role_id', 1)->get(); // ganti 'role' sesuai nama kolom di tabel users
+
+        foreach ($admins as $admin) {
+            Notification::create([
+                'pengirim_id'     => Auth::id(),
+                'user_id'         => $admin->id,
+                'notifiable_id'   => $rescheduleRequest->id,
+                'notifiable_type' => get_class($rescheduleRequest),
+                'title'           => 'Permintaan Reschedule Baru',
+                'message'         => Auth::user()->name . ' mengajukan permintaan reschedule.',
+                'is_read'         => false,
+                'type'            => 'reschedule',
+            ]);
+        }
 
         return $this->SuccessResponse($rescheduleRequest, 'Permintaan reschedule berhasil dikirim', 201);
     }
