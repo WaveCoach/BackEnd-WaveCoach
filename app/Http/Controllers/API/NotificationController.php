@@ -104,7 +104,8 @@ class NotificationController extends BaseController
             $items = $detail->items->map(function ($item) {
                 return [
                     'id' => $item->inventory->id,
-                    'name' => $item->inventory->name
+                    'name' => $item->inventory->name,
+                    'quantity' => $item->quantity,
                 ];
             });
         } elseif ($notif->notifiable_type === InventoryReturns::class) {
@@ -112,7 +113,8 @@ class NotificationController extends BaseController
 
             $items = [
                 'id' => $detail->inventory->id ?? null,
-                'name' => $detail->inventory->name ?? null
+                'name' => $detail->inventory->name ?? null,
+                'quantity' => $detail->qty_returned ?? null,
             ];
         } elseif ($notif->notifiable_type === Schedule::class) {
             $detail = $notif->notifiable()->with(['coach', 'location'])->first();
