@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Pusher\Pusher;
 
 class ScheduleController extends Controller
 {
@@ -125,6 +126,26 @@ class ScheduleController extends Controller
             'is_read'         => false,
             'type'            => 'schedule',
         ]);
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            [
+                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'useTLS' => true,
+            ]
+        );
+
+        $hardcodedUserId = 1;
+
+        // Kirim event ke Pusher
+        $pusher->trigger('notification-channel-user-' . $hardcodedUserId, 'NotificationSent', [
+            'message' => 'Jadwal baru Anda telah ditambahkan pada tanggal ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
+            'title'   => 'Jadwal Baru',
+            'type'    => 'schedule',
+        ]);
+
 
         return redirect()->route('schedule.index')->with('success', 'Schedule berhasil ditambahkan.');
     }
