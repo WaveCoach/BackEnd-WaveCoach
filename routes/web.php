@@ -81,6 +81,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.get');
     Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
+    Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
     Route::get('/test-email', function () {
         // Dummy data untuk file PDF
         $pdfContent = 'Ini adalah PDF dummy';

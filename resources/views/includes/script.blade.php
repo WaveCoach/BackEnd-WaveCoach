@@ -73,12 +73,15 @@ $(document).ready(function () {
 
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script>
+    // Aktifkan log untuk memeriksa komunikasi Pusher di konsol
     Pusher.logToConsole = true;
 
+    // Inisialisasi Pusher
     var pusher = new Pusher('2d59d7b8156ef1107a27', {
         cluster: 'ap1'
     });
 
+    // Subscribe ke channel 'notification-channel'
     var channel = pusher.subscribe('notification-channel');
 
     // Memeriksa apakah browser mendukung notifikasi
@@ -97,20 +100,19 @@ $(document).ready(function () {
 
     // Menangani event dari Pusher dan menampilkan notifikasi
     channel.bind('NotificationSent', function(data) {
-        // Tampilkan alert untuk debugging
-        alert('New notification: ' + data.message);
+        console.log(data); // Periksa apakah data diterima dengan benar
 
-        // Cek jika izin notifikasi sudah diberikan
-        if (Notification.permission === "granted") {
-            var notification = new Notification('New Notification', {
-                body: data.message, // Pesan yang diterima dari Pusher
+        // Memeriksa izin notifikasi dan menampilkan notifikasi
+        if (Notification.permission === 'granted') {
+            var notification = new Notification('New notification', {
+                body: data.message, // Isi pesan dari Pusher
+                icon: 'https://via.placeholder.com/150' // Gambar icon notifikasi
             });
 
-            // Event listener untuk klik notifikasi (opsional)
-            notification.onclick = function () {
-                window.location.href = data.url; // Arahkan pengguna ke URL tertentu saat notifikasi diklik
+            // Jika notifikasi diklik, buka halaman tertentu
+            notification.onclick = function() {
+                window.location.href = 'https://your-website-url.com'; // Ganti dengan URL yang sesuai
             };
         }
     });
 </script>
-
