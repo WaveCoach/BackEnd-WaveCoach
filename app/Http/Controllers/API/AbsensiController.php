@@ -50,7 +50,7 @@ class AbsensiController extends BaseController
             ]);
 
             if (Str::lower($validated['attendance_status']) === 'tidak hadir') {
-                $schedule = Schedule::find($validated['schedule_id']);
+                $schedule = Schedule::find($request->schedule_id);
                 $adminUsers = User::where('role_id', 1)->get();
 
                 foreach ($adminUsers as $admin) {
