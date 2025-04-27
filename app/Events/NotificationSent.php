@@ -13,28 +13,29 @@ use Illuminate\Queue\SerializesModels;
 class NotificationSent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $message;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct($message)
+    public $message;
+    public $title;
+    public $userId;
+
+    public function __construct($message, $title, $userId)
     {
         $this->message = $message;
+        $this->title = $title;
+        $this->userId = $userId;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
     public function broadcastOn()
     {
-        return new Channel('notification-channel');
+        // Broadcast ke channel private untuk user yang dituju
+        return new Channel('notification-channel-user-' . $this->userId);
     }
 
     public function broadcastWith()
     {
-        return ['message' => $this->message];
+        return [
+            'message' => $this->message,
+            'title'   => $this->title,
+        ];
     }
 }

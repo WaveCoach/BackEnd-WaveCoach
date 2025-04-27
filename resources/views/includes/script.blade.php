@@ -76,11 +76,13 @@ $(document).ready(function () {
 <script>
     Pusher.logToConsole = true;
 
+    var userId = '{{ Auth::user()->id }}';  // Ambil userId yang sedang login dari backend
+
     var pusher = new Pusher('2d59d7b8156ef1107a27', {
         cluster: 'ap1'
     });
 
-    var channel = pusher.subscribe('notification-channel');
+    var channel = pusher.subscribe('notification-channel-user-' + userId);  // Subscribe ke channel berdasarkan userId
 
     // Minta izin notif browser sekali saja
     if ('Notification' in window && Notification.permission !== "granted") {
@@ -93,7 +95,7 @@ $(document).ready(function () {
 
         if (Notification.permission === 'granted') {
             var notification = new Notification('Notifikasi Baru', {
-                body: data.message, // <-- pakai message dari API!!
+                body: data.message,  // <-- pakai message dari API!!
                 icon: 'https://via.placeholder.com/150'
             });
 

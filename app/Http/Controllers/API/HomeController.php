@@ -132,10 +132,7 @@ class HomeController extends BaseController
         ], 'Schedule retrieved successfully');
     }
 
-
-
-
-    public function requestReschedule(Request $request)
+        public function requestReschedule(Request $request)
     {
         $validated = $request->validate([
             'schedule_id' => 'required|exists:schedules,id',
@@ -144,7 +141,7 @@ class HomeController extends BaseController
 
         $existingRequest = RescheduleRequest::where('schedule_id', $validated['schedule_id'])
             ->where('coach_id', Auth::user()->id)
-            ->where('status', 'pending') // Hanya cek jika masih pending
+            ->where('status', 'pending')
             ->exists();
 
         if ($existingRequest) {
@@ -160,9 +157,20 @@ class HomeController extends BaseController
             'response_message' => null,
         ]);
 
-        $admins = User::where('role_id', 1)->get(); // ganti 'role' sesuai nama kolom di tabel users
+        $admins = User::where('role_id', 1)->get(); // Ambil semua admin
+
+        $pusher = new \Pusher\Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            [
+                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'useTLS' => true,
+            ]
+        );
 
         foreach ($admins as $admin) {
+            // Simpan notifikasi di database
             Notification::create([
                 'pengirim_id'     => Auth::id(),
                 'user_id'         => $admin->id,
@@ -173,10 +181,19 @@ class HomeController extends BaseController
                 'is_read'         => 0,
                 'type'            => 'reschedule',
             ]);
+
+            // Kirim Notif Real-time via Pusher ke channel spesifik berdasarkan userId
+            $pusher->trigger('notification-channel-user-' . $admin->id, 'NotificationSent', [
+                'message' => Auth::user()->name . ' mengajukan permintaan reschedule.',
+                'title'   => 'Permintaan Reschedule Baru',
+                'type'    => 'reschedule',
+            ]);
         }
 
         return $this->SuccessResponse($rescheduleRequest, 'Permintaan reschedule berhasil dikirim', 201);
     }
+
+
 
 
 
