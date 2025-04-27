@@ -162,7 +162,7 @@ class NotificationController extends BaseController
     public function sendNotification(Request $request)
     {
         $message = $request->input('message');
-        broadcast(new NotificationSent($message));
+        broadcast(new NotificationSent('haloooo'));
         return response()->json(['message' => 'Notification sent successfully!']);
     }
 
