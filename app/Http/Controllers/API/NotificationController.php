@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\NotificationSent;
 use App\Models\InventoryRequests;
 use App\Models\InventoryReturns;
 use App\Models\Notification;
@@ -156,6 +157,13 @@ class NotificationController extends BaseController
             ],
             'items' => $items
         ], 'Detail notifikasi');
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $message = $request->input('message');
+        broadcast(new NotificationSent($message));
+        return response()->json(['message' => 'Notification sent successfully!']);
     }
 
 

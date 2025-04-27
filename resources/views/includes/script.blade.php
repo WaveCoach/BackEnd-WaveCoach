@@ -70,3 +70,47 @@ $(document).ready(function () {
     setInterval(fetchNotifications, 10000);
 });
 </script>
+
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script>
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('2d59d7b8156ef1107a27', {
+        cluster: 'ap1'
+    });
+
+    var channel = pusher.subscribe('notification-channel');
+
+    // Memeriksa apakah browser mendukung notifikasi
+    if ('Notification' in window) {
+        // Memeriksa apakah pengguna sudah memberikan izin
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(function(permission) {
+                if (permission === "granted") {
+                    console.log("Izin notifikasi diberikan");
+                }
+            });
+        }
+    } else {
+        console.log("Browser tidak mendukung notifikasi");
+    }
+
+    // Menangani event dari Pusher dan menampilkan notifikasi
+    channel.bind('NotificationSent', function(data) {
+        // Tampilkan alert untuk debugging
+        alert('New notification: ' + data.message);
+
+        // Cek jika izin notifikasi sudah diberikan
+        if (Notification.permission === "granted") {
+            var notification = new Notification('New Notification', {
+                body: data.message, // Pesan yang diterima dari Pusher
+            });
+
+            // Event listener untuk klik notifikasi (opsional)
+            notification.onclick = function () {
+                window.location.href = data.url; // Arahkan pengguna ke URL tertentu saat notifikasi diklik
+            };
+        }
+    });
+</script>
+

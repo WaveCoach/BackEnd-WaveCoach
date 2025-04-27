@@ -55,4 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('notification', [NotificationController::class, 'getNotif']);
     Route::get('notification/{NotifId}', [NotificationController::class, 'getDetailNotif']);
     Route::get('notification-count', [NotificationController::class, 'getCountNotif']);
+    Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
+
 });
