@@ -10,6 +10,7 @@ use App\Models\StudentAttendance;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Pusher\Pusher;
@@ -51,9 +52,21 @@ class AbsensiController extends BaseController
 
             if (Str::lower($validated['attendance_status']) === 'tidak hadir') {
                 $schedule = Schedule::find($request->schedule_id);
-                $adminUsers = User::where('role_id', 1)->get();
+                $adminUsers = User::where('role_id', 1)->get(); // Ambil semua admin
+
+                // Set up Pusher
+                $pusher = new \Pusher\Pusher(
+                    env('PUSHER_APP_KEY'),
+                    env('PUSHER_APP_SECRET'),
+                    env('PUSHER_APP_ID'),
+                    [
+                        'cluster' => env('PUSHER_APP_CLUSTER'),
+                        'useTLS' => true,
+                    ]
+                );
 
                 foreach ($adminUsers as $admin) {
+                    // Simpan notifikasi di database
                     Notification::create([
                         'pengirim_id' => Auth::user()->id,
                         'notifiable_type' => 'App\Models\CoachAttendance',
@@ -65,24 +78,19 @@ class AbsensiController extends BaseController
                         'status' => 0
                     ]);
 
-                    $pusher = new Pusher(
-                        env('PUSHER_APP_KEY'),
-                        env('PUSHER_APP_SECRET'),
-                        env('PUSHER_APP_ID'),
-                        [
-                            'cluster' => env('PUSHER_APP_CLUSTER'),
-                            'useTLS' => true,
-                        ]
-                    );
-
-                    $data = [
-                        'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
-                        'user_id' => $admin->id,
-                    ];
-
-                    $pusher->trigger('admin-channel', 'coach-absent', $data);
+                    // Kirim Notifikasi Real-time via Pusher
+                    try {
+                        $pusher->trigger('notification-channel-user-' . $admin->id, 'NotificationSent', [
+                            'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
+                            'title'   => 'Coach Tidak Hadir',
+                            'type'    => 'absen',
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Pusher Error: ' . $e->getMessage());
+                    }
                 }
             }
+
 
             return $this->SuccessResponse($attendance, 'Absensi berhasil disimpan', 201);
 
