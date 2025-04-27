@@ -18,6 +18,7 @@ class AbsensiController extends BaseController
 {
     public function coachAbsent(Request $request)
     {
+        dd($request->all());
         $validated = $request->validate([
             'attendance_status' => 'required|string',
             'remarks'           => 'nullable|string',
