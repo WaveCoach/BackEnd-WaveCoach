@@ -162,10 +162,11 @@ class NotificationController extends BaseController
 
     public function sendNotification(Request $request)
     {
-        $pusher = new Pusher('2d59d7b8156ef1107a27', '2d59d7b8156ef1107a27', '1a48c7a8f6fa9594ddcc', [
+        $pusher = new Pusher('2d59d7b8156ef1107a27', '1a48c7a8f6fa9594ddcc', '1982308', [
             'cluster' => 'ap1',
             'useTLS' => true
         ]);
+
 
         $pusher->trigger('notification-channel', 'NotificationSent', [
             'message' => "Hello cintaaaaaa, this is a test notification!",
