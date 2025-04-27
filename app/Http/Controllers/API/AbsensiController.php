@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Pusher\Pusher;
 
 class AbsensiController extends BaseController
 {
@@ -49,10 +49,9 @@ class AbsensiController extends BaseController
                 'schedule_id'       => $validated['schedule_id']
             ]);
 
-            // Kirim notifikasi jika coach tidak hadir
             if (Str::lower($validated['attendance_status']) === 'tidak hadir') {
                 $schedule = Schedule::find($validated['schedule_id']);
-                $adminUsers = User::where('role_id', 1)->get(); // Asumsi role_id 1 = Admin
+                $adminUsers = User::where('role_id', 1)->get();
 
                 foreach ($adminUsers as $admin) {
                     Notification::create([
@@ -60,8 +59,25 @@ class AbsensiController extends BaseController
                         'title' => 'Coach Tidak Hadir',
                         'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
                         'type' => 'absen',
-                        'status' => 0 // 0 = belum dibaca
+                        'status' => 0
                     ]);
+
+                    $pusher = new Pusher(
+                        env('PUSHER_APP_KEY'),
+                        env('PUSHER_APP_SECRET'),
+                        env('PUSHER_APP_ID'),
+                        [
+                            'cluster' => env('PUSHER_APP_CLUSTER'),
+                            'useTLS' => true,
+                        ]
+                    );
+
+                    $data = [
+                        'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
+                        'user_id' => $admin->id,
+                    ];
+
+                    $pusher->trigger('admin-channel', 'coach-absent', $data);
                 }
             }
 
