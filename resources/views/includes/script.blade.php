@@ -74,59 +74,35 @@ $(document).ready(function () {
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 
 <script>
-    // Mengaktifkan logging untuk debugging
     Pusher.logToConsole = true;
 
-    // Membuat instance Pusher
     var pusher = new Pusher('2d59d7b8156ef1107a27', {
         cluster: 'ap1'
     });
 
-    // Subscribing ke channel
     var channel = pusher.subscribe('notification-channel');
 
-    // Memeriksa apakah browser mendukung notifikasi
-    if ('Notification' in window) {
-        // Memeriksa apakah pengguna sudah memberikan izin
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission().then(function(permission) {
-                if (permission === "granted") {
-                    console.log("Izin notifikasi diberikan");
-                }
-            });
-        }
-    } else {
-        console.log("Browser tidak mendukung notifikasi");
+    // Minta izin notif browser sekali saja
+    if ('Notification' in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
     }
 
-    // Menangani event dari Pusher dan menampilkan notifikasi
+    // Ketika ada event baru dikirim lewat Pusher
     channel.bind('NotificationSent', function(data) {
-        console.log(data); // Periksa apakah data diterima dengan benar
+        console.log('Data diterima:', data); // Debug cek isi data
 
-        // Tes menampilkan notifikasi jika izin diberikan
         if (Notification.permission === 'granted') {
-            var notification = new Notification('New notification', {
-                body: data.message,
+            var notification = new Notification('Notifikasi Baru', {
+                body: data.message, // <-- pakai message dari API!!
                 icon: 'https://via.placeholder.com/150'
             });
 
             notification.onclick = function() {
+                // Optional: Boleh kamu arahkan kemana setelah klik notif
                 window.location.href = 'https://your-website-url.com';
             };
+        } else {
+            console.log('Izin notifikasi belum diberikan');
         }
     });
-
-    // Tes menampilkan notifikasi manual untuk memastikan semuanya bekerja
-    if (Notification.permission === 'granted') {
-        var notification = new Notification('Test Notification', {
-            body: 'This is a test notification!',
-            icon: 'https://via.placeholder.com/150'
-        });
-
-        notification.onclick = function() {
-            window.location.href = 'https://your-website-url.com';
-        };
-    } else {
-        console.log('Notifikasi belum diizinkan');
-    }
 </script>

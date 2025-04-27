@@ -11,6 +11,7 @@ use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Pusher\Pusher;
 
 class NotificationController extends BaseController
 {
@@ -161,9 +162,16 @@ class NotificationController extends BaseController
 
     public function sendNotification(Request $request)
     {
-        $message = $request->input('message');
-        broadcast(new NotificationSent('haloooo'));
-        return response()->json(['message' => 'Notification sent successfully!']);
+        $pusher = new Pusher('2d59d7b8156ef1107a27', '2d59d7b8156ef1107a27', '1a48c7a8f6fa9594ddcc', [
+            'cluster' => 'ap1',
+            'useTLS' => true
+        ]);
+
+        $pusher->trigger('notification-channel', 'NotificationSent', [
+            'message' => "Hello cintaaaaaa, this is a test notification!",
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
 
