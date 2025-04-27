@@ -55,6 +55,9 @@ class AbsensiController extends BaseController
 
                 foreach ($adminUsers as $admin) {
                     Notification::create([
+                        'pengirim_id' => Auth::user()->id,
+                        'notifiable_type' => 'App\Models\CoachAttendance',
+                        'notifiable_id' => $attendance->id,
                         'user_id' => $admin->id,
                         'title' => 'Coach Tidak Hadir',
                         'message' => 'Coach ' . Auth::user()->name . ' tidak hadir untuk jadwal tanggal ' . optional($schedule)->date . '. Silakan lakukan penjadwalan ulang.',
