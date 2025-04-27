@@ -5,11 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\BaseController;
 use App\Models\CoachAttendance;
 use App\Models\Notification;
+use App\Models\Schedule;
 use App\Models\StudentAttendance;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Pusher\Pusher;
@@ -18,7 +18,6 @@ class AbsensiController extends BaseController
 {
     public function coachAbsent(Request $request)
     {
-        dd($request->all());
         $validated = $request->validate([
             'attendance_status' => 'required|string',
             'remarks'           => 'nullable|string',
