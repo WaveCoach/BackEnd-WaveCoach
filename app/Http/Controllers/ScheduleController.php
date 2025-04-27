@@ -137,10 +137,10 @@ class ScheduleController extends Controller
             ]
         );
 
-        $hardcodedUserId = 1;
+
 
         // Kirim event ke Pusher
-        $pusher->trigger('notification-channel-user-' . $hardcodedUserId, 'NotificationSent', [
+        $pusher->trigger('notification-channel-user-' . $coach->id, 'NotificationSent', [
             'message' => 'Jadwal baru Anda telah ditambahkan pada tanggal ' . $request->date . ' pukul ' . $request->start_time . ' - ' . $request->end_time,
             'title'   => 'Jadwal Baru',
             'type'    => 'schedule',
