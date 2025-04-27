@@ -72,16 +72,17 @@ $(document).ready(function () {
 </script>
 
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+
 <script>
-    // Aktifkan log untuk memeriksa komunikasi Pusher di konsol
+    // Mengaktifkan logging untuk debugging
     Pusher.logToConsole = true;
 
-    // Inisialisasi Pusher
+    // Membuat instance Pusher
     var pusher = new Pusher('2d59d7b8156ef1107a27', {
         cluster: 'ap1'
     });
 
-    // Subscribe ke channel 'notification-channel'
+    // Subscribing ke channel
     var channel = pusher.subscribe('notification-channel');
 
     // Memeriksa apakah browser mendukung notifikasi
@@ -102,17 +103,30 @@ $(document).ready(function () {
     channel.bind('NotificationSent', function(data) {
         console.log(data); // Periksa apakah data diterima dengan benar
 
-        // Memeriksa izin notifikasi dan menampilkan notifikasi
+        // Tes menampilkan notifikasi jika izin diberikan
         if (Notification.permission === 'granted') {
             var notification = new Notification('New notification', {
-                body: data.message, // Isi pesan dari Pusher
-                icon: 'https://via.placeholder.com/150' // Gambar icon notifikasi
+                body: data.message,
+                icon: 'https://via.placeholder.com/150'
             });
 
-            // Jika notifikasi diklik, buka halaman tertentu
             notification.onclick = function() {
-                window.location.href = 'https://your-website-url.com'; // Ganti dengan URL yang sesuai
+                window.location.href = 'https://your-website-url.com';
             };
         }
     });
+
+    // Tes menampilkan notifikasi manual untuk memastikan semuanya bekerja
+    if (Notification.permission === 'granted') {
+        var notification = new Notification('Test Notification', {
+            body: 'This is a test notification!',
+            icon: 'https://via.placeholder.com/150'
+        });
+
+        notification.onclick = function() {
+            window.location.href = 'https://your-website-url.com';
+        };
+    } else {
+        console.log('Notifikasi belum diizinkan');
+    }
 </script>
