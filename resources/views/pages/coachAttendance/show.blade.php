@@ -57,25 +57,30 @@
                     </td>
                     <td>
                         @php
-                        $tanggal = $item->schedule->date ?? null;
-                        $jamMulai = $item->schedule->start_time ?? null;
+                            $tanggal = $item->schedule->date ?? null;
+                            $jamMulai = $item->schedule->start_time ?? null;
 
-                        $waktuMulai = null;
-                        if ($tanggal && $jamMulai) {
-                            $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
-                        }
+                            $waktuMulai = null;
+                            if ($tanggal && $jamMulai) {
+                                try {
+                                    $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
+                                } catch (\Exception $e) {
+                                    $waktuMulai = null;
+                                }
+                            }
 
-                        $waktuMasuk = \Carbon\Carbon::parse($item->created_at);
-                    @endphp
+                            $waktuMasuk = \Carbon\Carbon::parse($item->created_at);
+                        @endphp
 
-
-                    @if ($waktuMasuk->lte($waktuMulai))
-                        <span class="text-green-600 badge bg-success font-semibold">Tepat Waktu</span>
-                    @else
-                        <span class="text-red-600 badge bg-danger font-semibold">Terlambat</span>
-                    @endif
-
+                        @if ($waktuMulai && $waktuMasuk->lte($waktuMulai))
+                            <span class="text-green-600 badge bg-success font-semibold">Tepat Waktu</span>
+                        @elseif ($waktuMulai)
+                            <span class="text-red-600 badge bg-danger font-semibold">Terlambat</span>
+                        @else
+                            <span class="badge bg-secondary font-semibold">Tidak Ada Jadwal</span>
+                        @endif
                     </td>
+
                     <td>{{$item->remarks}}</td>
                     <td>
                         @if($item->proof)
