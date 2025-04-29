@@ -330,7 +330,7 @@ class ScheduleController extends Controller
         $coach = PackageCoach::where('package_id', $packageId)
         ->join('users', 'users.id', '=', 'package_coach.coach_id')
         ->select('users.id as coach_id', 'users.name as coach_name')
-        ->first();
+        ->get();
 
         return response()->json([
             'students' => $students,
