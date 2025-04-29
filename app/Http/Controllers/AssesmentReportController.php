@@ -84,9 +84,9 @@ class AssesmentReportController extends Controller
         $user = User::where('id', $assessment->student_id)->first();
 
         // Pastikan email user tidak null
-        if ($user && $user->email) {
+        // if ($user && $user->email) {
             Mail::to('ramayanticinta@gmail.com')->send(new KirimEmail($assessment, $nilai, $student, $user));
-        }
+        // }
 
         return 'Email berhasil dikirim!';
     }
