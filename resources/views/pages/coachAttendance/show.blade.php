@@ -57,12 +57,17 @@
                     </td>
                     <td>
                         @php
-                        $tanggal = $item->schedule->date ?? '-';           // contoh: 2025-04-21
-                        $jamMulai = $item->schedule->start_time ?? '-';    // contoh: 07:30:00
-                        $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
+                        $tanggal = $item->schedule->date ?? null;
+                        $jamMulai = $item->schedule->start_time ?? null;
+
+                        $waktuMulai = null;
+                        if ($tanggal && $jamMulai) {
+                            $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
+                        }
 
                         $waktuMasuk = \Carbon\Carbon::parse($item->created_at);
                     @endphp
+
 
                     @if ($waktuMasuk->lte($waktuMulai))
                         <span class="text-green-600 badge bg-success font-semibold">Tepat Waktu</span>
