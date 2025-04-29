@@ -29,7 +29,6 @@
             <a class="nav-link notifications-dropdown position-relative" href="#" id="notificationsDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="true">
                 <i class="fas fa-bell"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    5
                 </span>
             </a>
 
