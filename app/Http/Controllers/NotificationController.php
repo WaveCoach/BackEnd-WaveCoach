@@ -15,10 +15,22 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
-    public function sendNotification()
+    public function getDetailNotif($id)
     {
-        event(new NotificationSent("Hello, this is a test notification!"));
+        $notification = Notification::find($id);
+        if (!$notification) {
+            return redirect()->back()->with('error', 'Notification not found');
+        }
 
-        return response()->json(['status' => 'Notification sent']);
+        $notification->update(['is_read' => 1]);
+
+        if ($notification->type === 'schedule') {
+            return redirect()->route('/schedule');
+        } elseif ($notification->type === 'reschedule') {
+            return redirect()->route('/reschedule');
+        } elseif ($notification->type === 'absen') {
+            return redirect()->route('/coach-attendance');
+        }
+
     }
 }

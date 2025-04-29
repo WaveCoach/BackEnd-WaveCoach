@@ -83,7 +83,9 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
     Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
+    Route::get('/detail-notification/{id}', [NotificationController::class, 'getDetailNotif'])->name('notification.detail');
     Route::post('/test-email', [AssesmentReportController::class, 'kirim'])->name('raport.email');
+
 
 });
 

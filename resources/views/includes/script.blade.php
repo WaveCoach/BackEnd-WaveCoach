@@ -47,7 +47,7 @@ $(document).ready(function () {
                     data.forEach(function (notif) {
                         let createdAt = new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         let notifItem = `
-                            <a href="${notif.type === 'reschedule' ? '{{ route('reschedule.index') }}' : '{{ route('schedule.index') }}'}">
+                            <a href="/detail-notification/${notif.id}">
                                 <div class="header-notif">
                                     <div class="notif-text">
                                         <p class="bold-notif-text">${notif.title}</p>
