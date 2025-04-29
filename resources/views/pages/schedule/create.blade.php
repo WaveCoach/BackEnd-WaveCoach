@@ -178,7 +178,7 @@
                         }
 
                         if (data.coaches) {
-                            let coachOptions = data.coaches.map(function (coach) {
+                            let coachOptions = data.coach.map(function (coach) {
                                 return new Option(coach.coach_name, coach.coach_id, false, false);
                             });
                             $('#coachSelect').append(coachOptions).trigger('change');
