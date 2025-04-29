@@ -47,9 +47,9 @@ $(document).ready(function () {
                     data.forEach(function (notif) {
                         let createdAt = new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         let notifItem = `
-                            <a href="/detail-notification/${notif.id}" style="background-color:#137BE2FF" onclick="markAsRead(${notif.id})">
+                            <a href="/detail-notification/${notif.id}"  onclick="markAsRead(${notif.id})">
                                 <div class="header-notif">
-                                    <div class="notif-text">
+                                    <div class="notif-text {{ notif.is_read == 1 ? 'bg-secondary' : '' }}">
                                         <p class="bold-notif-text">${notif.title}</p>
                                         <small>${notif.message}</small>
                                         <br>
