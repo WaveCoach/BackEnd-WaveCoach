@@ -43,7 +43,14 @@
                 <tr>
                     <td>{{$loop->iteration}}</td>
                     <td>{{$item->student->name}}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('d F Y') }}</td>
+                    <td>
+                        @if ($item->schedule)
+                            {{ \Carbon\Carbon::parse($item->schedule->date)->translatedFormat('d F Y') }}
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </td>
+
                     <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('H:i') }}</td>
                     <td>
