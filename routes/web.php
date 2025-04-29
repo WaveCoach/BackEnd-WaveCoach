@@ -24,6 +24,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Mail\AssessmentReportMail;
 use App\Models\Announcement;
+use App\Models\Assessment;
 use App\Models\RescheduleRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -82,24 +83,25 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
     Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
-    Route::get('/test-email', function () {
-        // Dummy data untuk file PDF
-        $pdfContent = 'Ini adalah PDF dummy';
-        $filename = 'test.pdf';
+    Route::get('/test-email', [AssesmentReportController::class, 'kirim'])->name('test.email');
+    // Route::get('/test-email', function () {
+    //     // Dummy data untuk file PDF
+    //     $pdfContent = 'Ini adalah PDF dummy';
+    //     $filename = 'test.pdf';
 
-        // Simpan file sementara di storage
-        Storage::put('public/reports/' . $filename, $pdfContent);
+    //     // Simpan file sementara di storage
+    //     Storage::put('public/reports/' . $filename, $pdfContent);
 
-        // Cek path file yang disimpan
-        $filePath = storage_path('app/public/reports/' . $filename);
+    //     // Cek path file yang disimpan
+    //     $filePath = storage_path('app/public/reports/' . $filename);
 
-        // Periksa apakah file ada
-        if (file_exists($filePath)) {
-            return 'File berhasil disimpan di: ' . $filePath;
-        } else {
-            return 'File gagal disimpan di: ' . $filePath;
-        }
-    });
+    //     // Periksa apakah file ada
+    //     if (file_exists($filePath)) {
+    //         return 'File berhasil disimpan di: ' . $filePath;
+    //     } else {
+    //         return 'File gagal disimpan di: ' . $filePath;
+    //     }
+    // });
 
 
 });

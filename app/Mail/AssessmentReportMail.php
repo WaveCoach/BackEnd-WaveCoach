@@ -25,7 +25,6 @@ class AssessmentReportMail extends Mailable
     public function build()
     {
         return $this->subject('Laporan Penilaian Siswa')
-            ->view('pages.assesment_report.mail_report')
-            ->attach(storage_path('app/public/reports/' . $this->filename));
+            ->view('pages.assesment_report.mail_report');
     }
 }

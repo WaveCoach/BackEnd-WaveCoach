@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AssessmentReportMail;
+use App\Mail\KirimEmail;
 use App\Models\Assessment;
 use App\Models\AssessmentDetail;
 use App\Models\Student;
@@ -67,6 +68,18 @@ class AssesmentReportController extends Controller
             ->send(new AssessmentReportMail($student->name, $filename));
 
         return back()->with('success', 'Laporan berhasil dikirim ke email!');
+    }
+
+    public function kirim()
+    {
+        $data = [
+            'nama' => 'Cinta Ramayanti',
+            'pesan' => 'Selamat, kamu berhasil membuat email otomatis di Laravel!'
+        ];
+
+        Mail::to('ramayanticinta@gmail.com')->send(new KirimEmail($data));
+
+        return 'Email berhasil dikirim!';
     }
 
 }
