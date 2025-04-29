@@ -177,12 +177,13 @@
                             $('#student-select').append(studentOptions).trigger('change');
                         }
 
-                        if (data.coaches) {
+                        if (data.coach) {
                             let coachOptions = data.coach.map(function (coach) {
                                 return new Option(coach.coach_name, coach.coach_id, false, false);
                             });
                             $('#coachSelect').append(coachOptions).trigger('change');
                         }
+
                     },
                     error: function () {
                         alert('Gagal mengambil data package!');
