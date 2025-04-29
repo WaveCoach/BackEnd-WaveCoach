@@ -326,7 +326,15 @@ class ScheduleController extends Controller
         ->select('users.id as user_id', 'users.name as student_name')
         ->get();
 
-        return response()->json($students);
+        $coach = Package::where('id', $packageId)
+        ->join('users', 'users.id', '=', 'packages.coach_id')
+        ->select('users.id as coach_id', 'users.name as coach_name')
+        ->first();
+
+        return response()->json([
+            'students' => $students,
+            'coach' => $coach
+        ]);
     }
 
 }

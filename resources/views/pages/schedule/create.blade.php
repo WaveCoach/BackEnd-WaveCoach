@@ -5,6 +5,7 @@
         <div class="card-body">
             <h5 class="card-title">Tambah Schedule Baru</h5>
             <p class="card-description">Halaman ini memungkinkan admin untuk menambahkan Schedule baru</p>
+
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -14,15 +15,15 @@
                     </ul>
                 </div>
             @endif
+
             @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
+                <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
             <form method="POST" action="{{ route('schedule.store') }}" id="jobPositionForm">
                 @csrf
                 <div class="row mb-4">
+                    {{-- Package --}}
                     <div class="col-6 mb-3">
                         <label for="package_id" class="form-label">Package</label>
                         <select class="select2 form-control" name="package_id" id="package-select">
@@ -32,50 +33,48 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- Pilihan Coach -->
+
+                    {{-- Coach --}}
                     <div class="col-6 mb-3">
-                        <label for="mastercoach_id" class="form-label">coach</label>
-                        <select class="select2" name="coach_id" id="coachSelect">
-                            <option value="" disabled selected>Pilih coach</option>
-                            @foreach ($coach as $i)
-                                <option value="{{ $i->id }}">{{ $i->name }}</option>
-                            @endforeach
+                        <label for="coach_id" class="form-label">Coach</label>
+                        <select class="select2 form-control" name="coach_id" id="coachSelect">
+                            <option value="" disabled selected>Pilih Coach</option>
                         </select>
                     </div>
+
+                    {{-- Email coach baru --}}
                     <div class="col-6 mb-3" id="emailField" style="display: none;">
-                        <label for="email" class="form-label">Email coach Baru</label>
-                        <input type="email" class="form-control" name="email" id="emailInput"
-                            placeholder="Masukkan email">
+                        <label for="email" class="form-label">Email Coach Baru</label>
+                        <input type="email" class="form-control" name="email" id="emailInput" placeholder="Masukkan email">
                     </div>
 
-                    <!-- Pilihan Tanggal -->
+                    {{-- Tanggal --}}
                     <div class="col-6 mb-3">
                         <label for="date" class="form-label">Date</label>
                         <input type="date" class="form-control" name="date">
                     </div>
 
-                    <!-- Pilihan Waktu Mulai -->
+                    {{-- Jam mulai --}}
                     <div class="col-6 mb-3">
                         <label for="start_time" class="form-label">Start Time</label>
                         <input type="time" class="form-control" name="start_time">
                     </div>
 
-                    <!-- Pilihan Waktu Selesai -->
+                    {{-- Jam selesai --}}
                     <div class="col-6 mb-3">
                         <label for="end_time" class="form-label">End Time</label>
                         <input type="time" class="form-control" name="end_time">
                     </div>
 
-                    <!-- Pilihan Student -->
+                    {{-- Student --}}
                     <div class="col-6 mb-3">
                         <label for="student_id" class="form-label">Student</label>
                         <select class="select2 form-control" name="student_id[]" id="student-select" multiple>
                             <option value="">Pilih Student</option>
                         </select>
-
                     </div>
 
-                    <!-- Pilihan Lokasi -->
+                    {{-- Location --}}
                     <div class="col-6 mb-3">
                         <label for="location_id" class="form-label">Location</label>
                         <select class="select2 form-control" name="location_id" id="location-select">
@@ -85,29 +84,22 @@
                             @endforeach
                         </select>
 
-                        <!-- Input Lokasi Baru -->
+                        {{-- Kolam baru --}}
                         <div id="address-fields" style="display: none; margin-top: 10px;">
-                            <input type="text" class="form-control mb-2" name="address"
-                                placeholder="Masukkan Alamat Kolam">
-                            <input type="text" class="form-control" name="maps"
-                                placeholder="Masukkan URL Alamat Kolam">
+                            <input type="text" class="form-control mb-2" name="address" placeholder="Masukkan Alamat Kolam">
+                            <input type="text" class="form-control" name="maps" placeholder="Masukkan URL Alamat Kolam">
                         </div>
                     </div>
 
+                    {{-- Penilaian --}}
                     <div class="col-6 mb-3">
                         <label for="is_assessed" class="form-label">Penilaian</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_assessed" id="is_assessed"
-                                value="1">
-                            <label class="form-check-label" for="is_assessed">
-                                Apakah ada penilaian?
-                            </label>
+                            <input class="form-check-input" type="checkbox" name="is_assessed" id="is_assessed" value="1">
+                            <label class="form-check-label" for="is_assessed">Apakah ada penilaian?</label>
                         </div>
                     </div>
                 </div>
-
-                <!-- Pilihan Apakah Sudah Dinilai -->
-
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -127,65 +119,15 @@
 @push('custom-scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Select2 untuk lokasi dengan opsi custom
-            $('#location-select').select2({
-                tags: true,
-                createTag: function(params) {
-                    var term = $.trim(params.term);
-                    if (term === '') return null;
-                    return {
-                        id: term,
-                        text: term,
-                        newTag: true
-                    };
-                }
-            }).on('select2:select', function(e) {
-                var data = e.params.data;
-                if (data.newTag) {
-                    $('#address-fields').fadeIn();
-                } else {
-                    $('#address-fields').fadeOut();
-                }
-            });
-        });
-    </script>
 
     <script>
-        $('#package-select').on('change', function() {
-            const packageId = $(this).val();
-
-            $('#student-select').empty().trigger('change');
-
-            if (!packageId) return;
-
-            $.ajax({
-                url: `/get-students-by-package/${packageId}`,
-                type: 'GET',
-                success: function(data) {
-                    let options = [];
-                    data.forEach(function(student) {
-                        options.push(new Option(student.student_name, student.user_id, false,
-                            false));
-                    });
-                    $('#student-select').append(options).trigger('change');
-                },
-                error: function() {
-                    alert('Gagal mengambil data student!');
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.select2').select2({
                 width: '100%',
                 placeholder: "Pilih atau Tambah Opsi",
                 allowClear: true,
                 tags: true,
-                createTag: function(params) {
+                createTag: function (params) {
                     var term = $.trim(params.term);
                     return term === '' ? null : {
                         id: term,
@@ -195,7 +137,16 @@
                 }
             });
 
-            $('#coachSelect').on('select2:select', function(e) {
+            $('#location-select').on('select2:select', function (e) {
+                var data = e.params.data;
+                if (data.newTag) {
+                    $('#address-fields').fadeIn();
+                } else {
+                    $('#address-fields').fadeOut();
+                }
+            });
+
+            $('#coachSelect').on('select2:select', function (e) {
                 var data = e.params.data;
                 if (data.newTag) {
                     $('#emailField').show();
@@ -204,6 +155,37 @@
                     $('#emailField').hide();
                     $('#emailInput').removeAttr('required');
                 }
+            });
+
+            $('#package-select').on('change', function () {
+                const packageId = $(this).val();
+                $('#student-select').empty().trigger('change');
+                $('#coachSelect').empty().trigger('change');
+                $('#emailField').hide();
+                $('#emailInput').removeAttr('required');
+
+                if (!packageId) return;
+
+                $.ajax({
+                    url: `/get-students-by-package/${packageId}`,
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.students) {
+                            let studentOptions = data.students.map(function (student) {
+                                return new Option(student.student_name, student.user_id, false, false);
+                            });
+                            $('#student-select').append(studentOptions).trigger('change');
+                        }
+
+                        if (data.coach) {
+                            let coachOption = new Option(data.coach.coach_name, data.coach.coach_id, true, true);
+                            $('#coachSelect').append(coachOption).trigger('change');
+                        }
+                    },
+                    error: function () {
+                        alert('Gagal mengambil data package!');
+                    }
+                });
             });
         });
     </script>
