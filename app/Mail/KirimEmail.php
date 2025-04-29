@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -19,7 +20,14 @@ class KirimEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Judul Email Otomatis')
-                    ->view('pages.assesment_report.mail_report'); // View Blade untuk isi email
+        // Menghasilkan PDF dari view
+        $pdf = Pdf::loadView('emails.pdf-view', $this->data);
+
+        // Mengirim email dengan PDF sebagai attachment
+        return $this->subject('Email dengan PDF Dinamis')
+                    ->view('emails.kirim-email')
+                    ->attachData($pdf->output(), 'document.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
     }
 }
