@@ -57,8 +57,8 @@
                     </td>
                     <td>
                         @php
-                        $tanggal = $item->schedule->date;           // contoh: 2025-04-21
-                        $jamMulai = $item->schedule->start_time;    // contoh: 07:30:00
+                        $tanggal = $item->schedule->date ?? '-';           // contoh: 2025-04-21
+                        $jamMulai = $item->schedule->start_time ?? '-';    // contoh: 07:30:00
                         $waktuMulai = \Carbon\Carbon::parse("$tanggal $jamMulai");
 
                         $waktuMasuk = \Carbon\Carbon::parse($item->created_at);
