@@ -19,15 +19,14 @@ class KirimEmail extends Mailable
     }
 
     public function build()
-    {
-        // Menghasilkan PDF dari view
-        $pdf = Pdf::loadView('emails.pdf-view', $this->data);
+{
+    $pdf = Pdf::loadView('emails.pdf-view', ['data' => $this->data]);
 
-        // Mengirim email dengan PDF sebagai attachment
-        return $this->subject('Email dengan PDF Dinamis')
-                    ->view('emails.kirim-email')
-                    ->attachData($pdf->output(), 'document.pdf', [
-                        'mime' => 'application/pdf',
-                    ]);
-    }
+    return $this->subject('Email dengan PDF Dinamis')
+                ->view('emails.kirim-email', ['data' => $this->data]) // sekalian kirim data ke email view juga
+                ->attachData($pdf->output(), 'document.pdf', [
+                    'mime' => 'application/pdf',
+                ]);
+}
+
 }
