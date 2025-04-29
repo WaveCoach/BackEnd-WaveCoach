@@ -177,9 +177,11 @@
                             $('#student-select').append(studentOptions).trigger('change');
                         }
 
-                        if (data.coach) {
-                            let coachOption = new Option(data.coach.coach_name, data.coach.coach_id, true, true);
-                            $('#coachSelect').append(coachOption).trigger('change');
+                        if (data.coaches) {
+                            let coachOptions = data.coaches.map(function (coach) {
+                                return new Option(coach.coach_name, coach.coach_id, false, false);
+                            });
+                            $('#coachSelect').append(coachOptions).trigger('change');
                         }
                     },
                     error: function () {
