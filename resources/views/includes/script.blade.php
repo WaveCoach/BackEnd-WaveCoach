@@ -49,7 +49,7 @@ $(document).ready(function () {
                         let notifItem = `
                             <a href="/detail-notification/${notif.id}"  onclick="markAsRead(${notif.id})">
                                 <div class="header-notif">
-                                    <div class="notif-text {{ notif.is_read == 1 ? 'bg-secondary' : '' }}">
+                                    <div class="notif-text ${ notif.is_read == 1 ? 'bg-secondary' : '' }">
                                         <p class="bold-notif-text">${notif.title}</p>
                                         <small>${notif.message}</small>
                                         <br>
