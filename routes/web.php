@@ -84,25 +84,6 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
     Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
     Route::post('/test-email', [AssesmentReportController::class, 'kirim'])->name('raport.email');
-    // Route::get('/test-email', function () {
-    //     // Dummy data untuk file PDF
-    //     $pdfContent = 'Ini adalah PDF dummy';
-    //     $filename = 'test.pdf';
-
-    //     // Simpan file sementara di storage
-    //     Storage::put('public/reports/' . $filename, $pdfContent);
-
-    //     // Cek path file yang disimpan
-    //     $filePath = storage_path('app/public/reports/' . $filename);
-
-    //     // Periksa apakah file ada
-    //     if (file_exists($filePath)) {
-    //         return 'File berhasil disimpan di: ' . $filePath;
-    //     } else {
-    //         return 'File gagal disimpan di: ' . $filePath;
-    //     }
-    // });
-
 
 });
 
