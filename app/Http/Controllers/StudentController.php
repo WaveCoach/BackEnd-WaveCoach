@@ -71,7 +71,7 @@ class StudentController extends Controller
             }
         }
 
-        return redirect()->route('student.index')->with('success', 'Student berhasil ditambahkan dengan password: 12345678');
+        return redirect()->route('student.index')->with('success', 'Student berhasil ditambahkan');
     }
 
     public function show(string $id)
