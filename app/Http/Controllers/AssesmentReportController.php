@@ -70,14 +70,23 @@ class AssesmentReportController extends Controller
         return back()->with('success', 'Laporan berhasil dikirim ke email!');
     }
 
-    public function kirim()
+    public function kirim($id)
     {
-        $data = [
-            'nama' => 'Cinta Ramayanti',
-            'pesan' => 'Selamat, kamu berhasil membuat email otomatis di Laravel!'
-        ];
+        $assessment = Assessment::with(['student', 'category', 'coach', 'schedule.location'])
+                        ->where('id', $id)
+                        ->first();
 
-        Mail::to('ramayanticinta@gmail.com')->send(new KirimEmail($data));
+        $nilai = AssessmentDetail::with(['assessment', 'aspect'])
+                        ->where('assessment_id', $id)
+                        ->get();
+
+        $student = Student::where('user_id', $assessment->student_id)->first();
+        $user = User::where('id', $assessment->student_id)->first();
+
+        // Pastikan email user tidak null
+        if ($user && $user->email) {
+            Mail::to($user->email)->send(new KirimEmail($assessment, $nilai, $student, $user));
+        }
 
         return 'Email berhasil dikirim!';
     }
