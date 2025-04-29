@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Pusher\Pusher;
 
 class InventoryController extends BaseController
 {
@@ -84,6 +85,23 @@ class InventoryController extends BaseController
                 'message'         => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
                 'type'            => 'request',
                 'is_read'         => 0,
+            ]);
+
+            $pusher = new Pusher(
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
+                [
+                    'cluster' => env('PUSHER_APP_CLUSTER'),
+                    'useTLS' => true,
+                ]
+            );
+
+            // Kirim event ke Pusher
+            $pusher->trigger('notification-channel-user-' . $loanRequest->mastercoach_id, 'NotificationSent', [
+                'message' => "Peminjaman oleh {$loanRequest->coach->name} telah diajukan untuk barang tertentu.",
+                'title'   => 'Permintaan Peminjaman Barang',
+                'type'    => 'request',
             ]);
 
             DB::commit();
@@ -159,6 +177,23 @@ class InventoryController extends BaseController
                     'is_read'         => 0,
                 ]);
 
+                $pusher = new Pusher(
+                    env('PUSHER_APP_KEY'),
+                    env('PUSHER_APP_SECRET'),
+                    env('PUSHER_APP_ID'),
+                    [
+                        'cluster' => env('PUSHER_APP_CLUSTER'),
+                        'useTLS' => true,
+                    ]
+                );
+
+                // Kirim event ke Pusher
+                $pusher->trigger('notification-channel-user-' . $loanRequest->coach_id, 'NotificationSent', [
+                    'message' => "Permintaan peminjaman Anda untuk tanggal {$loanRequest->tanggal_pinjam} telah disetujui oleh Mastercoach.",
+                    'title'   => 'Peminjaman Disetujui',
+                    'type'    => 'request',
+                ]);
+
 
             } elseif ($request->status === 'rejected') {
                 $loanRequest->update([
@@ -175,6 +210,23 @@ class InventoryController extends BaseController
                     'message'         => "Permintaan peminjaman Anda ditolak. Alasan: {$request->rejection_reason}",
                     'type'            => 'request',
                     'is_read'         => 0,
+                ]);
+
+                $pusher = new Pusher(
+                    env('PUSHER_APP_KEY'),
+                    env('PUSHER_APP_SECRET'),
+                    env('PUSHER_APP_ID'),
+                    [
+                        'cluster' => env('PUSHER_APP_CLUSTER'),
+                        'useTLS' => true,
+                    ]
+                );
+
+                // Kirim event ke Pusher
+                $pusher->trigger('notification-channel-user-' . $loanRequest->coach_id, 'NotificationSent', [
+                    'message' => "Permintaan peminjaman Anda ditolak. Alasan: {$request->rejection_reason}",
+                    'title'   => 'Peminjaman Ditolak',
+                    'type'    => 'request',
                 ]);
 
             }
@@ -257,6 +309,23 @@ class InventoryController extends BaseController
                 'message'         => "{$coachName} telah mengajukan pengembalian barang *{$inventoryName}*.",
                 'type'            => 'return',
                 'is_read'         => 0,
+            ]);
+
+            $pusher = new Pusher(
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
+                [
+                    'cluster' => env('PUSHER_APP_CLUSTER'),
+                    'useTLS' => true,
+                ]
+            );
+
+            // Kirim event ke Pusher
+            $pusher->trigger('notification-channel-user-' . $landing->mastercoach_id, 'NotificationSent', [
+                'message' => "{$coachName} telah mengajukan pengembalian barang *{$inventoryName}*.",
+                'title'   => 'Pengajuan Pengembalian Barang',
+                'type'    => 'return',
             ]);
 
             DB::commit();
@@ -343,6 +412,23 @@ class InventoryController extends BaseController
                     'is_read'     => 0,
                 ]);
 
+                $pusher = new Pusher(
+                    env('PUSHER_APP_KEY'),
+                    env('PUSHER_APP_SECRET'),
+                    env('PUSHER_APP_ID'),
+                    [
+                        'cluster' => env('PUSHER_APP_CLUSTER'),
+                        'useTLS' => true,
+                    ]
+                );
+
+                // Kirim event ke Pusher
+                $pusher->trigger('notification-channel-user-' . $returnRequest->coach_id, 'NotificationSent', [
+                    'message' => "Pengembalian barang *{$inventoryName}* oleh {$coachName} telah disetujui oleh Mastercoach.",
+                    'title'   => 'Pengembalian Barang Disetujui',
+                    'type'    => 'return',
+                ]);
+
             } elseif ($request->status === 'rejected') {
                 $returnRequest->updateOrFail([
                     'status' => 'rejected',
@@ -357,6 +443,23 @@ class InventoryController extends BaseController
                     'message'     => "Pengembalian barang *{$inventoryName}* oleh {$coachName} ditolak. Alasan: {$request->rejection_reason}.",
                     'type'        => 'return',
                     'is_read'     => 0,
+                ]);
+
+                $pusher = new Pusher(
+                    env('PUSHER_APP_KEY'),
+                    env('PUSHER_APP_SECRET'),
+                    env('PUSHER_APP_ID'),
+                    [
+                        'cluster' => env('PUSHER_APP_CLUSTER'),
+                        'useTLS' => true,
+                    ]
+                );
+
+                // Kirim event ke Pusher
+                $pusher->trigger('notification-channel-user-' . $returnRequest->coach_id, 'NotificationSent', [
+                    'message' => "Pengembalian barang *{$inventoryName}* oleh {$coachName} ditolak. Alasan: {$request->rejection_reason}.",
+                    'title'   => 'Pengembalian Barang Ditolak',
+                    'type'    => 'return',
                 ]);
             }
 
