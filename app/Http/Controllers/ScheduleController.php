@@ -6,6 +6,7 @@ use App\Models\coaches;
 use App\Models\location;
 use App\Models\Notification;
 use App\Models\Package;
+use App\Models\PackageCoach;
 use App\Models\PackageStudent;
 use App\Models\schedule;
 use App\Models\ScheduleDetail;
@@ -326,7 +327,7 @@ class ScheduleController extends Controller
         ->select('users.id as user_id', 'users.name as student_name')
         ->get();
 
-        $coach = Package::where('id', $packageId)
+        $coach = PackageCoach::where('id', $packageId)
         ->join('users', 'users.id', '=', 'packages.coach_id')
         ->select('users.id as coach_id', 'users.name as coach_name')
         ->first();
