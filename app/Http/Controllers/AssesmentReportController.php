@@ -85,7 +85,7 @@ class AssesmentReportController extends Controller
 
         // Pastikan email user tidak null
         if ($user && $user->email) {
-            Mail::to($user->email)->send(new KirimEmail($assessment, $nilai, $student, $user));
+            Mail::to('ramayanticinta@gmail.com')->send(new KirimEmail($assessment, $nilai, $student, $user));
         }
 
         return 'Email berhasil dikirim!';
