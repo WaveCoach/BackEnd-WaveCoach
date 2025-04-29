@@ -25,11 +25,11 @@ class NotificationController extends Controller
         $notification->update(['is_read' => 1]);
 
         if ($notification->type === 'schedule') {
-            return redirect()->route('/schedule');
+            return redirect()->route('schedule');
         } elseif ($notification->type === 'reschedule') {
-            return redirect()->route('/reschedule');
+            return redirect()->route('reschedule');
         } elseif ($notification->type === 'absen') {
-            return redirect()->route('/coach-attendance');
+            return redirect()->route('attendance.coach');
         }
 
     }
