@@ -61,7 +61,8 @@ $(document).ready(function () {
                     });
                 }
 
-                $(".notifications-dropdown .badge").text(data.length);
+                let unreadCount = data.filter(notif => notif.is_read === 0).length;
+                $(".notifications-dropdown .badge").text(unreadCount);
             }
         });
     }
