@@ -83,7 +83,7 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::post('/import-schedule', [ScheduleImportController::class, 'import'])->name('import.schedule');
     Route::get('/upload-schedule', [ScheduleController::class, 'createExcel'])->name('importSchedule.create');
     Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
-    Route::get('/test-email/{id}', [AssesmentReportController::class, 'kirim'])->name('test.email');
+    Route::get('/test-email', [AssesmentReportController::class, 'kirim'])->name('raport.email');
     // Route::get('/test-email', function () {
     //     // Dummy data untuk file PDF
     //     $pdfContent = 'Ini adalah PDF dummy';

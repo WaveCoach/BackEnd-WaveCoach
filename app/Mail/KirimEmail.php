@@ -11,35 +11,19 @@ class KirimEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $assessment;
-    public $nilai;
-    public $student;
-    public $user;
+    public $data; // berisi array: assessments, nilai, student, user
 
-    public function __construct($assessment, $nilai, $student, $user)
+    public function __construct($data)
     {
-        $this->assessment = $assessment;
-        $this->nilai = $nilai;
-        $this->student = $student;
-        $this->user = $user;
+        $this->data = $data;
     }
 
     public function build()
     {
-        $pdf = Pdf::loadView('emails.pdf-view', [
-            'assessment' => $this->assessment,
-            'nilai' => $this->nilai,
-            'student' => $this->student,
-            'user' => $this->user,
-        ]);
+        $pdf = Pdf::loadView('emails.pdf-view', $this->data);
 
         return $this->subject('Email dengan PDF Dinamis')
-                    ->view('emails.kirim-email', [
-                        'assessment' => $this->assessment,
-                        'nilai' => $this->nilai,
-                        'student' => $this->student,
-                        'user' => $this->user,
-                    ])
+                    ->view('emails.kirim-email', $this->data)
                     ->attachData($pdf->output(), 'document.pdf', [
                         'mime' => 'application/pdf',
                     ]);

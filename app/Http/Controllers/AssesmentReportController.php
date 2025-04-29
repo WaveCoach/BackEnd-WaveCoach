@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class AssesmentReportController extends Controller
 {
@@ -70,25 +71,50 @@ class AssesmentReportController extends Controller
         return back()->with('success', 'Laporan berhasil dikirim ke email!');
     }
 
-    public function kirim($id)
+    public function kirim(Request $request)
     {
-        $assessment = Assessment::with(['student', 'category', 'coach', 'schedule.location'])
-                        ->where('id', $id)
-                        ->first();
+        $ids = $request->ids;
 
-        $nilai = AssessmentDetail::with(['assessment', 'aspect'])
-                        ->where('assessment_id', $id)
+        $assessments = Assessment::with(['student', 'category', 'coach', 'schedule.location'])
+                                ->whereIn('id', $ids)
+                                ->get();
+
+        if ($assessments->isEmpty()) {
+            return redirect()->back()->with('error', 'Assessment tidak ditemukan.');
+        }
+
+        $firstAssessment = $assessments->first();
+        $student = Student::where('user_id', $firstAssessment->student_id)->first();
+        $user = User::find($firstAssessment->student_id);
+
+        $allDetails = [];
+
+        foreach ($assessments as $assessment) {
+            $nilai = AssessmentDetail::with(['assessment', 'aspect'])
+                        ->where('assessment_id', $assessment->id)
                         ->get();
 
-        $student = Student::where('user_id', $assessment->student_id)->first();
-        $user = User::where('id', $assessment->student_id)->first();
+            $allDetails[] = [
+                'assessment' => $assessment,
+                'nilai' => $nilai
+            ];
+        }
 
-        // Pastikan email user tidak null
-        // if ($user && $user->email) {
-            Mail::to('ramayanticinta@gmail.com')->send(new KirimEmail($assessment, $nilai, $student, $user));
-        // }
+        if ($user && $user->email_parent) {
+            $data = [
+                'assessments' => $allDetails,
+                'student' => $student,
+                'user' => $user
+            ];
 
-        return 'Email berhasil dikirim!';
+            Mail::to($user->email_parent)->send(new KirimEmail($data));
+
+            return redirect()->back()->with('success', 'Email berhasil dikirim!');
+        }
+
+        return redirect()->back()->with('error', 'Email user tidak ditemukan.');
     }
+
+
 
 }

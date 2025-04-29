@@ -4,7 +4,7 @@
     <title>Email dengan PDF</title>
 </head>
 <body>
-    <h1>Halo,</h1>
+    <h1>Halo</h1>
     <p>Silakan cek lampiran PDF.</p>
 </body>
 </html>

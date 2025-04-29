@@ -1,58 +1,67 @@
 @extends('layouts.default')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Laporan Penilaian {{$student->name ?? ''}}</h5>
+<form action="{{ route('raport.email') }}" method="POST">
+    @csrf
 
-        <table id="zero-conf" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>nama coach</th>
-                    <th>Tanggal Penilaian</th>
-                    <th>Gaya Renang</th>
-                    <th>Keterangan</th>
-                    <th>Dokumen</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($assesment as $item)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->coach->name }}</td>
-                    <td>{{ date('d-m-Y', strtotime($item->created_at)) }}</td>
-                    <td>{{ $item->category->name }}</td>
-                    <td>
-                        @php
-                            $average = $item->details->avg('score');
-                            $kkm = $item->category->kkm;
-                            $status = $average >= $kkm ? 'Lulus' : 'Tidak Lulus';
-                        @endphp
-                        <span>Rata-rata: {{ number_format($average, 2) }}<br>Status: <strong class="{{ $status == 'Lulus' ? 'text-success' : 'text-danger' }}">{{ $status }}</strong></span>
-                    </td>
-                    <td>
-                        <a href="{{ route('assesment-report.pdf', $item->id) }}">pdf</a>
-                        <input type="checkbox" name="selected_assesments[]" value="{{ $item->id }}">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Laporan Penilaian {{$student->name ?? ''}}</h5>
 
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
+            <table id="zero-conf" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>nama coach</th>
+                        <th>Tanggal Penilaian</th>
+                        <th>Gaya Renang</th>
+                        <th>Keterangan</th>
+                        <th>Dokumen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($assesment as $item)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->coach->name }}</td>
+                        <td>{{ date('d-m-Y', strtotime($item->created_at)) }}</td>
+                        <td>{{ $item->category->name }}</td>
+                        <td>
+                            @php
+                                $average = $item->details->avg('score');
+                                $kkm = $item->category->kkm;
+                                $status = $average >= $kkm ? 'Lulus' : 'Tidak Lulus';
+                            @endphp
+                            <span>Rata-rata: {{ number_format($average, 2) }}<br>Status:
+                                <strong class="{{ $status == 'Lulus' ? 'text-success' : 'text-danger' }}">{{ $status }}</strong>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ route('assesment-report.pdf', $item->id) }}">pdf</a>
+                            <input type="checkbox" name="ids[]" value="{{ $item->id }}">
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>No</th>
+                        <th>nama coach</th>
+                        <th>Tanggal Penilaian</th>
+                        <th>Gaya Renang</th>
+                        <th>Keterangan</th>
+                        <th>Dokumen</th>
+                    </tr>
+                </tfoot>
+            </table>
 
-            <tfoot>
-                <tr>
-                    <th>No</th>
-                    <th>nama coach</th>
-                    <th>Tanggal Penilaian</th>
-                    <th>Gaya Renang</th>
-                    <th>Keterangan</th>
-                    <th>Dokumen</th>
-                </tr>
-            </tfoot>
-        </table>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Kirim Email</button>
+            </div>
+        </div>
     </div>
-</div>
+</form>
+
 @endsection
 
 @push('custom-style')

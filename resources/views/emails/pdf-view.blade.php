@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Raport Renang - Gaya Bebas</title>
+    <title>Raport Renang - Penilaian Siswa</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -39,68 +39,79 @@
         }
         .footer {
             margin-top: 40px;
+            page-break-after: always;
         }
     </style>
 </head>
 <body>
 
     <h2>Laporan Penilaian Renang</h2>
-    <h3>{{ $assessment->category->name }}</h3>
+    <h3>Nama Siswa: {{ $student->name }} ({{ $student->nis }})</h3>
 
-    <table class="meta">
-        <tr>
-            <td><strong>Nama Siswa</strong></td>
-            <td>: {{ $assessment->student->name }}</td>
-            <td><strong>Kelas</strong></td>
-            <td>: {{ $assessment->package->name }}</td>
-        </tr>
-        <tr>
-            <td><strong>ID Siswa</strong></td>
-            <td>: {{ $student->nis }}</td>
-            <td><strong>Tanggal Penilaian</strong></td>
-            <td>: {{ $assessment->created_at->format('d F Y') }}</td>
-        </tr>
-        <tr>
-            <td><strong>Pelatih</strong></td>
-            <td>: {{ $assessment->coach->name }}</td>
-            <td><strong>Lokasi</strong></td>
-            <td>: {{ $assessment->schedule->location->name ?? '-' }}</td>
-        </tr>
-    </table>
+    @foreach ($assessments as $index => $item)
+        @php
+            $assessment = $item['assessment'];
+            $nilai = $item['nilai'];
+        @endphp
 
-    <table class="penilaian">
-        <thead>
+        <h3>{{ $assessment->category->name }}</h3>
+
+        <table class="meta">
             <tr>
-                <th>No</th>
-                <th>Aspek Penilaian</th>
-                <th>Deskripsi</th>
-                <th>Nilai</th>
-                <th>Komentar</th>
+                <td><strong>Nama Siswa</strong></td>
+                <td>: {{ $assessment->student->name }}</td>
+                <td><strong>Kelas</strong></td>
+                <td>: {{ $assessment->package->name ?? '-' }}</td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach ($nilai as $item)
             <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->aspect->name }}</td>
-                <td>{{ $item->aspect->desc }}</td>
-                <td>{{ $item->score }}</td>
-                <td>{{ $item->remarks }}</td>
+                <td><strong>ID Siswa</strong></td>
+                <td>: {{ $student->nis }}</td>
+                <td><strong>Tanggal Penilaian</strong></td>
+                <td>: {{ $assessment->created_at->format('d F Y') }}</td>
             </tr>
-            @endforeach
-        </tbody>
-    </table>
+            <tr>
+                <td><strong>Pelatih</strong></td>
+                <td>: {{ $assessment->coach->name }}</td>
+                <td><strong>Lokasi</strong></td>
+                <td>: {{ $assessment->schedule->location->name ?? '-' }}</td>
+            </tr>
+        </table>
 
-    <p><strong>Rata-rata Nilai:</strong> {{ number_format($nilai->avg('score'), 2) }}</p>
+        <table class="penilaian">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Aspek Penilaian</th>
+                    <th>Deskripsi</th>
+                    <th>Nilai</th>
+                    <th>Komentar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($nilai as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->aspect->name }}</td>
+                    <td>{{ $item->aspect->desc }}</td>
+                    <td>{{ $item->score }}</td>
+                    <td>{{ $item->remarks }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="footer">
-        <strong>Catatan Pelatih:</strong>
-        <p>
-            Siswa telah menunjukkan usaha yang baik selama sesi pelatihan. Diharapkan terus konsisten dan semangat dalam latihan ke depannya.
-        </p>
+        <p><strong>Rata-rata Nilai:</strong> {{ number_format($nilai->avg('score'), 2) }}</p>
 
-        <p style="margin-top: 50px;">Tanda Tangan Pelatih: _______________________</p>
-    </div>
+        <div class="footer">
+            <strong>Catatan Pelatih:</strong>
+            <p>
+                Siswa telah menunjukkan usaha yang baik selama sesi pelatihan. Diharapkan terus konsisten dan semangat dalam latihan ke depannya.
+            </p>
+
+            <p style="margin-top: 50px;">Tanda Tangan Pelatih: _______________________</p>
+        </div>
+
+    @endforeach
 
 </body>
 </html>
